@@ -1,0 +1,8 @@
+<view class="container">
+  <view class="message">
+    <text>Message: {{message}}</text>
+  </view>
+  <view class="status">
+    <text>Status: {{status}}</text>
+  </view>
+</view> 
