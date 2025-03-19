@@ -1,0 +1,59 @@
+<!-- 栈操作游戏页面 -->
+<view class="container">
+  <!-- 游戏信息卡片 -->
+  <view class="game-card">
+    <view class="game-info">
+      <view class="game-title">栈操作挑战</view>
+      <view class="game-description">完成指定的栈操作任务</view>
+    </view>
+  </view>
+
+  <!-- 栈展示区域 -->
+  <view class="stack-container">
+    <view class="stack-label">栈顶</view>
+    <view class="stack-items">
+      <block wx:for="{{stack}}" wx:key="index" wx:for-item="item">
+        <view class="stack-item">{{item}}</view>
+      </block>
+    </view>
+    <view class="stack-label">栈底</view>
+  </view>
+
+  <!-- 操作面板 -->
+  <view class="operation-panel">
+    <view class="operation-title">{{currentTask}}</view>
+    
+    <view class="operation-controls">
+      <view class="control-group">
+        <text class="control-label">操作类型:</text>
+        <picker bindchange="onOperationTypeChange" value="{{operationTypeIndex}}" range="{{operationTypes}}">
+          <view class="picker-view">
+            {{operationTypes[operationTypeIndex]}}
+          </view>
+        </picker>
+      </view>
+      
+      <view class="control-group" wx:if="{{operationTypeIndex === 0}}">
+        <text class="control-label">元素值:</text>
+        <input type="number" class="input-field" value="{{elementValue}}" bindinput="onElementValueInput" />
+      </view>
+    </view>
+    
+    <button class="operation-button" bindtap="executeOperation">执行操作</button>
+  </view>
+
+  <!-- 操作历史 -->
+  <view class="operation-history">
+    <view class="history-title">操作历史</view>
+    <view class="history-items">
+      <block wx:for="{{operationHistory}}" wx:key="index">
+        <view class="history-item">{{item}}</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 操作结果提示 -->
+  <view class="operation-result" wx:if="{{operationResult}}">
+    {{operationResult}}
+  </view>
+</view> 

@@ -1,9 +1,49 @@
 const config = require('../../../config.js');
+const app = getApp();
 
 Page({
   data: {
     message: '', // 用于存储后端返回的消息
-    status: ''   // 用于存储后端返回的状态
+    status: '',   // 用于存储后端返回的状态
+    userInfo: {},
+    gameCategories: [
+      {
+        id: 1,
+        name: '基础数据结构',
+        games: [
+          {
+            id: 1,
+            name: '链表操作',
+            icon: '/assets/linked-list.png',
+            description: '学习链表的基本操作'
+          },
+          {
+            id: 2,
+            name: '栈与队列',
+            icon: '/assets/stack-queue.png',
+            description: '掌握栈和队列的应用'
+          }
+        ]
+      },
+      {
+        id: 2,
+        name: '算法游戏',
+        games: [
+          {
+            id: 3,
+            name: '迷宫寻路',
+            icon: '/assets/maze.png',
+            description: '使用不同算法解决迷宫问题'
+          },
+          {
+            id: 4,
+            name: '排序可视化',
+            icon: '/assets/sorting.png',
+            description: '可视化各种排序算法'
+          }
+        ]
+      }
+    ]
   },
 
   onLoad: function() {
@@ -12,6 +52,8 @@ Page({
 
     // 调用POST API
     this.sendGreeting();
+
+    this.getUserInfo();
   },
 
   // 获取Hello消息
@@ -53,6 +95,20 @@ Page({
       fail: (err) => {
         console.error('Request failed:', err);
       }
+    });
+  },
+
+  getUserInfo() {
+    const userInfo = wx.getStorageSync('userInfo');
+    if (userInfo) {
+      this.setData({ userInfo });
+    }
+  },
+
+  onGameTap(e) {
+    const { game } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/game/game?id=${game.id}&name=${game.name}`
     });
   }
 }); 

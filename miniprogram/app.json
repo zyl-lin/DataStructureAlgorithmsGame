@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "src/pages/index/index",
+    "src/pages/game/game",
+    "src/pages/learning/learning",
+    "src/pages/learning/article",
+    "src/pages/profile/profile",
+    "src/pages/maze/maze",
+    "src/pages/linkedlist/linkedlist",
+    "src/pages/stack/stack"
+  ],
+  "window": {
+    "navigationBarTitleText": "数据结构与算法游戏",
+    "navigationBarBackgroundColor": "#4CAF50",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4CAF50",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "src/pages/index/index",
+        "text": "游戏",
+        "iconPath": "assets/icons/game.png",
+        "selectedIconPath": "assets/icons/game-active.png"
+      },
+      {
+        "pagePath": "src/pages/learning/learning",
+        "text": "学习",
+        "iconPath": "assets/icons/learning.png",
+        "selectedIconPath": "assets/icons/learning-active.png"
+      },
+      {
+        "pagePath": "src/pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+} 

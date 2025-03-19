@@ -1,0 +1,193 @@
+.game-component {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #333;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.linked-list-container {
+  margin: 30rpx 0;
+  padding: 20rpx;
+  background-color: #f9f9f9;
+  border-radius: 12rpx;
+}
+
+.linked-list-visualization {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 30rpx 0;
+  align-items: center;
+}
+
+.linked-list-node {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.node-value {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.node-pointer {
+  flex: 1;
+  margin: 0 20rpx;
+  color: #666;
+  font-weight: bold;
+  font-size: 32rpx;
+  text-align: center;
+}
+
+.node-pointer.last {
+  color: #999;
+  font-size: 28rpx;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.control-button {
+  flex: 1;
+  margin: 0 10rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 28rpx;
+  padding: 15rpx 0;
+}
+
+.operation-panel {
+  background-color: #f8f8f8;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-top: 30rpx;
+}
+
+.operation-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.operation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20rpx;
+}
+
+.control-label {
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+  color: #666;
+}
+
+.control-input {
+  padding: 16rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.position-selector {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.position-option {
+  padding: 16rpx 30rpx;
+  background-color: #f0f0f0;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  text-align: center;
+  flex: 1;
+}
+
+.position-option.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.operation-button {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.result-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+  width: 80%;
+  max-width: 600rpx;
+  z-index: 1000;
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.result-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  margin-bottom: 30rpx;
+  color: #666;
+}
+
+.close-button {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+} 

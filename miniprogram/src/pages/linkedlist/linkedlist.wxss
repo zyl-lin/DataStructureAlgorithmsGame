@@ -1,0 +1,142 @@
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.game-card {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+  padding: 10rpx;
+}
+
+.game-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.linked-list-container {
+  margin: 30rpx 0;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.linked-list-node {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.node-value {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.node-pointer {
+  flex: 1;
+  margin: 0 20rpx;
+  color: #666;
+  font-weight: bold;
+  font-size: 32rpx;
+  text-align: center;
+}
+
+.node-pointer.last {
+  color: #999;
+  font-size: 28rpx;
+}
+
+.operation-panel {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.operation-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 10rpx;
+  border-bottom: 1px solid #eee;
+}
+
+.operation-controls {
+  margin-bottom: 20rpx;
+}
+
+.control-group {
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.control-label {
+  width: 160rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.picker-view {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+}
+
+.input-field {
+  flex: 1;
+  height: 70rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+}
+
+.operation-button {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 10rpx;
+  text-align: center;
+}
+
+.operation-result {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background-color: #f1f8e9;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  color: #4CAF50;
+} 

@@ -1,0 +1,89 @@
+<view class="sorting-container">
+  <view class="array-visualization">
+    <block wx:for="{{displayArray}}" wx:key="index">
+      <view class="array-item" style="height: {{item.height}}rpx; background-color: {{item.color}};">
+        <text class="array-value" wx:if="{{showValues}}">{{item.value}}</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="controls-panel">
+    <view class="algorithm-selector">
+      <view class="section-title">选择排序算法</view>
+      <view class="algorithm-buttons">
+        <view 
+          class="algorithm-btn {{selectedAlgorithm === 'bubble' ? 'active' : ''}}" 
+          bindtap="selectAlgorithm" 
+          data-algorithm="bubble"
+        >
+          冒泡排序
+        </view>
+        <view 
+          class="algorithm-btn {{selectedAlgorithm === 'insertion' ? 'active' : ''}}" 
+          bindtap="selectAlgorithm" 
+          data-algorithm="insertion"
+        >
+          插入排序
+        </view>
+        <view 
+          class="algorithm-btn {{selectedAlgorithm === 'quick' ? 'active' : ''}}" 
+          bindtap="selectAlgorithm" 
+          data-algorithm="quick"
+        >
+          快速排序
+        </view>
+        <view 
+          class="algorithm-btn {{selectedAlgorithm === 'merge' ? 'active' : ''}}" 
+          bindtap="selectAlgorithm" 
+          data-algorithm="merge"
+        >
+          归并排序
+        </view>
+      </view>
+    </view>
+
+    <view class="settings">
+      <view class="section-title">设置</view>
+      <view class="settings-row">
+        <text class="setting-label">数组大小:</text>
+        <slider 
+          min="5" 
+          max="50" 
+          value="{{arraySize}}" 
+          show-value="true"
+          bindchange="onArraySizeChange"
+        />
+      </view>
+      <view class="settings-row">
+        <text class="setting-label">排序速度:</text>
+        <slider 
+          min="1" 
+          max="10" 
+          value="{{sortingSpeed}}" 
+          show-value="true"
+          bindchange="onSortingSpeedChange"
+        />
+      </view>
+      <view class="settings-row">
+        <text class="setting-label">显示数值:</text>
+        <switch checked="{{showValues}}" bindchange="onShowValuesChange" />
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <button class="action-btn generate" bindtap="generateNewArray">生成新数组</button>
+      <button class="action-btn sort" bindtap="startSorting" disabled="{{isSorting}}">开始排序</button>
+      <button class="action-btn stop" bindtap="stopSorting" disabled="{{!isSorting}}">停止</button>
+    </view>
+  </view>
+
+  <view class="info-panel">
+    <view class="info-title">算法信息</view>
+    <view class="algorithm-info">{{algorithmInfo}}</view>
+    <view class="stats">
+      <text>比较次数: {{comparisons}}</text>
+      <text>交换次数: {{swaps}}</text>
+      <text>当前状态: {{sortingStatus}}</text>
+    </view>
+  </view>
+</view> 

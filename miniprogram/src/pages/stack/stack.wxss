@@ -1,0 +1,163 @@
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.game-card {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+  padding: 10rpx;
+}
+
+.game-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.stack-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30rpx 0;
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.stack-label {
+  font-size: 26rpx;
+  color: #666;
+  margin: 10rpx 0;
+}
+
+.stack-items {
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  border: 2rpx solid #ddd;
+  border-top: none;
+}
+
+.stack-item {
+  padding: 20rpx;
+  text-align: center;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  font-size: 28rpx;
+  border-bottom: 2rpx solid #fff;
+}
+
+.operation-panel {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.operation-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 10rpx;
+  border-bottom: 1px solid #eee;
+}
+
+.operation-controls {
+  margin-bottom: 20rpx;
+}
+
+.control-group {
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.control-label {
+  width: 160rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.picker-view {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+}
+
+.input-field {
+  flex: 1;
+  height: 70rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+}
+
+.operation-button {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 10rpx;
+  text-align: center;
+}
+
+.operation-history {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.history-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.history-items {
+  max-height: 300rpx;
+  overflow-y: auto;
+}
+
+.history-item {
+  padding: 10rpx 0;
+  font-size: 26rpx;
+  color: #666;
+  border-bottom: 1rpx solid #eee;
+}
+
+.operation-result {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background-color: #f1f8e9;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  color: #4CAF50;
+} 

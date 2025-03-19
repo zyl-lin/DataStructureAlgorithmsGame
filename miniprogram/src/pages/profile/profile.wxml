@@ -1,0 +1,118 @@
+<view class="container">
+  <view class="header">
+    <text class="title">个人中心</text>
+  </view>
+  
+  <view class="user-profile">
+    <view class="avatar">
+      <image src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+    </view>
+    <view class="user-info">
+      <text class="nickname">{{userInfo.nickName || '未登录用户'}}</text>
+      <text class="level">Level {{userInfo.level || 1}}</text>
+    </view>
+    <view class="edit-btn" bindtap="editProfile">
+      <image src="/assets/icons/edit.png" mode="aspectFit"></image>
+    </view>
+  </view>
+  
+  <view class="stats-container">
+    <view class="stats-item">
+      <text class="stats-value">{{stats.completedGames || 0}}</text>
+      <text class="stats-label">已完成</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-value">{{stats.achievements || 0}}</text>
+      <text class="stats-label">成就</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-value">{{stats.streak || 0}}</text>
+      <text class="stats-label">连续学习</text>
+    </view>
+  </view>
+  
+  <view class="menu-list">
+    <view class="menu-section">
+      <text class="section-title">学习记录</text>
+      <view class="menu-item" bindtap="navigateToHistory">
+        <view class="menu-icon">
+          <image src="/assets/icons/history.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">学习历史</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="menu-item" bindtap="navigateToFavorites">
+        <view class="menu-icon">
+          <image src="/assets/icons/favorite.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">我的收藏</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="menu-item" bindtap="navigateToAchievements">
+        <view class="menu-icon">
+          <image src="/assets/icons/trophy.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">我的成就</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+    
+    <view class="menu-section">
+      <text class="section-title">应用设置</text>
+      <view class="menu-item" bindtap="navigateToSettings">
+        <view class="menu-icon">
+          <image src="/assets/icons/settings.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">设置</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="menu-item" bindtap="navigateToHelp">
+        <view class="menu-icon">
+          <image src="/assets/icons/help.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">帮助与反馈</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="menu-item" bindtap="navigateToAbout">
+        <view class="menu-icon">
+          <image src="/assets/icons/info.png" mode="aspectFit"></image>
+        </view>
+        <text class="menu-text">关于我们</text>
+        <view class="menu-arrow">
+          <image src="/assets/icons/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="tab-bar">
+    <view class="tab-item" bindtap="navigateToIndex">
+      <view class="tab-icon">
+        <image src="/assets/icons/game.png" mode="aspectFit"></image>
+      </view>
+      <text>游戏</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToLearning">
+      <view class="tab-icon">
+        <image src="/assets/icons/learning.png" mode="aspectFit"></image>
+      </view>
+      <text>学习</text>
+    </view>
+    <view class="tab-item active">
+      <view class="tab-icon">
+        <image src="/assets/icons/profile-active.png" mode="aspectFit"></image>
+      </view>
+      <text>我的</text>
+    </view>
+  </view>
+</view> 

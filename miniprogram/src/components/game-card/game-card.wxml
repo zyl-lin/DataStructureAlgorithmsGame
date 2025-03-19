@@ -1,0 +1,10 @@
+<view class="game-card" data-game="{{game}}" bindtap="onTap">
+  <image class="game-icon" src="{{game.icon}}" mode="aspectFit" />
+  <view class="game-info">
+    <text class="game-name">{{game.name}}</text>
+    <text class="game-description">{{game.description}}</text>
+  </view>
+  <view class="game-status">
+    <text class="progress">进度: {{progress}}%</text>
+  </view>
+</view> 

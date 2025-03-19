@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="header">
+    <text class="title">学习资料</text>
+  </view>
+  
+  <view class="learning-categories">
+    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-category="{{item}}">
+      <view class="category-icon">
+        <image src="{{item.icon}}" mode="aspectFit"></image>
+      </view>
+      <view class="category-name">{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="recommended-section" wx:if="{{recommendedArticles.length > 0}}">
+    <view class="section-title">推荐阅读</view>
+    <view class="article-list">
+      <view class="article-item" wx:for="{{recommendedArticles}}" wx:key="id" bindtap="onArticleTap" data-article="{{item}}">
+        <view class="article-title">{{item.title}}</view>
+        <view class="article-desc">{{item.summary}}</view>
+        <view class="article-meta">
+          <text class="article-date">{{item.date}}</text>
+          <text class="article-views">{{item.views}} 阅读</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-bar">
+    <view class="tab-item" bindtap="navigateToIndex">
+      <view class="tab-icon">
+        <image src="/assets/icons/game.png" mode="aspectFit"></image>
+      </view>
+      <text>游戏</text>
+    </view>
+    <view class="tab-item active">
+      <view class="tab-icon">
+        <image src="/assets/icons/learning-active.png" mode="aspectFit"></image>
+      </view>
+      <text>学习</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToProfile">
+      <view class="tab-icon">
+        <image src="/assets/icons/profile.png" mode="aspectFit"></image>
+      </view>
+      <text>我的</text>
+    </view>
+  </view>
+</view> 

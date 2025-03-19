@@ -1,0 +1,43 @@
+<!-- 迷宫寻路游戏页面 -->
+<view class="maze-page">
+  <view class="header">
+    <view class="title">迷宫寻路游戏</view>
+    <view class="subtitle">使用不同的算法找到迷宫中的路径</view>
+  </view>
+  
+  <view class="game-container">
+    <maze-game 
+      id="mazeGame" 
+      level="{{currentLevel}}"
+      bind:pathcompleted="onPathCompleted"
+      bind:resetmaze="onMazeReset"
+      bind:nextlevel="onNextLevel"
+    />
+  </view>
+  
+  <view class="instructions">
+    <view class="instructions-title">游戏说明</view>
+    <view class="instructions-content">
+      <text>1. 选择一种算法进行寻路。</text>
+      <text>2. 点击"开始寻路"按钮执行算法。</text>
+      <text>3. 观察不同算法的寻路路径和效率。</text>
+      <text>4. 完成当前关卡后，可以点击"下一关"进入更难的迷宫。</text>
+    </view>
+  </view>
+  
+  <view class="stats-container">
+    <view class="stats-title">统计数据</view>
+    <view class="stats-row">
+      <text class="stats-label">当前关卡：</text>
+      <text class="stats-value">{{currentLevel}}</text>
+    </view>
+    <view class="stats-row">
+      <text class="stats-label">使用算法：</text>
+      <text class="stats-value">{{lastUsedAlgorithm || '未选择'}}</text>
+    </view>
+    <view class="stats-row">
+      <text class="stats-label">路径长度：</text>
+      <text class="stats-value">{{lastPathLength || '未知'}}</text>
+    </view>
+  </view>
+</view> 

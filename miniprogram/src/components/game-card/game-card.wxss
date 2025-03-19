@@ -1,0 +1,42 @@
+.game-card {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-icon {
+  width: 100%;
+  height: 200rpx;
+  margin-bottom: 16rpx;
+}
+
+.game-info {
+  flex: 1;
+}
+
+.game-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+}
+
+.game-status {
+  margin-top: 16rpx;
+  text-align: right;
+}
+
+.progress {
+  font-size: 24rpx;
+  color: #007AFF;
+} 

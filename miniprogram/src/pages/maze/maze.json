@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "迷宫寻路游戏",
+  "usingComponents": {
+    "maze-game": "/src/components/maze-game/maze-game"
+  }
+} 

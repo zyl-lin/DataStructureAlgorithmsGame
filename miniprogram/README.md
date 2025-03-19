@@ -1,0 +1,205 @@
+## 2023-10-05 16:05:00
+
+- **会话的主要目的**：将IP地址保存在配置文件中，方便管理和修改。
+- **完成的主要任务**：创建了 `config.js` 文件，并修改了 `index.js` 文件以使用配置文件中的IP地址。
+- **关键决策和解决方案**：通过配置文件集中管理IP地址，避免了硬编码。
+- **使用的技术栈**：微信小程序, JavaScript
+- **修改了哪些文件**：`config.js`, `src/pages/index/index.js` 
+
+
+## 2023-10-06 14:30:00
+- **会话的主要目的**：设计数据结构与算法游戏微信小程序的技术栈。
+- **完成的主要任务**：提供了完整的技术栈设计方案，包括前端、后端、部署方案、API设计和游戏实现思路，并扩展了配置文件。
+- **关键决策和解决方案**：采用微信小程序原生框架作为前端，C++作为后端语言，设计了完整的API接口和数据结构与算法游戏实现方案。
+- **使用的技术栈**：微信小程序、C++、HTTP服务器、JSON处理、SQLite/MySQL、Nginx、Docker
+- **修改了哪些文件**：`config.js`
+
+## 2024-03-18 13:30:00
+- **会话的主要目的**：实现数据结构与算法游戏小程序的前端界面和后端服务。
+- **完成的主要任务**：
+  1. 创建了小程序前端页面结构，包括首页和游戏页面
+  2. 实现了游戏卡片组件
+  3. 设计了后端C++服务架构
+  4. 实现了三种游戏逻辑：链表操作、迷宫寻路和排序可视化
+- **关键决策和解决方案**：
+  1. 使用微信小程序原生框架开发前端，保持轻量级和性能
+  2. 采用Crow框架实现C++后端服务，提供RESTful API
+  3. 使用SQLite数据库存储用户数据和游戏进度
+  4. 实现了模块化的游戏逻辑，便于扩展和维护
+- **使用的技术栈**：
+  1. 前端：微信小程序原生框架（WXML、WXSS、JS）
+  2. 后端：C++17、Crow框架、nlohmann/json、SQLite3
+  3. 构建工具：CMake
+- **修改了哪些文件**：
+  1. 前端文件：
+     - `src/pages/index/index.wxml`
+     - `src/pages/index/index.wxss`
+     - `src/pages/index/index.js`
+     - `src/pages/game/game.wxml`
+     - `src/pages/game/game.wxss`
+     - `src/pages/game/game.js`
+     - `src/components/game-card/game-card.wxml`
+     - `src/components/game-card/game-card.wxss`
+     - `src/components/game-card/game-card.js`
+  2. 后端文件：
+     - `src/server/main.cpp`
+     - `src/server/game_logic.cpp`
+     - `src/server/game_logic.h`
+     - `CMakeLists.txt`
+
+## 2024-03-18 14:30:00
+- **会话的主要目的**：实现迷宫寻路游戏页面，包括界面布局、样式和游戏逻辑。
+- **完成的主要任务**：
+  1. 创建了迷宫寻路游戏的页面布局（maze.wxml）
+  2. 实现了迷宫寻路游戏的样式（maze.wxss）
+  3. 实现了迷宫寻路游戏的逻辑（maze.js），包括：
+     - 迷宫初始化
+     - 三种寻路算法（DFS、BFS、A*）
+     - 路径动画显示
+     - 算法选择功能
+  4. 创建了迷宫寻路游戏的配置文件（maze.json）
+- **关键决策和解决方案**：
+  1. 使用网格布局实现迷宫显示
+  2. 实现了三种不同的寻路算法，让用户可以对比不同算法的效果
+  3. 使用动画效果展示寻路过程，提升用户体验
+  4. 采用组件化的方式组织代码，便于维护和扩展
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript
+  3. CSS Grid布局
+- **修改了哪些文件**：
+  1. `src/pages/maze/maze.wxml`
+  2. `src/pages/maze/maze.wxss`
+  3. `src/pages/maze/maze.js`
+  4. `src/pages/maze/maze.json`
+
+## 2024-03-18 15:30:00
+- **会话的主要目的**：解决图标缺失问题，并继续完善单链表操作和栈操作游戏页面。
+- **完成的主要任务**：
+  1. 创建了缺失的图标文件作为占位符
+  2. 实现了单链表操作游戏页面，包括：
+     - 链表展示
+     - 节点插入、删除和查找功能
+     - 任务系统
+  3. 实现了栈操作游戏页面，包括：
+     - 栈的可视化展示
+     - 入栈、出栈和查看栈顶操作
+     - 操作历史记录
+     - 任务进度跟踪
+  4. 更新app.json，添加新的游戏页面
+- **关键决策和解决方案**：
+  1. 创建空的图标文件作为占位符，解决app.json图标引用问题
+  2. 使用列表布局和动画效果直观展示单链表结构
+  3. 使用反向列表布局展示栈的后进先出特性
+  4. 实现任务系统和进度跟踪，提高用户体验
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript
+  3. WXML/WXSS
+- **修改了哪些文件**：
+  1. `assets/icons/game.png` (创建)
+  2. `assets/icons/game-active.png` (创建)
+  3. `assets/icons/learning.png` (创建)
+  4. `assets/icons/learning-active.png` (创建)
+  5. `assets/icons/profile.png` (创建)
+  6. `assets/icons/profile-active.png` (创建)
+  7. `app.json` (更新)
+  8. `src/pages/linkedlist/linkedlist.wxml` (创建)
+  9. `src/pages/linkedlist/linkedlist.wxss` (创建)
+  10. `src/pages/linkedlist/linkedlist.js` (创建)
+  11. `src/pages/linkedlist/linkedlist.json` (创建)
+  12. `src/pages/stack/stack.wxml` (创建)
+  13. `src/pages/stack/stack.wxss` (创建)
+  14. `src/pages/stack/stack.js` (创建)
+  15. `src/pages/stack/stack.json` (创建)
+
+## 2024-03-19 10:30:00
+- **会话的主要目的**：实现迷宫寻路游戏组件，作为游戏页面的可重用模块。
+- **完成的主要任务**：
+  1. 创建了迷宫寻路游戏组件的布局（maze-game.wxml）
+  2. 实现了迷宫寻路游戏组件的样式（maze-game.wxss）
+  3. 实现了迷宫寻路游戏组件的逻辑（maze-game.js），包括：
+     - 动态迷宫生成
+     - 深度优先搜索（DFS）算法
+     - 广度优先搜索（BFS）算法
+     - A*寻路算法
+     - 路径动画显示
+     - 关卡系统
+  4. 创建了迷宫寻路游戏组件的配置文件（maze-game.json）
+- **关键决策和解决方案**：
+  1. 使用组件化结构，允许在不同页面复用迷宫游戏
+  2. 实现三种经典寻路算法供用户选择和比较
+  3. 设计了可扩展的迷宫生成系统，支持不同大小和复杂度的迷宫
+  4. 使用动画效果呈现算法执行过程，增强用户体验和教育效果
+  5. 添加关卡系统，通过逐步增加难度保持用户的挑战性
+- **使用的技术栈**：
+  1. 微信小程序自定义组件
+  2. JavaScript（迷宫生成和寻路算法）
+  3. WXML/WXSS（界面和样式）
+  4. 事件系统（组件与页面交互）
+- **修改了哪些文件**：
+  1. `src/components/maze-game/maze-game.wxml` (创建)
+  2. `src/components/maze-game/maze-game.wxss` (创建)
+  3. `src/components/maze-game/maze-game.js` (创建)
+  4. `src/components/maze-game/maze-game.json` (创建)
+
+## 2024-03-20 11:30:00
+
+创建了迷宫游戏组件，包括：
+布局文件 (maze-game.wxml)
+样式文件 (maze-game.wxss)
+逻辑文件 (maze-game.js)
+配置文件 (maze-game.json)
+迷宫游戏组件实现了以下功能：
+动态迷宫生成，支持不同关卡
+多种寻路算法（DFS、BFS、A）
+路径动画显示
+事件系统（完成路径、重置迷宫、下一关）
+更新了迷宫游戏页面，引入了迷宫游戏组件：
+更新了wxml布局，引入组件
+更新了wxss样式
+更新了js逻辑，处理组件事件
+更新了json配置，注册组件
+4. 添加了统计功能，记录用户使用的算法和路径长度
+
+## 2024-03-20 12:30:00
+- **会话的主要目的**：修复微信小程序中组件路径错误问题。
+- **完成的主要任务**：
+  1. 修复了 src/pages/game/game.json 文件中 sorting-game 组件的路径错误。
+  2. 解释了微信小程序中组件路径应使用相对路径而非绝对路径。
+- **关键决策和解决方案**：
+  1. 将组件路径从绝对路径 /src/components/sorting-game/sorting-game 修改为相对路径 ../../components/sorting-game/sorting-game
+  2. 解释了微信小程序中组件路径应使用相对路径而非绝对路径
+- **使用的技术栈**：
+  1. 微信小程序
+- **修改了哪些文件**：
+  1. `src/pages/game/game.json`
+
+## 2024-03-20 13:30:00
+- **会话的主要目的**：修复微信小程序中组件路径错误问题。
+- **完成的主要任务**：
+  1. 修复了 src/pages/game/game.json 文件中组件路径错误。
+  2. 将所有组件的路径从绝对路径改为相对路径。
+- **关键决策和解决方案**：
+  1. 将组件路径从 /src/components/... 修改为 ../../components/...
+  2. 确保所有组件路径使用相对路径，符合微信小程序的规范
+- **使用的技术栈**：
+  1. 微信小程序配置文件
+  2. JSON
+- **修改了哪些文件**：
+  1. `src/pages/game/game.json`
+
+## 2024-03-20 14:30:00
+- **会话的主要目的**：再次修复微信小程序中组件路径错误问题。
+- **完成的主要任务**：
+  1. 修正了组件路径配置，使其指向正确的组件目录。
+  2. 将组件路径改为从小程序根目录开始的绝对路径。
+- **关键决策和解决方案**：
+  1. 发现组件实际位于 miniprogram/components 目录下
+  2. 将组件路径从 "../../../components/..." 修改为 "src/components/..."
+  3. 使用绝对路径确保组件能被正确找到
+- **使用的技术栈**：
+  1. 微信小程序配置文件
+  2. JSON
+- **修改了哪些文件**：
+  1. `src/pages/game/game.json`

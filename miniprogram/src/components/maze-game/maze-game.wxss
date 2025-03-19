@@ -1,0 +1,150 @@
+.game-component {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #333;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.maze-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4rpx;
+  margin: 30rpx 0;
+  background-color: #f9f9f9;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.maze-cell {
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+}
+
+.maze-cell.wall {
+  background-color: #333;
+}
+
+.maze-cell.start {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.maze-cell.end {
+  background-color: #F44336;
+  color: white;
+}
+
+.maze-cell.path {
+  background-color: #FFEB3B;
+}
+
+.player-icon, .end-icon {
+  color: white;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.controller {
+  margin: 30rpx 0;
+}
+
+.direction-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.horizontal-buttons {
+  display: flex;
+  gap: 40rpx;
+}
+
+.direction-btn {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 30rpx;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.algorithm-selector {
+  margin: 20rpx 0;
+}
+
+.algorithm-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #333;
+}
+
+.algorithm-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.algorithm-option {
+  padding: 15rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.algorithm-option.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 20rpx;
+}
+
+.control-button {
+  flex: 1;
+  min-width: 160rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 26rpx;
+  padding: 15rpx 0;
+}
+
+.result-message {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background-color: #E3F2FD;
+  color: #1976D2;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  text-align: center;
+} 

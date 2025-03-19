@@ -1,0 +1,195 @@
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.game-card {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+  padding: 10rpx;
+}
+
+.game-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.game-description {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.maze-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4rpx;
+  margin: 20rpx 0;
+  background-color: #fff;
+  padding: 10rpx;
+  border-radius: 10rpx;
+}
+
+.maze-cell {
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+}
+
+.maze-cell.wall {
+  background-color: #333;
+}
+
+.maze-cell.start {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.maze-cell.end {
+  background-color: #F44336;
+  color: white;
+}
+
+.maze-cell.path {
+  background-color: #FFEB3B;
+}
+
+.algorithm-selector {
+  margin: 20rpx 0;
+}
+
+.algorithm-item {
+  padding: 20rpx;
+  background-color: #f0f0f0;
+  border-radius: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.algorithm-item.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.algorithm-name {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.action-button {
+  flex: 1;
+  padding: 20rpx;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.maze-page {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 30rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 32rpx;
+  color: #666;
+}
+
+.game-container {
+  margin-bottom: 30rpx;
+}
+
+.instructions {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.instructions-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.instructions-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.instructions-content text {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.5;
+}
+
+.stats-container {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.stats-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.stats-row:last-child {
+  border-bottom: none;
+}
+
+.stats-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.stats-value {
+  font-size: 28rpx;
+  color: #4CAF50;
+  font-weight: bold;
+} 

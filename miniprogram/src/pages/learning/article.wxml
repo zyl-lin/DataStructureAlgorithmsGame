@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <image src="/assets/icons/back.png" mode="aspectFit"></image>
+    </view>
+    <text class="title">{{article.title || '文章详情'}}</text>
+  </view>
+  
+  <view class="article-content">
+    <view class="article-header">
+      <text class="article-title">{{article.title}}</text>
+      <view class="article-meta">
+        <text class="article-date">{{article.date}}</text>
+        <text class="article-views">{{article.views}} 阅读</text>
+      </view>
+    </view>
+    
+    <view class="article-body">
+      <rich-text nodes="{{article.content}}"></rich-text>
+    </view>
+    
+    <view class="article-tags" wx:if="{{article.tags && article.tags.length > 0}}">
+      <text class="tag" wx:for="{{article.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+  
+  <view class="related-articles" wx:if="{{relatedArticles.length > 0}}">
+    <view class="section-title">相关推荐</view>
+    <view class="related-list">
+      <view class="related-item" wx:for="{{relatedArticles}}" wx:key="id" bindtap="onRelatedTap" data-article="{{item}}">
+        <text class="related-title">{{item.title}}</text>
+        <text class="related-views">{{item.views}} 阅读</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="feedback">
+    <view class="feedback-title">这篇文章对你有帮助吗？</view>
+    <view class="feedback-buttons">
+      <view class="feedback-btn {{feedback === 'helpful' ? 'active' : ''}}" bindtap="onFeedbackTap" data-type="helpful">
+        <image src="/assets/icons/thumbs-up{{feedback === 'helpful' ? '-active' : ''}}.png" mode="aspectFit"></image>
+        <text>有帮助</text>
+      </view>
+      <view class="feedback-btn {{feedback === 'not-helpful' ? 'active' : ''}}" bindtap="onFeedbackTap" data-type="not-helpful">
+        <image src="/assets/icons/thumbs-down{{feedback === 'not-helpful' ? '-active' : ''}}.png" mode="aspectFit"></image>
+        <text>没帮助</text>
+      </view>
+    </view>
+  </view>
+</view> 

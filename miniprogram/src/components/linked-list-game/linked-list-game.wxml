@@ -1,0 +1,22 @@
+<!-- 链表游戏组件 -->
+<view class="game-component">
+  <view class="game-title">{{title}}</view>
+  <view class="game-description">{{description}}</view>
+  
+  <!-- 链表展示区域 -->
+  <view class="linked-list-container" wx:if="{{nodes.length > 0}}">
+    <block wx:for="{{nodes}}" wx:key="index">
+      <view class="linked-list-node">
+        <view class="node-value">{{item.value}}</view>
+        <view class="node-pointer" wx:if="{{index < nodes.length - 1}}">→</view>
+        <view class="node-pointer last" wx:else>NULL</view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 游戏控制区域 -->
+  <view class="game-controls">
+    <button class="control-button" bindtap="onStart">开始游戏</button>
+    <button class="control-button" bindtap="onNextLevel" wx:if="{{isCompleted}}">下一关</button>
+  </view>
+</view> 

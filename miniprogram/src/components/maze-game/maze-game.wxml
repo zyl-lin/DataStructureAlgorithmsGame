@@ -1,0 +1,38 @@
+<!-- 迷宫游戏组件 -->
+<view class="game-component">
+  <view class="game-title">{{title}}</view>
+  <view class="game-description">{{description}}</view>
+  
+  <!-- 迷宫展示区域 -->
+  <view class="maze-container" wx:if="{{maze.length > 0}}">
+    <block wx:for="{{maze}}" wx:key="index">
+      <view class="maze-cell {{item.type}}">{{item.value}}</view>
+    </block>
+  </view>
+  
+  <!-- 算法选择区域 -->
+  <view class="algorithm-selector">
+    <view class="algorithm-title">选择算法:</view>
+    <view class="algorithm-options">
+      <view class="algorithm-option {{algorithm === 'dfs' ? 'active' : ''}}" 
+            bindtap="selectAlgorithm" data-algorithm="dfs">
+        深度优先搜索 (DFS)
+      </view>
+      <view class="algorithm-option {{algorithm === 'bfs' ? 'active' : ''}}" 
+            bindtap="selectAlgorithm" data-algorithm="bfs">
+        广度优先搜索 (BFS)
+      </view>
+      <view class="algorithm-option {{algorithm === 'astar' ? 'active' : ''}}" 
+            bindtap="selectAlgorithm" data-algorithm="astar">
+        A*算法
+      </view>
+    </view>
+  </view>
+  
+  <!-- 游戏控制区域 -->
+  <view class="game-controls">
+    <button class="control-button" bindtap="onStart">开始寻路</button>
+    <button class="control-button" bindtap="onReset">重置迷宫</button>
+    <button class="control-button" bindtap="onNextLevel" wx:if="{{isCompleted}}">下一关</button>
+  </view>
+</view> 

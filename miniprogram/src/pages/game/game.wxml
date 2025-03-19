@@ -1,0 +1,68 @@
+<view class="container">
+  <view class="header">
+    <text class="title">{{gameName}}</text>
+    <view class="level-info">
+      <text>关卡: {{currentLevel}}/{{totalLevels}}</text>
+    </view>
+  </view>
+
+  <view class="game-content">
+    <block wx:if="{{gameType === 'linkedList'}}">
+      <linked-list-game 
+        nodes="{{nodes}}"
+        bind:nodeTap="onNodeTap"
+        bind:operation="onOperation"
+      />
+    </block>
+    <block wx:elif="{{gameType === 'maze'}}">
+      <maze-game 
+        maze="{{maze}}"
+        player="{{player}}"
+        bind:move="onMove"
+        bind:algorithm="onAlgorithmSelect"
+      />
+    </block>
+    <block wx:elif="{{gameType === 'sorting'}}">
+      <sorting-game 
+        array="{{array}}"
+        bind:sort="onSort"
+        bind:algorithm="onAlgorithmSelect"
+      />
+    </block>
+  </view>
+
+  <view class="controls">
+    <view class="operation-buttons">
+      <button 
+        wx:for="{{operations}}" 
+        wx:key="id"
+        class="operation-btn"
+        bindtap="onOperationTap"
+        data-operation="{{item}}"
+      >
+        {{item.name}}
+      </button>
+    </view>
+    <view class="navigation-buttons">
+      <button 
+        class="nav-btn prev" 
+        bindtap="prevLevel"
+        disabled="{{currentLevel === 1}}"
+      >
+        上一关
+      </button>
+      <button 
+        class="nav-btn next" 
+        bindtap="nextLevel"
+        disabled="{{currentLevel === totalLevels}}"
+      >
+        下一关
+      </button>
+    </view>
+  </view>
+
+  <view class="hint-panel" wx:if="{{showHint}}">
+    <text class="hint-text">{{currentHint}}</text>
+    <button class="close-hint" bindtap="closeHint">关闭</button>
+  </view>
+</view> 
