@@ -26,6 +26,55 @@
     <rich-text nodes="{{formattedContent}}"></rich-text>
   </view>
 
+  <!-- 评论区域 -->
+  <view class="comments-section">
+    <view class="section-title">评论区</view>
+    
+    <view class="comments-list" wx:if="{{comments.length > 0}}">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+        <view class="comment-user">
+          <image class="user-avatar" src="{{item.avatar || '/assets/icons/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="user-info">
+            <view class="user-name">{{item.userName}}</view>
+            <view class="comment-time">{{item.createTime}}</view>
+          </view>
+        </view>
+        <view class="comment-content">{{item.content}}</view>
+        
+        <view class="comment-actions">
+          <view class="action-item" bindtap="likeComment" data-id="{{item.id}}">
+            <image class="action-icon" src="{{item.isLiked ? '/assets/icons/like-filled.png' : '/assets/icons/like.png'}}"></image>
+            <text>{{item.likeCount || 0}}</text>
+          </view>
+          <view class="action-item" bindtap="replyComment" data-id="{{item.id}}" data-name="{{item.userName}}">
+            <image class="action-icon" src="/assets/icons/comment.png"></image>
+            <text>回复</text>
+          </view>
+        </view>
+        
+        <view class="replies" wx:if="{{item.replies && item.replies.length > 0}}">
+          <view class="reply-item" wx:for="{{item.replies}}" wx:for-item="reply" wx:key="id">
+            <view class="reply-header">
+              <text class="reply-name">{{reply.userName}}</text>
+              <text class="reply-time">{{reply.createTime}}</text>
+            </view>
+            <view class="reply-content">{{reply.content}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="empty-comment" wx:else>
+      <image src="/assets/icons/comment-empty.png" mode="aspectFit"></image>
+      <text>暂无评论，快来发表你的看法吧</text>
+    </view>
+    
+    <view class="comment-input-area">
+      <input class="comment-input" type="text" placeholder="{{replyTo ? '回复 '+replyTo+':' : '写下你的评论...'}}" value="{{commentContent}}" bindinput="onCommentInput" />
+      <button class="comment-submit" disabled="{{!commentContent}}" bindtap="submitComment">发布</button>
+    </view>
+  </view>
+
   <!-- 相关文章推荐 -->
   <view class="related-section" wx:if="{{relatedArticles.length > 0}}">
     <view class="section-title">相关推荐</view>
@@ -46,16 +95,16 @@
   <!-- 底部操作栏 -->
   <view class="action-bar">
     <view class="action-btn" bindtap="toggleFavorite">
-      <image class="action-icon" src="{{isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" mode="aspectFit"></image>
-      <text>收藏</text>
+      <image src="{{isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" mode="aspectFit"></image>
+      <text>{{isFavorite ? '已收藏' : '收藏'}}</text>
     </view>
     <view class="action-btn" bindtap="shareArticle">
-      <image class="action-icon" src="/assets/icons/share.png" mode="aspectFit"></image>
+      <image src="/assets/icons/share.png" mode="aspectFit"></image>
       <text>分享</text>
     </view>
-    <button class="action-btn share-btn" open-type="share">
-      <image class="action-icon" src="/assets/icons/wechat.png" mode="aspectFit"></image>
-      <text>微信</text>
-    </button>
+    <view class="action-btn" bindtap="backToTop">
+      <image src="/assets/icons/top.png" mode="aspectFit"></image>
+      <text>顶部</text>
+    </view>
   </view>
 </view> 

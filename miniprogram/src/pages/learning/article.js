@@ -5,11 +5,16 @@ Page({
    * 页面的初始数据
    */
   data: {
+    articleId: null,
     article: null,
     formattedContent: '',
     relatedArticles: [],
     isFavorite: false,
-    loading: true
+    loading: true,
+    comments: [],
+    commentContent: '',
+    replyTo: '',
+    replyToCommentId: null
   },
 
   /**
@@ -18,6 +23,8 @@ Page({
   onLoad: function (options) {
     if (options.id) {
       this.getArticleDetail(options.id);
+      this.loadComments(); // 加载评论
+      this.checkFavoriteStatus(options.id);
     } else {
       wx.showToast({
         title: '文章不存在',
@@ -43,7 +50,7 @@ Page({
       const articleData = {
         id: id,
         title: '算法讲解：动态规划入门指南',
-        coverImage: '/assets/images/dp-cover.jpg',
+        coverImage: '/assets/icons/learning.png',
         date: '2023-11-15',
         views: 1342,
         tags: ['动态规划', '算法', '入门'],
@@ -95,21 +102,21 @@ Page({
       {
         id: '2',
         title: '贪心算法与动态规划的区别',
-        coverImage: '/assets/images/greedy-vs-dp.jpg',
+        coverImage: '/assets/icons/learning.png',
         views: 986,
         tags: ['算法']
       },
       {
         id: '3',
         title: '如何解决背包问题 - 动态规划经典应用',
-        coverImage: '/assets/images/knapsack.jpg',
+        coverImage: '/assets/icons/learning.png',
         views: 1208,
         tags: ['动态规划']
       },
       {
         id: '4',
         title: '从零开始学习编程算法',
-        coverImage: '/assets/images/algorithms.jpg',
+        coverImage: '/assets/icons/learning.png',
         views: 2453,
         tags: ['编程基础']
       }
@@ -127,32 +134,46 @@ Page({
   },
   
   /**
-   * 切换收藏状态
+   * 检查收藏状态
    */
-  toggleFavorite: function () {
-    const id = this.data.article.id;
-    let favorites = wx.getStorageSync('favorites') || [];
+  checkFavoriteStatus: function(articleId) {
+    const favoriteArticles = wx.getStorageSync('favoriteArticles') || [];
+    const isFavorite = favoriteArticles.includes(articleId);
+    this.setData({
+      isFavorite
+    });
+  },
+
+  /**
+   * 收藏或取消收藏文章
+   */
+  toggleFavorite: function() {
+    const articleId = this.data.article.id;
+    let favoriteArticles = wx.getStorageSync('favoriteArticles') || [];
+    const isFavorite = this.data.isFavorite;
     
-    if (this.data.isFavorite) {
+    if (isFavorite) {
       // 取消收藏
-      favorites = favorites.filter(item => item !== id);
+      favoriteArticles = favoriteArticles.filter(id => id !== articleId);
       wx.showToast({
         title: '已取消收藏',
-        icon: 'success'
+        icon: 'none'
       });
     } else {
       // 添加收藏
-      favorites.push(id);
+      favoriteArticles.push(articleId);
       wx.showToast({
-        title: '已收藏',
+        title: '收藏成功',
         icon: 'success'
       });
     }
     
-    wx.setStorageSync('favorites', favorites);
     this.setData({
-      isFavorite: !this.data.isFavorite
+      isFavorite: !isFavorite
     });
+    
+    // 保存到本地存储
+    wx.setStorageSync('favoriteArticles', favoriteArticles);
   },
   
   /**
@@ -161,7 +182,7 @@ Page({
   navigateToArticle: function (e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/src/pages/learning/article?id=${id}`
+      url: '../learning/article?id=' + id
     });
   },
   
@@ -173,14 +194,222 @@ Page({
   },
 
   /**
+   * 分享文章
+   */
+  shareArticle: function() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    });
+  },
+
+  /**
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
     const article = this.data.article;
     return {
       title: article.title,
-      path: `/pages/learning/article?id=${article.id}`,
+      path: `/src/pages/learning/article?id=${article.id}`,
       imageUrl: article.coverImage
     };
+  },
+
+  /**
+   * 加载评论列表
+   */
+  loadComments: function() {
+    const that = this;
+    wx.showLoading({
+      title: '加载评论中',
+    });
+    
+    // 模拟评论数据，实际项目中应通过API获取
+    setTimeout(() => {
+      const mockComments = [
+        {
+          id: '1',
+          userName: '数据结构爱好者',
+          avatar: '/assets/icons/default-avatar.png',
+          content: '这篇文章讲解得很清晰，对理解二叉树很有帮助！',
+          createTime: '2023-05-15 14:30',
+          likeCount: 12,
+          isLiked: false,
+          replies: [
+            {
+              id: '1-1',
+              userName: '学习达人',
+              content: '是的，我也觉得很实用，特别是平衡树的部分',
+              createTime: '2023-05-15 15:20'
+            }
+          ]
+        },
+        {
+          id: '2',
+          userName: '算法学习者',
+          avatar: '/assets/icons/default-avatar.png',
+          content: '希望能多出一些算法分析的文章，期待更新！',
+          createTime: '2023-05-14 09:45',
+          likeCount: 8,
+          isLiked: true,
+          replies: []
+        }
+      ];
+      
+      that.setData({
+        comments: mockComments
+      });
+      
+      wx.hideLoading();
+    }, 1000);
+  },
+  
+  /**
+   * 点赞评论
+   */
+  likeComment: function(e) {
+    const commentId = e.currentTarget.dataset.id;
+    const comments = this.data.comments.map(comment => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          isLiked: !comment.isLiked,
+          likeCount: comment.isLiked ? (comment.likeCount - 1) : (comment.likeCount + 1)
+        };
+      }
+      return comment;
+    });
+    
+    this.setData({
+      comments
+    });
+    
+    // 实际项目中应发送请求至服务器更新点赞状态
+    wx.showToast({
+      title: comments.find(c => c.id === commentId).isLiked ? '点赞成功' : '已取消点赞',
+      icon: 'none'
+    });
+  },
+  
+  /**
+   * 回复评论
+   */
+  replyComment: function(e) {
+    const commentId = e.currentTarget.dataset.id;
+    const userName = e.currentTarget.dataset.name;
+    
+    this.setData({
+      replyTo: userName,
+      replyToCommentId: commentId
+    });
+  },
+  
+  /**
+   * 监听评论输入
+   */
+  onCommentInput: function(e) {
+    this.setData({
+      commentContent: e.detail.value
+    });
+  },
+  
+  /**
+   * 提交评论
+   */
+  submitComment: function() {
+    if (!this.data.commentContent.trim()) {
+      wx.showToast({
+        title: '评论内容不能为空',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    wx.showLoading({
+      title: '发布中'
+    });
+    
+    const that = this;
+    // 模拟评论提交，实际项目中应通过API提交
+    setTimeout(() => {
+      const now = new Date();
+      const formatDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      if (that.data.replyToCommentId) {
+        // 回复评论
+        const comments = that.data.comments.map(comment => {
+          if (comment.id === that.data.replyToCommentId) {
+            const replies = comment.replies || [];
+            replies.push({
+              id: `${comment.id}-${replies.length + 1}`,
+              userName: '我',
+              content: that.data.commentContent,
+              createTime: formatDate
+            });
+            return {
+              ...comment,
+              replies
+            };
+          }
+          return comment;
+        });
+        
+        that.setData({
+          comments,
+          commentContent: '',
+          replyTo: '',
+          replyToCommentId: null
+        });
+      } else {
+        // 新评论
+        const newComment = {
+          id: String(that.data.comments.length + 1),
+          userName: '我',
+          avatar: '/assets/icons/default-avatar.png',
+          content: that.data.commentContent,
+          createTime: formatDate,
+          likeCount: 0,
+          isLiked: false,
+          replies: []
+        };
+        
+        that.setData({
+          comments: [newComment, ...that.data.comments],
+          commentContent: ''
+        });
+      }
+      
+      wx.hideLoading();
+      wx.showToast({
+        title: '发布成功',
+        icon: 'success'
+      });
+    }, 1000);
+  },
+  
+  /**
+   * 取消回复
+   */
+  cancelReply: function() {
+    this.setData({
+      replyTo: '',
+      replyToCommentId: null
+    });
+  },
+
+  /**
+   * 返回页面顶部
+   */
+  backToTop: function() {
+    wx.pageScrollTo({
+      scrollTop: 0,
+      duration: 300
+    });
+    
+    wx.showToast({
+      title: '已返回顶部',
+      icon: 'none',
+      duration: 1500
+    });
   }
 }) 

@@ -1,10 +1,30 @@
 <!-- 学习页面 -->
 <view class="learning-page">
   <!-- 顶部搜索栏 -->
-  <view class="search-container">
-    <view class="search-box">
-      <icon type="search" size="16" color="#999"></icon>
-      <input type="text" placeholder="搜索算法与数据结构" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch"></input>
+  <view class="header">
+    <view class="search-container">
+      <view class="search-input-wrap">
+        <image class="search-icon" src="/assets/icons/search.png" mode="aspectFit"></image>
+        <input class="search-input" type="text" placeholder="搜索数据结构与算法文章" value="{{searchValue}}" bindinput="onSearchInput" bindconfirm="onSearch" confirm-type="search" />
+        <image class="clear-icon" wx:if="{{searchValue}}" src="/assets/icons/clear.png" mode="aspectFit" bindtap="clearSearch"></image>
+      </view>
+      <view class="my-favorites" bindtap="showMyFavorites">
+        <image src="/assets/icons/favorite.png" mode="aspectFit"></image>
+        <text>收藏</text>
+      </view>
+    </view>
+    <!-- 搜索历史 -->
+    <view class="search-history" wx:if="{{showSearchHistory && searchHistory.length > 0}}">
+      <view class="history-header">
+        <view class="history-title">搜索历史</view>
+        <view class="history-clear" bindtap="clearSearchHistory">清空</view>
+      </view>
+      <view class="history-list">
+        <view class="history-item" wx:for="{{searchHistory}}" wx:key="*this" bindtap="onHistoryItemTap" data-keyword="{{item}}">
+          <icon type="search" size="14" color="#999"></icon>
+          <text>{{item}}</text>
+        </view>
+      </view>
     </view>
   </view>
 
@@ -63,14 +83,25 @@
       </view>
       <block wx:if="{{articles.length > 0}}">
         <view class="article-list">
-          <view class="article-item" wx:for="{{articles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
-            <image class="article-thumb" src="{{item.coverImage}}" mode="aspectFill"></image>
-            <view class="article-content">
+          <view class="article-item" wx:for="{{articles}}" wx:key="id" data-id="{{item.id}}" bindtap="navigateToArticle">
+            <view class="article-cover">
+              <image src="{{item.coverImage}}" mode="aspectFill" lazy-load></image>
+              <view class="article-category">{{item.categoryName}}</view>
+            </view>
+            <view class="article-info">
               <view class="article-title">{{item.title}}</view>
-              <view class="article-desc">{{item.description}}</view>
               <view class="article-meta">
-                <view class="meta-date">{{item.date}}</view>
-                <view class="meta-views">{{item.views}} 阅读</view>
+                <view class="meta-item">
+                  <image src="/assets/icons/time.png" mode="aspectFit"></image>
+                  <text>{{item.createTime}}</text>
+                </view>
+                <view class="meta-item">
+                  <image src="/assets/icons/view.png" mode="aspectFit"></image>
+                  <text>{{item.viewCount}}</text>
+                </view>
+                <view class="favorite-btn" catchtap="toggleFavorite" data-id="{{item.id}}">
+                  <image src="{{item.isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" mode="aspectFit"></image>
+                </view>
               </view>
             </view>
           </view>
@@ -83,7 +114,7 @@
         <view class="end-line" wx:if="{{noMoreData && !isLoading}}">已显示全部内容</view>
       </block>
       <view class="empty-container" wx:else>
-        <image src="/assets/images/empty.png" mode="aspectFit"></image>
+        <image src="/assets/icons/learning.png" mode="aspectFit"></image>
         <text>暂无相关内容</text>
       </view>
     </view>
