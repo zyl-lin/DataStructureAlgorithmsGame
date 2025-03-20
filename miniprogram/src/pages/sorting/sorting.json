@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "排序算法",
+  "usingComponents": {
+    "sorting-game": "../../components/sorting-game/sorting-game"
+  }
+}

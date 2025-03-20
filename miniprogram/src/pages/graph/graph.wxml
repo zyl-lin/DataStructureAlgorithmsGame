@@ -1,0 +1,82 @@
+<view class="container">
+  <!-- 头部区域 -->
+  <view class="header">
+    <view class="title-area">
+      <view class="title">图遍历</view>
+      <view class="subtitle">探索图的不同遍历方式</view>
+    </view>
+    
+    <!-- 关卡信息 -->
+    <view class="level-info">
+      <view class="level-text">关卡 {{currentLevel}}/{{totalLevels}}</view>
+      <view class="level-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{currentLevel / totalLevels * 100}}%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 游戏内容区域 -->
+  <view class="game-content">
+    <!-- 当前任务介绍 -->
+    <view class="task-card">
+      <view class="task-header">
+        <view class="task-title">当前任务</view>
+      </view>
+      <view class="task-body">
+        <view class="task-description">{{task.description}}</view>
+      </view>
+    </view>
+    
+    <!-- 图遍历游戏组件 -->
+    <graph-game 
+      graphData="{{graphData}}" 
+      traversalMode="{{traversalMode}}" 
+      startNodeIndex="{{startNodeIndex}}"
+      task="{{task}}"
+      correctSequence="{{correctSequence}}"
+      bind:traversalComplete="onTraversalComplete"
+      bind:modeChange="onTraversalModeChange"
+      bind:startNodeChange="onStartNodeChange"
+    ></graph-game>
+    
+    <!-- 遍历完成状态总结 -->
+    <view class="traversal-summary">
+      <view class="summary-title">遍历完成状态</view>
+      <view class="summary-content">
+        <view class="summary-item">
+          <view class="summary-label">深度优先 (DFS):</view>
+          <view class="summary-status {{allTraversalsComplete.dfs ? 'status-complete' : 'status-incomplete'}}">
+            {{allTraversalsComplete.dfs ? '已完成' : '未完成'}}
+          </view>
+        </view>
+        <view class="summary-item">
+          <view class="summary-label">广度优先 (BFS):</view>
+          <view class="summary-status {{allTraversalsComplete.bfs ? 'status-complete' : 'status-incomplete'}}">
+            {{allTraversalsComplete.bfs ? '已完成' : '未完成'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 导航按钮 -->
+  <view class="navigation-buttons">
+    <button class="nav-btn reset-btn" bindtap="resetLevel">重置关卡</button>
+    <button class="nav-btn prev-btn" bindtap="prevLevel" disabled="{{currentLevel === 1}}">上一关</button>
+    <button class="nav-btn next-btn" bindtap="nextLevel" disabled="{{currentLevel === totalLevels}}">下一关</button>
+  </view>
+  
+  <!-- 底部提示区域 -->
+  <view class="footer">
+    <view class="tips">
+      <view class="tips-title">图遍历知识点:</view>
+      <view class="tips-content">
+        <text>深度优先遍历(DFS)：先尽可能深地访问一个分支，再回溯访问其它分支。</text>
+        <text>广度优先遍历(BFS)：先访问当前节点的所有邻居，再逐层向外扩展。</text>
+        <text>两种遍历方式在某些图中会产生明显不同的访问序列。</text>
+      </view>
+    </view>
+  </view>
+</view> 

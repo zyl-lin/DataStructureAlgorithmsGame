@@ -1,0 +1,74 @@
+<view class="container">
+  <!-- 头部区域 -->
+  <view class="header">
+    <view class="title-area">
+      <view class="title">排序算法</view>
+      <view class="subtitle">可视化学习排序算法的原理</view>
+    </view>
+    
+    <!-- 关卡信息 -->
+    <view class="level-info">
+      <view class="level-text">关卡 {{currentLevel}}/{{totalLevels}}</view>
+      <view class="level-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{currentLevel / totalLevels * 100}}%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 游戏内容区域 -->
+  <view class="game-content">
+    <!-- 当前任务介绍 -->
+    <view class="task-card">
+      <view class="task-header">
+        <view class="task-title">当前任务</view>
+      </view>
+      <view class="task-body">
+        <view class="task-description">{{currentTask.description}}</view>
+      </view>
+    </view>
+    
+    <!-- 排序游戏组件 -->
+    <sorting-game 
+      algorithmType="{{currentAlgorithm}}" 
+      dataArray="{{currentArray}}"
+      task="{{currentTask}}"
+      bind:sortComplete="onSortComplete"
+      bind:algorithmChange="onAlgorithmChange"
+    ></sorting-game>
+    
+    <!-- 算法完成状态总结 -->
+    <view class="algorithm-summary">
+      <view class="summary-title">算法完成状态</view>
+      <view class="summary-content">
+        <view class="summary-item" wx:for="{{algorithms}}" wx:key="type">
+          <view class="summary-label">{{item.name}}:</view>
+          <view class="summary-status {{item.completed ? 'status-complete' : 'status-incomplete'}}">
+            {{item.completed ? '已完成' : '未完成'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 导航按钮 -->
+  <view class="navigation-buttons">
+    <button class="nav-btn reset-btn" bindtap="resetLevel">重置关卡</button>
+    <button class="nav-btn prev-btn" bindtap="prevLevel" disabled="{{currentLevel === 1}}">上一关</button>
+    <button class="nav-btn next-btn" bindtap="nextLevel" disabled="{{currentLevel === totalLevels}}">下一关</button>
+  </view>
+  
+  <!-- 底部提示区域 -->
+  <view class="footer">
+    <view class="tips">
+      <view class="tips-title">排序算法知识点:</view>
+      <view class="tips-content">
+        <text>冒泡排序: 通过重复遍历要排序的元素列表，比较相邻的元素并交换它们，时间复杂度O(n²)。</text>
+        <text>选择排序: 每次从未排序的部分选择最小(或最大)元素，放到已排序部分的末尾，时间复杂度O(n²)。</text>
+        <text>插入排序: 构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入，时间复杂度O(n²)。</text>
+        <text>快速排序: 分治法，选择一个基准元素，将列表分为两部分，时间复杂度O(nlogn)。</text>
+      </view>
+    </view>
+  </view>
+</view>

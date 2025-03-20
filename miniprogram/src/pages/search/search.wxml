@@ -1,0 +1,72 @@
+<view class="container">
+  <!-- 头部区域 -->
+  <view class="header">
+    <view class="title-area">
+      <view class="title">搜索算法</view>
+      <view class="subtitle">可视化学习搜索算法的原理</view>
+    </view>
+    
+    <!-- 关卡信息 -->
+    <view class="level-info">
+      <view class="level-text">关卡 {{currentLevel}}/{{totalLevels}}</view>
+      <view class="level-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{currentLevel / totalLevels * 100}}%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 游戏内容区域 -->
+  <view class="game-content">
+    <!-- 当前任务介绍 -->
+    <view class="task-card">
+      <view class="task-header">
+        <view class="task-title">当前任务</view>
+      </view>
+      <view class="task-body">
+        <view class="task-description">{{currentTask.description}}</view>
+      </view>
+    </view>
+    
+    <!-- 搜索游戏组件 -->
+    <search-game 
+      dataArray="{{currentArray}}"
+      isSorted="{{currentTask.isSorted}}"
+      initialSearchType="{{currentTask.defaultSearchType}}"
+      bind:searchComplete="onSearchComplete"
+    ></search-game>
+    
+    <!-- 算法完成状态总结 -->
+    <view class="algorithm-summary">
+      <view class="summary-title">算法完成状态</view>
+      <view class="summary-content">
+        <view class="summary-item" wx:for="{{algorithms}}" wx:key="type">
+          <view class="summary-label">{{item.name}}:</view>
+          <view class="summary-status {{item.completed ? 'status-complete' : 'status-incomplete'}}">
+            {{item.completed ? '已完成' : '未完成'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 导航按钮 -->
+  <view class="navigation-buttons">
+    <button class="nav-btn reset-btn" bindtap="resetLevel">重置关卡</button>
+    <button class="nav-btn prev-btn" bindtap="prevLevel" disabled="{{currentLevel === 1}}">上一关</button>
+    <button class="nav-btn next-btn" bindtap="nextLevel" disabled="{{currentLevel === totalLevels}}">下一关</button>
+  </view>
+  
+  <!-- 底部提示区域 -->
+  <view class="footer">
+    <view class="tips">
+      <view class="tips-title">搜索算法知识点:</view>
+      <view class="tips-content">
+        <text>线性搜索: 从头到尾逐个检查数组中的每个元素，直到找到目标值或检查完整个数组。时间复杂度O(n)。</text>
+        <text>二分搜索: 要求数组已排序，将目标值与数组中间元素比较，根据结果在左半部分或右半部分继续搜索。时间复杂度O(log n)。</text>
+        <text>二分搜索虽然效率高，但要求数组必须已排序，对于经常变化的数据集，排序的开销可能抵消掉搜索效率的提升。</text>
+      </view>
+    </view>
+  </view>
+</view> 

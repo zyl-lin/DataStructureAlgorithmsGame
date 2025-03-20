@@ -1,0 +1,76 @@
+<view class="container">
+  <view class="header">
+    <view class="title-area">
+      <text class="title">二叉树遍历</text>
+      <text class="subtitle">理解不同的遍历方式</text>
+    </view>
+    <view class="level-info">
+      <text class="level-text">关卡 {{currentLevel}}/{{totalLevels}}</text>
+      <view class="level-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{currentLevel / totalLevels * 100}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="game-content">
+    <view class="task-card">
+      <view class="task-header">
+        <text class="task-title">当前任务</text>
+      </view>
+      <view class="task-body">
+        <text class="task-description">{{currentTask.description}}</text>
+      </view>
+    </view>
+
+    <binary-tree-game 
+      treeData="{{treeData}}"
+      traversalMode="{{traversalMode}}"
+      task="{{currentTask}}"
+      correctSequence="{{correctSequence}}"
+      bind:modeChange="onTraversalModeChange"
+      bind:traversalComplete="onTraversalComplete"
+    />
+
+    <view class="traversal-summary">
+      <view class="summary-title">遍历完成状态</view>
+      <view class="summary-content">
+        <view class="summary-item {{completedTraversals[currentTask.id].preorder ? 'completed' : ''}}">
+          <text class="summary-label">前序遍历</text>
+          <text class="summary-status">{{completedTraversals[currentTask.id].preorder ? '已完成' : '未完成'}}</text>
+        </view>
+        <view class="summary-item {{completedTraversals[currentTask.id].inorder ? 'completed' : ''}}">
+          <text class="summary-label">中序遍历</text>
+          <text class="summary-status">{{completedTraversals[currentTask.id].inorder ? '已完成' : '未完成'}}</text>
+        </view>
+        <view class="summary-item {{completedTraversals[currentTask.id].postorder ? 'completed' : ''}}">
+          <text class="summary-label">后序遍历</text>
+          <text class="summary-status">{{completedTraversals[currentTask.id].postorder ? '已完成' : '未完成'}}</text>
+        </view>
+        <view class="summary-item {{completedTraversals[currentTask.id].levelorder ? 'completed' : ''}}">
+          <text class="summary-label">层序遍历</text>
+          <text class="summary-status">{{completedTraversals[currentTask.id].levelorder ? '已完成' : '未完成'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="navigation-buttons">
+      <button class="nav-btn" bindtap="resetLevel">重置关卡</button>
+      <button class="nav-btn" bindtap="prevLevel" disabled="{{currentLevel <= 1}}">上一关</button>
+      <button class="nav-btn" bindtap="nextLevel" disabled="{{currentLevel >= totalLevels}}">下一关</button>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="tips">
+      <text class="tips-title">二叉树遍历知识点</text>
+      <view class="tips-content">
+        <text>1. 前序遍历顺序: 根-左-右</text>
+        <text>2. 中序遍历顺序: 左-根-右</text>
+        <text>3. 后序遍历顺序: 左-右-根</text>
+        <text>4. 层序遍历: 按层从上到下，每层从左到右</text>
+      </view>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,66 @@
+<view class="queue-game-container">
+  <!-- 任务区域 -->
+  <view class="task-panel" wx:if="{{task}}">
+    <view class="task-title">当前任务</view>
+    <view class="task-description">{{task.description}}</view>
+  </view>
+
+  <!-- 队列可视化区域 -->
+  <view class="queue-visualization">
+    <view class="queue-labels">
+      <view class="queue-label">队首</view>
+      <view class="queue-label">队尾</view>
+    </view>
+    <view class="queue-container">
+      <block wx:if="{{queue.length === 0}}">
+        <view class="empty-queue">队列为空</view>
+      </block>
+      <block wx:else>
+        <view class="queue-items">
+          <view class="queue-item" wx:for="{{queue}}" wx:key="index">
+            {{item}}
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 操作区域 -->
+  <view class="queue-operations">
+    <view class="input-group">
+      <input class="queue-input" type="text" placeholder="输入元素值" bindinput="onValueInput" value="{{currentValue}}" />
+    </view>
+    <view class="queue-buttons">
+      <button class="operation-btn enqueue-btn" bindtap="onEnqueue" disabled="{{isQueueFull}}">入队 (Enqueue)</button>
+      <button class="operation-btn dequeue-btn" bindtap="onDequeue" disabled="{{isQueueEmpty}}">出队 (Dequeue)</button>
+      <button class="operation-btn peek-btn" bindtap="onPeek" disabled="{{isQueueEmpty}}">查看队首 (Peek)</button>
+    </view>
+  </view>
+
+  <!-- 队列信息 -->
+  <view class="queue-info">
+    <view class="info-item">
+      <text class="info-label">队列大小:</text>
+      <text class="info-value">{{queue.length}}/{{maxSize}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">状态:</text>
+      <text class="info-value" wx:if="{{isQueueEmpty}}">空</text>
+      <text class="info-value" wx:elif="{{isQueueFull}}">满</text>
+      <text class="info-value" wx:else>可操作</text>
+    </view>
+  </view>
+
+  <!-- 操作历史 -->
+  <view class="operation-history">
+    <view class="history-title">操作历史</view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{operationHistory}}" wx:key="index">
+        {{item}}
+      </view>
+      <view class="no-history" wx:if="{{operationHistory.length === 0}}">
+        暂无操作记录
+      </view>
+    </view>
+  </view>
+</view> 

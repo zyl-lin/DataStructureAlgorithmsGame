@@ -1,0 +1,85 @@
+<view class="graph-game-container">
+  <!-- 图形渲染区域 -->
+  <view class="graph-area">
+    <canvas type="2d" id="graph-canvas" class="graph-canvas" bindtap="onCanvasTap"></canvas>
+    
+    <!-- 节点信息覆盖层 - 用于响应不支持canvas tap事件的系统 -->
+    <view class="node-overlay" wx:if="{{nodePositions.length > 0}}">
+      <view 
+        wx:for="{{nodePositions}}" 
+        wx:key="index"
+        class="node-touch-area"
+        style="left: {{item.x - nodeRadius}}px; top: {{item.y - nodeRadius}}px; width: {{nodeRadius * 2}}px; height: {{nodeRadius * 2}}px;"
+        data-index="{{index}}"
+        catchtap="onNodeTap"
+      ></view>
+    </view>
+  </view>
+  
+  <!-- 用户序列显示区域 -->
+  <view class="sequence-area">
+    <view class="sequence-label">你的遍历序列:</view>
+    <view class="sequence-display">
+      <view 
+        wx:for="{{userSequence}}" 
+        wx:key="index"
+        class="sequence-node {{index === userSequence.length - 1 ? 'sequence-node-active' : ''}}"
+      >
+        {{item}}
+      </view>
+      <view class="sequence-empty" wx:if="{{userSequence.length === 0}}">
+        请点击节点开始遍历
+      </view>
+    </view>
+  </view>
+  
+  <!-- 遍历模式选择 -->
+  <view class="mode-selector" wx:if="{{task}}">
+    <view class="mode-label">遍历模式:</view>
+    <view class="mode-options">
+      <view 
+        class="mode-option {{traversalMode === 'dfs' ? 'mode-option-active' : ''}}"
+        data-mode="dfs"
+        bindtap="changeTraversalMode"
+      >
+        深度优先 (DFS)
+      </view>
+      <view 
+        class="mode-option {{traversalMode === 'bfs' ? 'mode-option-active' : ''}}"
+        data-mode="bfs"
+        bindtap="changeTraversalMode"
+      >
+        广度优先 (BFS)
+      </view>
+    </view>
+  </view>
+  
+  <!-- 起始节点选择区域 - 可选功能 -->
+  <view class="start-node-selector" wx:if="{{graphData.nodes.length > 0 && task.allowStartNodeChange}}">
+    <view class="start-label">起始节点:</view>
+    <view class="start-options">
+      <view 
+        wx:for="{{graphData.nodes}}" 
+        wx:key="index"
+        class="start-option {{startNodeIndex === index ? 'start-option-active' : ''}}"
+        data-index="{{index}}"
+        bindtap="changeStartNode"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+  
+  <!-- 反馈信息区域 -->
+  <view class="feedback-panel" wx:if="{{showFeedback}}">
+    <view class="feedback-message {{isCorrect ? 'feedback-correct' : 'feedback-incorrect'}}">
+      {{feedbackMessage}}
+    </view>
+  </view>
+  
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="action-btn restart-btn" bindtap="restart">重新开始</button>
+    <button class="action-btn show-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}">查看正确答案</button>
+  </view>
+</view> 

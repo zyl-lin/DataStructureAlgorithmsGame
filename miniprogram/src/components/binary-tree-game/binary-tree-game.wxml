@@ -1,0 +1,93 @@
+<view class="binary-tree-container">
+  <!-- 任务面板 -->
+  <view class="task-panel" wx:if="{{task}}">
+    <view class="task-title">当前任务</view>
+    <view class="task-description">{{task.description}}</view>
+  </view>
+
+  <!-- 遍历模式选择器 -->
+  <view class="traversal-selector">
+    <view class="selector-title">遍历方式</view>
+    <view class="selector-options">
+      <view class="selector-option {{traversalMode === 'preorder' ? 'active' : ''}}" 
+            bindtap="changeTraversalMode" 
+            data-mode="preorder">
+        前序遍历 (Preorder)
+      </view>
+      <view class="selector-option {{traversalMode === 'inorder' ? 'active' : ''}}" 
+            bindtap="changeTraversalMode" 
+            data-mode="inorder">
+        中序遍历 (Inorder)
+      </view>
+      <view class="selector-option {{traversalMode === 'postorder' ? 'active' : ''}}" 
+            bindtap="changeTraversalMode" 
+            data-mode="postorder">
+        后序遍历 (Postorder)
+      </view>
+      <view class="selector-option {{traversalMode === 'levelorder' ? 'active' : ''}}" 
+            bindtap="changeTraversalMode" 
+            data-mode="levelorder">
+        层序遍历 (Level Order)
+      </view>
+    </view>
+  </view>
+
+  <!-- 二叉树可视化 -->
+  <view class="tree-visualization">
+    <block wx:for="{{treeLayout}}" wx:for-item="level" wx:for-index="levelIndex" wx:key="levelIndex">
+      <view class="tree-level">
+        <block wx:for="{{level}}" wx:key="id">
+          <view class="tree-node-wrapper" style="width: calc(100% / {{Math.pow(2, levelIndex)}});">
+            <view class="tree-node {{selectedNodes.includes(item.id) ? 'selected' : ''}} {{highlightedNodes.includes(item.id) ? 'highlighted' : ''}}"
+                  bindtap="onNodeTap"
+                  data-id="{{item.id}}"
+                  data-value="{{item.value}}">
+              {{item.value}}
+            </view>
+            <!-- 节点连接线 (简化版) -->
+            <view wx:if="{{item.hasLeft}}" class="branch branch-left"></view>
+            <view wx:if="{{item.hasRight}}" class="branch branch-right"></view>
+          </view>
+        </block>
+      </view>
+    </block>
+  </view>
+
+  <!-- 用户遍历序列 -->
+  <view class="sequence-panel">
+    <view class="sequence-title">您的遍历序列</view>
+    <view class="sequence-list">
+      <block wx:if="{{userSequence.length > 0}}">
+        <view class="sequence-item" wx:for="{{userSequence}}" wx:key="index">
+          {{item}}
+        </view>
+      </block>
+      <block wx:else>
+        <view class="sequence-empty">点击树节点开始遍历</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 反馈信息 -->
+  <view class="feedback-panel" wx:if="{{showFeedback}}">
+    <view class="feedback-message {{isCorrect ? 'correct' : 'incorrect'}}">
+      {{feedbackMessage}}
+    </view>
+    <view class="correct-sequence" wx:if="{{!isCorrect}}">
+      <view class="sequence-title">正确的序列是</view>
+      <view class="sequence-list">
+        <view class="sequence-item" wx:for="{{correctSequence}}" wx:key="index">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="action-btn" bindtap="restart">重新开始</button>
+    <button class="action-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}">
+      查看正确遍历
+    </button>
+  </view>
+</view> 

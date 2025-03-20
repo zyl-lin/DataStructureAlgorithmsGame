@@ -1,0 +1,234 @@
+.search-game-container {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 算法选择区域 */
+.algorithm-selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.selector-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.selector-options {
+  display: flex;
+  flex: 1;
+}
+
+.algorithm-option {
+  padding: 10rpx 20rpx;
+  font-size: 28rpx;
+  color: #666;
+  background-color: #f5f5f5;
+  border-radius: 6rpx;
+  margin-right: 10rpx;
+}
+
+.algorithm-option.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* 数组可视化区域 */
+.array-visualization {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 300rpx;
+  margin: 20rpx 0;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  padding: 10rpx;
+}
+
+.array-item {
+  width: 50rpx;
+  margin: 0 5rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 24rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6rpx 6rpx 0 0;
+  transition: all 0.3s ease;
+}
+
+.array-item.current {
+  background-color: #FF9800;
+}
+
+.array-item.checked {
+  background-color: #2196F3;
+}
+
+.array-item.found {
+  background-color: #4CAF50;
+  animation: pulse 1s infinite;
+}
+
+.array-item.not-found {
+  background-color: #F44336;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 搜索输入区域 */
+.search-input-area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 70rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 6rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  margin-right: 20rpx;
+}
+
+.search-button {
+  width: 180rpx;
+  height: 70rpx;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6rpx;
+}
+
+button[disabled] {
+  background-color: #f5f5f5 !important;
+  color: #ccc !important;
+}
+
+/* 搜索控制区域 */
+.search-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.control-button {
+  flex: 1;
+  height: 70rpx;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6rpx;
+  margin: 0 10rpx;
+}
+
+.step-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.auto-button {
+  background-color: #FF9800;
+  color: white;
+}
+
+.auto-button.active {
+  background-color: #F44336;
+}
+
+.reset-button {
+  background-color: #9E9E9E;
+  color: white;
+}
+
+/* 搜索信息区域 */
+.search-info {
+  margin-bottom: 20rpx;
+  padding: 15rpx;
+  background-color: #f5f5f5;
+  border-radius: 6rpx;
+}
+
+.info-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.step-description {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  line-height: 1.5;
+}
+
+.search-result {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.result-found {
+  color: #4CAF50;
+}
+
+.result-not-found {
+  color: #F44336;
+}
+
+/* 算法信息区域 */
+.algorithm-info {
+  padding: 15rpx;
+  background-color: #f5f5f5;
+  border-radius: 6rpx;
+}
+
+.info-content {
+  margin-top: 10rpx;
+}
+
+.info-item {
+  margin-bottom: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.info-label {
+  font-weight: bold;
+  margin-right: 10rpx;
+}
+
+.info-value {
+  color: #333;
+} 

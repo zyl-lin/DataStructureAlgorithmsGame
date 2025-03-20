@@ -157,3 +157,140 @@
 
 ### 修改了哪些文件
 - README.md（添加本次会话总结）
+
+## 2025-03-20
+
+### 会话主要目的
+为数据结构与算法教学游戏开发C++后端API服务
+
+### 完成的主要任务
+- 设计并实现了基于Crow框架的REST API服务
+- 创建了SQLite数据库模型和接口
+- 实现了用户管理、游戏内容和游戏互动等API
+- 添加了JWT认证系统
+- 实现了成就系统和用户进度追踪功能
+
+### 关键决策和解决方案
+- 使用Crow框架作为HTTP服务器，提供轻量级Web API
+- 采用SQLite作为数据库，便于部署和管理
+- 实现JWT认证，提高API安全性
+- 设计符合RESTful风格的API接口
+- 使用JSON作为数据交换格式
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- SQLite3数据库
+- nlohmann/json库
+- OpenSSL (用于JWT签名)
+- CMake构建系统
+
+### 新建的文件
+- src/server/main.cpp - 服务器入口
+- src/server/database.h/cpp - 数据库接口和实现
+- src/server/user_routes.h/cpp - 用户相关API路由
+- src/server/game_routes.h/cpp - 游戏相关API路由
+
+## 2025-03-20
+
+### 会话主要目的
+解决Ubuntu服务器上Boost库版本过低导致的Crow框架编译错误
+
+### 完成的主要任务
+- 诊断了构建过程中Boost版本不兼容问题（1.58.0 vs 需要的1.64+）
+- 提供了多种解决方案更新Boost库
+
+### 关键决策和解决方案
+- 提供了通过APT安装新版Boost的方法
+- 提供了从源码编译安装Boost的详细步骤
+- 提供了修改Crow依赖库源码的替代方案
+
+### 使用的技术栈
+- CMake
+- Boost C++库
+- Crow Web框架
+- Ubuntu包管理系统
+
+### 修改的文件
+- README.md（添加本次会话总结）
+
+## 2025-03-21
+
+### 会话主要目的
+解决Ubuntu服务器上Boost库下载解压失败的问题
+
+### 完成的主要任务
+- 诊断了tar解压缩错误的原因（文件格式不正确或下载不完整）
+- 提供了多种解决Boost库安装的替代方案
+
+### 关键决策和解决方案
+- 提供了重新下载Boost源码包的正确方法
+- 推荐了通过Ubuntu PPA安装预编译Boost包的简便方法
+- 提供了使用apt直接安装特定版本Boost的命令
+
+### 使用的技术栈
+- Ubuntu包管理系统
+- Boost C++库
+- CMake构建系统
+
+### 修改的文件
+- README.md（添加本次会话总结）
+
+## 2025-03-21
+
+### 会话主要目的
+解决Crow框架中CORS中间件命名空间错误导致的编译问题
+
+### 完成的主要任务
+- 诊断了编译错误的根本原因（使用了错误的CORS中间件命名空间）
+- 修改了所有相关文件中的CORS处理器引用
+
+### 关键决策和解决方案
+- 将所有`crow::CORSHandler`替换为正确的`crow::middlewares::Cors`
+- 保持代码功能不变的同时解决了命名空间不匹配问题
+
+### 使用的技术栈
+- C++ 
+- Crow Web框架
+- CORS中间件
+
+### 修改的文件
+- src/server/main.cpp
+- src/server/user_routes.h
+- src/server/user_routes.cpp
+- src/server/game_routes.h
+- src/server/game_routes.cpp
+- src/server/achievement_routes.h
+- src/server/achievement_routes.cpp
+
+## 2025-03-22
+
+### 会话主要目的
+解决Ubuntu 16.04系统上的编译错误，包括Database类未声明方法和CORS命名空间错误
+
+### 完成的主要任务
+- 修复了Database类中未声明的方法：populateInitialData, checkAchievements和unlockAchievement
+- 修复了字符串连接错误，特别是在getUserAchievements和getUserProgress方法中
+- 将CORS中间件引用从crow::middlewares::Cors改回crow::CORSHandler，以匹配Ubuntu 16.04上的Crow版本
+
+### 关键决策和解决方案
+- 在Database类的private部分添加了缺少的方法声明
+- 修改了字符串连接方式，使用连续的字符串字面量替代+连接符
+- 恢复使用与旧版Crow框架兼容的CORS处理器命名空间
+
+### 使用的技术栈
+- C++
+- Crow Web框架
+- SQLite3数据库
+- nlohmann/json库
+
+### 修改的文件
+- src/server/database.h
+- src/server/database.cpp
+- src/server/main.cpp
+- src/server/user_routes.h
+- src/server/user_routes.cpp
+- src/server/game_routes.h
+- src/server/game_routes.cpp
+- src/server/achievement_routes.h
+- src/server/achievement_routes.cpp

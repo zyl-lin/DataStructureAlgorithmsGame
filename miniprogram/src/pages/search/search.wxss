@@ -1,0 +1,206 @@
+.container {
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: #f5f5f5;
+}
+
+/* 头部区域样式 */
+.header {
+  margin-bottom: 30rpx;
+}
+
+.title-area {
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 6rpx;
+}
+
+.level-info {
+  margin-bottom: 20rpx;
+}
+
+.level-text {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.level-progress {
+  height: 10rpx;
+  background-color: #e0e0e0;
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4CAF50;
+  border-radius: 5rpx;
+}
+
+/* 游戏内容区域样式 */
+.game-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-card {
+  background-color: white;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.task-header {
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-bottom: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.task-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.task-body {
+  padding: 10rpx 0;
+}
+
+.task-description {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 算法完成状态总结 */
+.algorithm-summary {
+  background-color: white;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.summary-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-bottom: 10rpx;
+}
+
+.summary-content {
+  padding: 10rpx 0;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.summary-status {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.status-complete {
+  color: #4CAF50;
+}
+
+.status-incomplete {
+  color: #999;
+}
+
+/* 导航按钮 */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 30rpx 0;
+}
+
+.nav-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 26rpx;
+  padding: 15rpx 0;
+  text-align: center;
+  border-radius: 8rpx;
+}
+
+.reset-btn {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1rpx solid #ddd;
+}
+
+.prev-btn {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1rpx solid #ddd;
+}
+
+.next-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+button[disabled] {
+  background-color: #f5f5f5 !important;
+  color: #ccc !important;
+  border: 1rpx solid #ddd !important;
+}
+
+/* 底部提示区域 */
+.footer {
+  margin-top: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.tips {
+  background-color: #fff8e1;
+  border-radius: 10rpx;
+  padding: 20rpx;
+}
+
+.tips-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ff9800;
+  margin-bottom: 10rpx;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.tips-content text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
+} 

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "图遍历",
+  "usingComponents": {
+    "graph-game": "../../components/graph-game/graph-game"
+  }
+} 

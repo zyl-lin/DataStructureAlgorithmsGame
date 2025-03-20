@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "队列操作",
+  "usingComponents": {
+    "queue-game": "../../components/queue-game/queue-game"
+  }
+} 

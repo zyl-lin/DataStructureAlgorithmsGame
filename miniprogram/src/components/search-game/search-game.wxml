@@ -1,0 +1,106 @@
+<view class="search-game-container">
+  <!-- 搜索算法选择区域 -->
+  <view class="algorithm-selector">
+    <view class="selector-label">算法：</view>
+    <view class="selector-options">
+      <view 
+        class="algorithm-option {{searchType === 'linear' ? 'active' : ''}}" 
+        data-type="linear" 
+        bindtap="changeSearchType"
+      >
+        线性搜索
+      </view>
+      <view 
+        class="algorithm-option {{searchType === 'binary' ? 'active' : ''}}" 
+        data-type="binary" 
+        bindtap="changeSearchType"
+      >
+        二分搜索
+      </view>
+    </view>
+  </view>
+  
+  <!-- 数组可视化区域 -->
+  <view class="array-visualization">
+    <block wx:for="{{visualArray}}" wx:key="index">
+      <view 
+        class="array-item {{item.status}}" 
+        style="height: {{item.value * 3 + 30}}rpx"
+      >
+        {{item.value}}
+      </view>
+    </block>
+  </view>
+  
+  <!-- 搜索目标值输入 -->
+  <view class="search-input-area">
+    <view class="input-label">搜索目标值：</view>
+    <input 
+      class="search-input" 
+      type="number" 
+      value="{{targetValue}}" 
+      bindinput="onTargetValueChange"
+    />
+    <button 
+      class="search-button" 
+      bindtap="startSearch"
+      disabled="{{isSearching || !targetValue}}"
+    >
+      开始搜索
+    </button>
+  </view>
+  
+  <!-- 搜索步骤控制区域 -->
+  <view class="search-controls" wx:if="{{isSearching}}">
+    <button 
+      class="control-button step-button"
+      bindtap="nextStep"
+      disabled="{{isCompleted}}"
+    >
+      下一步
+    </button>
+    <button 
+      class="control-button auto-button {{isAutoPlaying ? 'active' : ''}}"
+      bindtap="toggleAutoPlay"
+      disabled="{{isCompleted}}"
+    >
+      {{isAutoPlaying ? '暂停' : '自动播放'}}
+    </button>
+    <button 
+      class="control-button reset-button"
+      bindtap="resetSearch"
+    >
+      重置
+    </button>
+  </view>
+  
+  <!-- 搜索过程信息 -->
+  <view class="search-info">
+    <view class="info-title">搜索过程：</view>
+    <view class="step-description">{{currentStepDescription}}</view>
+    <view class="search-result" wx:if="{{isCompleted}}">
+      <text class="{{searchResult.found ? 'result-found' : 'result-not-found'}}">
+        {{searchResult.message}}
+      </text>
+    </view>
+  </view>
+  
+  <!-- 算法信息区域 -->
+  <view class="algorithm-info">
+    <view class="info-title">算法信息：</view>
+    <view class="info-content">
+      <view class="info-item">
+        <text class="info-label">时间复杂度：</text>
+        <text class="info-value">{{currentAlgorithmInfo.timeComplexity}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">空间复杂度：</text>
+        <text class="info-value">{{currentAlgorithmInfo.spaceComplexity}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">适用场景：</text>
+        <text class="info-value">{{currentAlgorithmInfo.useCases}}</text>
+      </view>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "搜索算法",
+  "usingComponents": {
+    "search-game": "../../components/search-game/search-game"
+  }
+} 

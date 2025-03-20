@@ -7,7 +7,12 @@
     "src/pages/profile/profile",
     "src/pages/maze/maze",
     "src/pages/linkedlist/linkedlist",
-    "src/pages/stack/stack"
+    "src/pages/stack/stack",
+    "src/pages/queue/queue",
+    "src/pages/binarytree/binarytree",
+    "src/pages/graph/graph",
+    "src/pages/sorting/sorting",
+    "src/pages/search/search"
   ],
   "window": {
     "navigationBarTitleText": "数据结构与算法游戏",

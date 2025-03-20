@@ -203,3 +203,157 @@
   2. JSON
 - **修改了哪些文件**：
   1. `src/pages/game/game.json`
+
+## 2024-03-21 09:45:00
+- **会话的主要目的**：实现队列操作的游戏组件和页面，基于原型图中的设计。
+- **完成的主要任务**：
+  1. 创建了队列游戏组件，包括：
+     - 队列游戏组件布局（queue-game.wxml）
+     - 队列游戏组件样式（queue-game.wxss）
+     - 队列游戏组件逻辑（queue-game.js），实现入队、出队和查看队首操作
+     - 队列游戏组件配置（queue-game.json）
+  2. 创建了队列操作页面，包括：
+     - 页面布局（queue.wxml）
+     - 页面样式（queue.wxss）
+     - 页面逻辑（queue.js），包括关卡系统和任务检查
+     - 页面配置（queue.json）
+  3. 更新了app.json，添加了队列操作页面
+- **关键决策和解决方案**：
+  1. 实现了队列的可视化展示，直观显示先进先出特性
+  2. 设计了任务系统，引导用户完成队列的基本操作
+  3. 添加了操作历史记录功能，帮助用户理解操作流程
+  4. 实现了关卡系统，通过逐步提高难度保持挑战性
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript（队列操作逻辑）
+  3. WXML/WXSS（界面和样式）
+  4. 自定义组件（组件化开发）
+- **修改了哪些文件**：
+  1. `src/components/queue-game/queue-game.wxml`（创建）
+  2. `src/components/queue-game/queue-game.wxss`（创建）
+  3. `src/components/queue-game/queue-game.js`（创建）
+  4. `src/components/queue-game/queue-game.json`（创建）
+  5. `src/pages/queue/queue.wxml`（创建）
+  6. `src/pages/queue/queue.wxss`（创建）
+  7. `src/pages/queue/queue.js`（创建）
+  8. `src/pages/queue/queue.json`（创建）
+  9. `app.json`（更新）
+
+## 2024-03-22 10:30:00
+- **会话的主要目的**：实现二叉树遍历游戏组件和页面，基于原型图中的设计。
+- **完成的主要任务**：
+  1. 创建了二叉树游戏组件，包括：
+     - 二叉树游戏组件布局（binary-tree-game.wxml）
+     - 二叉树游戏组件样式（binary-tree-game.wxss）
+     - 二叉树游戏组件逻辑（binary-tree-game.js），实现前序、中序、后序和层序遍历
+     - 二叉树游戏组件配置（binary-tree-game.json）
+  2. 创建了二叉树遍历页面，包括：
+     - 页面布局（binarytree.wxml）
+     - 页面样式（binarytree.wxss）
+     - 页面逻辑（binarytree.js），包括关卡系统和遍历验证
+     - 页面配置（binarytree.json）
+  3. 更新了app.json，添加了二叉树遍历页面
+- **关键决策和解决方案**：
+  1. 实现了二叉树的可视化展示，直观显示树形结构
+  2. 支持四种遍历方式：前序遍历、中序遍历、后序遍历和层序遍历
+  3. 设计了递归算法处理树的布局和遍历逻辑
+  4. 实现了动画效果展示遍历过程，增强学习体验
+  5. 添加了遍历完成状态跟踪，鼓励用户尝试所有遍历方式
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript（二叉树数据结构和遍历算法）
+  3. WXML/WXSS（界面和样式）
+  4. 自定义组件（组件化开发）
+- **修改了哪些文件**：
+  1. `src/components/binary-tree-game/binary-tree-game.wxml`（创建）
+  2. `src/components/binary-tree-game/binary-tree-game.wxss`（创建）
+  3. `src/components/binary-tree-game/binary-tree-game.js`（创建）
+  4. `src/components/binary-tree-game/binary-tree-game.json`（创建）
+  5. `src/pages/binarytree/binarytree.wxml`（创建）
+  6. `src/pages/binarytree/binarytree.wxss`（创建）
+  7. `src/pages/binarytree/binarytree.js`（创建）
+  8. `src/pages/binarytree/binarytree.json`（创建）
+  9. `app.json`（更新）
+
+## 2024-03-23 10:00:00
+- **会话的主要目的**：实现图遍历游戏功能，并将其添加到小程序中。
+- **完成的主要任务**：
+  1. 检查和确认图游戏组件和页面的代码完整性
+  2. 将图游戏页面添加到app.json中，使其在小程序中可访问
+  3. 确保图游戏功能正常工作，包括DFS和BFS两种遍历方式
+- **关键决策和解决方案**：
+  1. 使用Canvas实现图的可视化展示
+  2. 实现了动态图形布局算法，可以根据节点数量自动调整布局
+  3. 支持两种遍历方式（DFS和BFS）的交互式演示
+  4. 设计了三个不同难度的关卡，提供渐进式学习体验
+  5. 添加了反馈机制，帮助用户理解图遍历算法的执行过程
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. Canvas 2D绘图API
+  3. 图遍历算法（DFS、BFS）
+  4. 自定义组件
+- **修改了哪些文件**：
+  1. `app.json`（更新，添加图游戏页面路径）
+
+## 2024-03-24 09:30:00
+- **会话的主要目的**：实现排序算法可视化游戏功能，并将其添加到小程序中。
+- **完成的主要任务**：
+  1. 创建了排序游戏页面，包括：
+     - 页面布局（sorting.wxml）
+     - 页面样式（sorting.wxss）
+     - 页面逻辑（sorting.js），实现不同排序算法的选择和关卡系统
+     - 页面配置（sorting.json）
+  2. 将排序游戏页面添加到app.json中，使其在小程序中可访问
+  3. 集成已有的排序游戏组件，实现四种排序算法的可视化：冒泡排序、选择排序、插入排序和快速排序
+- **关键决策和解决方案**：
+  1. 设计了三个不同难度的关卡，分别针对不同的排序算法
+  2. 实现了算法完成状态追踪，帮助用户学习多种排序算法
+  3. 提供了详细的排序算法知识点，增强教育价值
+  4. 保持与其他游戏页面一致的用户界面，提供统一的用户体验
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript（排序算法实现）
+  3. WXML/WXSS（界面和样式）
+  4. 自定义组件（组件化开发）
+- **修改了哪些文件**：
+  1. `src/pages/sorting/sorting.wxml`（创建）
+  2. `src/pages/sorting/sorting.wxss`（创建）
+  3. `src/pages/sorting/sorting.js`（创建）
+  4. `src/pages/sorting/sorting.json`（创建）
+  5. `app.json`（更新，添加排序游戏页面路径）
+
+## 2024-03-25 10:00:00
+- **会话的主要目的**：实现搜索算法可视化游戏功能，并将其添加到小程序中。
+- **完成的主要任务**：
+  1. 创建了搜索游戏组件，包括：
+     - 搜索游戏组件布局（search-game.wxml）
+     - 搜索游戏组件样式（search-game.wxss）
+     - 搜索游戏组件逻辑（search-game.js），实现线性搜索和二分搜索算法
+     - 搜索游戏组件配置（search-game.json）
+  2. 创建了搜索算法页面，包括：
+     - 页面布局（search.wxml）
+     - 页面样式（search.wxss）
+     - 页面逻辑（search.js），实现关卡系统和不同搜索场景
+     - 页面配置（search.json）
+  3. 将搜索算法页面添加到app.json中，使其在小程序中可访问
+- **关键决策和解决方案**：
+  1. 实现了两种常用搜索算法（线性搜索和二分搜索）的可视化
+  2. 设计了逐步执行和自动播放功能，便于用户理解算法执行过程
+  3. 提供了不同场景的关卡，展示不同搜索算法的适用场景和性能差异
+  4. 添加了搜索算法的时间复杂度和空间复杂度信息，增强教育价值
+  5. 提供了详细的步骤说明，帮助用户理解算法的工作原理
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript（搜索算法实现）
+  3. WXML/WXSS（界面和样式）
+  4. 自定义组件（组件化开发）
+- **修改了哪些文件**：
+  1. `src/components/search-game/search-game.wxml`（创建）
+  2. `src/components/search-game/search-game.wxss`（创建）
+  3. `src/components/search-game/search-game.js`（创建）
+  4. `src/components/search-game/search-game.json`（创建）
+  5. `src/pages/search/search.wxml`（创建）
+  6. `src/pages/search/search.wxss`（创建）
+  7. `src/pages/search/search.js`（创建）
+  8. `src/pages/search/search.json`（创建）
+  9. `app.json`（更新，添加搜索算法页面路径）

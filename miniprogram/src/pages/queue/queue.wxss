@@ -1,0 +1,158 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20rpx;
+}
+
+/* 头部样式 */
+.header {
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.title-area {
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+  margin-top: 10rpx;
+}
+
+.level-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-text {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.level-progress {
+  height: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #e0e0e0;
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4caf50;
+}
+
+/* 游戏内容样式 */
+.game-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-card {
+  background-color: white;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.task-header {
+  margin-bottom: 10rpx;
+}
+
+.task-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.task-body {
+  padding: 10rpx 0;
+}
+
+.task-description {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 导航按钮样式 */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 20rpx 0;
+}
+
+.nav-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+  padding: 20rpx 0;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 10rpx;
+  border: none;
+  text-align: center;
+}
+
+.nav-btn:first-child {
+  margin-left: 0;
+}
+
+.nav-btn:last-child {
+  margin-right: 0;
+}
+
+.nav-btn[disabled] {
+  background-color: #cccccc;
+  color: #999999;
+}
+
+/* 底部样式 */
+.footer {
+  margin-top: 20rpx;
+}
+
+.tips {
+  background-color: white;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.tips-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tips-content text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 10rpx;
+} 

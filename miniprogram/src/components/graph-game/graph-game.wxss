@@ -1,0 +1,214 @@
+.graph-game-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 图形渲染区域 */
+.graph-area {
+  position: relative;
+  width: 100%;
+  height: 500rpx;
+  background-color: #f9f9f9;
+  border-radius: 12rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* 节点覆盖层 - 用于触摸事件 */
+.node-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.node-touch-area {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* 用户序列显示区域 */
+.sequence-area {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.sequence-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.sequence-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  min-height: 60rpx;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  background-color: #f5f5f5;
+}
+
+.sequence-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  font-size: 28rpx;
+}
+
+.sequence-node-active {
+  background-color: #f44336;
+  transform: scale(1.1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+}
+
+.sequence-empty {
+  color: #999;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* 遍历模式选择器 */
+.mode-selector {
+  margin-bottom: 20rpx;
+}
+
+.mode-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.mode-options {
+  display: flex;
+  gap: 20rpx;
+}
+
+.mode-option {
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 26rpx;
+  transition: all 0.3s;
+}
+
+.mode-option-active {
+  background-color: #2196f3;
+  color: white;
+  font-weight: bold;
+}
+
+/* 起始节点选择器 */
+.start-node-selector {
+  margin-bottom: 20rpx;
+}
+
+.start-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.start-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.start-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #333;
+  font-size: 28rpx;
+}
+
+.start-option-active {
+  background-color: #ff9800;
+  color: white;
+  font-weight: bold;
+}
+
+/* 反馈信息区域 */
+.feedback-panel {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.feedback-message {
+  padding: 16rpx;
+  border-radius: 8rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+
+.feedback-correct {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.feedback-incorrect {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30rpx;
+  margin-top: 10rpx;
+}
+
+.action-btn {
+  min-width: 180rpx;
+  padding: 0 30rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  text-align: center;
+  background-color: #f5f5f5;
+  color: #333;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+}
+
+.restart-btn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.show-btn {
+  background-color: #2196f3;
+  color: white;
+} 

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "二叉树遍历",
+  "usingComponents": {
+    "binary-tree-game": "../../components/binary-tree-game/binary-tree-game"
+  }
+} 
