@@ -12,15 +12,15 @@ int main() {
     Database db("game_database.db");
     db.initialize();
     
-    // 创建Crow应用 - 不使用CORS中间件
-    crow::App app;
+    // 创建Crow应用
+    crow::App<crow::CORSHandler> app;
     
-    // 添加全局中间件来手动处理CORS
-    app.after_handle([](crow::request&, crow::response& res){
-        res.add_header("Access-Control-Allow-Origin", "*");
-        res.add_header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
-        res.add_header("Access-Control-Allow-Headers", "Content-Type");
-    });
+    // 启用CORS
+    auto& cors = app.get_middleware<crow::CORSHandler>();
+    cors
+        .global()
+        .headers("Content-Type")
+        .methods("POST", "GET", "PUT", "DELETE");
     
     // 注册路由
     registerUserRoutes(app, db);

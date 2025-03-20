@@ -1,0 +1,354 @@
+<view class="dp-game-container">
+  <!-- 算法选择区域 -->
+  <view class="algorithm-selector">
+    <view class="selector-label">算法类型：</view>
+    <view class="selector-options">
+      <view 
+        class="algorithm-option {{dpType === 'fibonacci' ? 'active' : ''}}" 
+        data-type="fibonacci" 
+        bindtap="changeDpType"
+      >
+        斐波那契数列
+      </view>
+      <view 
+        class="algorithm-option {{dpType === 'knapsack' ? 'active' : ''}}" 
+        data-type="knapsack" 
+        bindtap="changeDpType"
+      >
+        背包问题
+      </view>
+      <view 
+        class="algorithm-option {{dpType === 'lcs' ? 'active' : ''}}" 
+        data-type="lcs" 
+        bindtap="changeDpType"
+      >
+        最长公共子序列
+      </view>
+    </view>
+  </view>
+  
+  <!-- 参数输入区域 -->
+  <view class="input-area">
+    <!-- 斐波那契数列输入 -->
+    <block wx:if="{{dpType === 'fibonacci'}}">
+      <view class="input-group">
+        <view class="input-label">计算第n个斐波那契数：</view>
+        <input 
+          class="input-field" 
+          type="number" 
+          value="{{fibN}}" 
+          bindinput="onFibNChange"
+        />
+      </view>
+    </block>
+    
+    <!-- 背包问题输入 -->
+    <block wx:elif="{{dpType === 'knapsack'}}">
+      <view class="input-group">
+        <view class="input-label">背包容量：</view>
+        <input 
+          class="input-field" 
+          type="number" 
+          value="{{knapsackCapacity}}" 
+          bindinput="onKnapsackCapacityChange"
+        />
+      </view>
+      <view class="knapsack-items">
+        <view class="items-header">
+          <text>物品</text>
+          <text>价值</text>
+          <text>重量</text>
+        </view>
+        <view 
+          class="item-row" 
+          wx:for="{{knapsackItems}}" 
+          wx:key="index"
+        >
+          <text>{{index + 1}}</text>
+          <input 
+            type="number" 
+            value="{{item.value}}" 
+            data-index="{{index}}"
+            data-field="value"
+            bindinput="onKnapsackItemChange"
+          />
+          <input 
+            type="number" 
+            value="{{item.weight}}" 
+            data-index="{{index}}"
+            data-field="weight"
+            bindinput="onKnapsackItemChange"
+          />
+        </view>
+        <view class="items-actions">
+          <button bindtap="addKnapsackItem">添加物品</button>
+          <button bindtap="removeKnapsackItem" disabled="{{knapsackItems.length <= 1}}">删除物品</button>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 最长公共子序列输入 -->
+    <block wx:elif="{{dpType === 'lcs'}}">
+      <view class="input-group">
+        <view class="input-label">第一个字符串：</view>
+        <input 
+          class="input-field" 
+          type="text" 
+          value="{{lcsStr1}}" 
+          bindinput="onLcsStr1Change"
+        />
+      </view>
+      <view class="input-group">
+        <view class="input-label">第二个字符串：</view>
+        <input 
+          class="input-field" 
+          type="text" 
+          value="{{lcsStr2}}" 
+          bindinput="onLcsStr2Change"
+        />
+      </view>
+    </block>
+  </view>
+  
+  <!-- 控制按钮 -->
+  <view class="control-buttons">
+    <button 
+      class="start-button" 
+      bindtap="startVisualization"
+      disabled="{{isVisualizing}}"
+    >
+      开始可视化
+    </button>
+    <button 
+      class="step-button" 
+      bindtap="nextStep"
+      disabled="{{!isVisualizing || isCompleted || isAutoPlaying}}"
+    >
+      下一步
+    </button>
+    <button 
+      class="auto-button {{isAutoPlaying ? 'active' : ''}}"
+      bindtap="toggleAutoPlay"
+      disabled="{{!isVisualizing || isCompleted}}"
+    >
+      {{isAutoPlaying ? '暂停' : '自动播放'}}
+    </button>
+    <button 
+      class="reset-button"
+      bindtap="resetVisualization"
+      disabled="{{!isVisualizing}}"
+    >
+      重置
+    </button>
+  </view>
+  
+  <!-- 可视化区域 -->
+  <view class="visualization-area">
+    <!-- 当前步骤说明 -->
+    <view class="step-description">
+      {{currentStepDescription || '请选择算法并输入参数，然后点击"开始可视化"'}}
+    </view>
+    
+    <!-- 斐波那契可视化 -->
+    <block wx:if="{{dpType === 'fibonacci' && isVisualizing}}">
+      <view class="fibonacci-visualization">
+        <view class="fibonacci-tree">
+          <view 
+            class="fibonacci-node {{item.status}}" 
+            wx:for="{{fibonacciNodes}}" 
+            wx:key="id"
+            style="left: {{item.x}}rpx; top: {{item.y}}rpx;"
+          >
+            <view class="node-content">
+              <text class="node-value">{{item.value}}</text>
+              <text class="node-param">F({{item.n}})</text>
+            </view>
+          </view>
+          <!-- 画连线的Canvas -->
+          <canvas type="2d" id="fibonacci-canvas" class="fibonacci-canvas"></canvas>
+        </view>
+        
+        <!-- 当前计算表格 -->
+        <view class="fibonacci-memo">
+          <view class="memo-title">记忆化表格：</view>
+          <view class="memo-table">
+            <view class="memo-row" wx:for="{{fibonacciMemo}}" wx:key="index">
+              <view class="memo-cell">F({{index}})</view>
+              <view class="memo-cell {{item.status}}">{{item.value !== undefined ? item.value : '-'}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 背包问题可视化 -->
+    <block wx:elif="{{dpType === 'knapsack' && isVisualizing}}">
+      <view class="knapsack-visualization">
+        <!-- 背包问题动态规划表格 -->
+        <view class="dp-table-container">
+          <view class="dp-table-title">动态规划表格：</view>
+          <view class="dp-table">
+            <view class="dp-table-header">
+              <view class="dp-cell"></view>
+              <view class="dp-cell" wx:for="{{knapsackDpTable[0]}}" wx:key="index">
+                {{index}}
+              </view>
+            </view>
+            <view class="dp-table-row" wx:for="{{knapsackDpTable}}" wx:for-item="row" wx:for-index="rowIndex" wx:key="rowIndex">
+              <view class="dp-cell dp-row-header">{{rowIndex}}</view>
+              <view class="dp-cell {{cell.status}}" wx:for="{{row}}" wx:for-item="cell" wx:key="index">
+                {{cell.value !== undefined ? cell.value : '-'}}
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 当前物品和选择情况 -->
+        <view class="knapsack-current-state">
+          <view class="current-item" wx:if="{{currentKnapsackItem}}">
+            <view class="current-item-title">当前考虑物品：</view>
+            <view class="current-item-details">
+              <text>物品 {{currentKnapsackItem.index + 1}}</text>
+              <text>价值：{{currentKnapsackItem.value}}</text>
+              <text>重量：{{currentKnapsackItem.weight}}</text>
+            </view>
+          </view>
+          
+          <view class="selected-items">
+            <view class="selected-items-title">最优选择物品：</view>
+            <view class="no-items" wx:if="{{selectedKnapsackItems.length === 0}}">
+              尚未完成计算
+            </view>
+            <view class="selected-item" wx:for="{{selectedKnapsackItems}}" wx:key="index">
+              <text>物品 {{item.index + 1}}</text>
+              <text>价值：{{item.value}}</text>
+              <text>重量：{{item.weight}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 最长公共子序列可视化 -->
+    <block wx:elif="{{dpType === 'lcs' && isVisualizing}}">
+      <view class="lcs-visualization">
+        <!-- LCS动态规划表格 -->
+        <view class="dp-table-container">
+          <view class="dp-table-title">动态规划表格：</view>
+          <view class="dp-table">
+            <view class="dp-table-header">
+              <view class="dp-cell"></view>
+              <view class="dp-cell"></view>
+              <view class="dp-cell lcs-char" wx:for="{{lcsStr2}}" wx:key="index">
+                {{item}}
+              </view>
+            </view>
+            <view class="dp-table-row" wx:for="{{lcsDpTable}}" wx:for-item="row" wx:for-index="rowIndex" wx:key="rowIndex">
+              <view class="dp-cell dp-row-header">{{rowIndex}}</view>
+              <view class="dp-cell lcs-char" wx:if="{{rowIndex > 0}}">
+                {{lcsStr1[rowIndex-1]}}
+              </view>
+              <view class="dp-cell" wx:else></view>
+              <view class="dp-cell {{cell.status}}" wx:for="{{row}}" wx:for-item="cell" wx:key="index">
+                {{cell.value !== undefined ? cell.value : '-'}}
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 最长公共子序列结果 -->
+        <view class="lcs-result">
+          <view class="lcs-result-title">最长公共子序列：</view>
+          <view class="lcs-result-value">
+            <text wx:if="{{lcsResult}}">{{lcsResult}}</text>
+            <text wx:else>尚未完成计算</text>
+          </view>
+          <view class="lcs-highlight">
+            <view class="str-display">
+              <text>字符串1：</text>
+              <text 
+                wx:for="{{lcsStr1}}" 
+                wx:key="index" 
+                class="{{lcsHighlight1[index] ? 'highlight' : ''}}"
+              >{{item}}</text>
+            </view>
+            <view class="str-display">
+              <text>字符串2：</text>
+              <text 
+                wx:for="{{lcsStr2}}" 
+                wx:key="index" 
+                class="{{lcsHighlight2[index] ? 'highlight' : ''}}"
+              >{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 结果区域 -->
+  <view class="result-area" wx:if="{{isCompleted}}">
+    <view class="result-title">计算结果：</view>
+    <view class="result-content">
+      <block wx:if="{{dpType === 'fibonacci'}}">
+        <text>第 {{fibN}} 个斐波那契数为: {{fibResult}}</text>
+      </block>
+      <block wx:elif="{{dpType === 'knapsack'}}">
+        <text>最大价值: {{knapsackResult}}</text>
+      </block>
+      <block wx:elif="{{dpType === 'lcs'}}">
+        <text>最长公共子序列长度: {{lcsResult.length}}</text>
+        <text>最长公共子序列: {{lcsResult}}</text>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 算法信息区域 -->
+  <view class="algorithm-info">
+    <view class="info-title">算法信息：</view>
+    <view class="info-content">
+      <block wx:if="{{dpType === 'fibonacci'}}">
+        <view class="info-item">
+          <text class="info-label">时间复杂度：</text>
+          <text class="info-value">O(n)</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">空间复杂度：</text>
+          <text class="info-value">O(n)</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">动态规划思想：</text>
+          <text class="info-value">利用已计算的子问题结果，避免重复计算。斐波那契数列F(n) = F(n-1) + F(n-2)</text>
+        </view>
+      </block>
+      <block wx:elif="{{dpType === 'knapsack'}}">
+        <view class="info-item">
+          <text class="info-label">时间复杂度：</text>
+          <text class="info-value">O(n×W)，n为物品数量，W为背包容量</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">空间复杂度：</text>
+          <text class="info-value">O(n×W)</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">动态规划思想：</text>
+          <text class="info-value">对于每个物品，决定放入或不放入背包，取两种选择中价值较大者</text>
+        </view>
+      </block>
+      <block wx:elif="{{dpType === 'lcs'}}">
+        <view class="info-item">
+          <text class="info-label">时间复杂度：</text>
+          <text class="info-value">O(m×n)，m和n为两个字符串的长度</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">空间复杂度：</text>
+          <text class="info-value">O(m×n)</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">动态规划思想：</text>
+          <text class="info-value">比较两个字符串的每个字符，依次构建最长公共子序列</text>
+        </view>
+      </block>
+    </view>
+  </view>
+</view> 

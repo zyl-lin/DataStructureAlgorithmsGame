@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "动态规划算法",
+  "usingComponents": {
+    "dp-game": "/src/components/dp-game/dp-game"
+  }
+} 

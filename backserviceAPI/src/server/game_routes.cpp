@@ -3,7 +3,7 @@
 
 using json = nlohmann::json;
 
-void registerGameRoutes(crow::App& app, Database& db) {
+void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     // 获取所有游戏
     CROW_ROUTE(app, "/api/games").methods(crow::HTTPMethod::GET)
     ([&db](const crow::request& req) {

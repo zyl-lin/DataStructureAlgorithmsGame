@@ -1,0 +1,524 @@
+.dp-game-container {
+  padding: 20rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 算法选择区域样式 */
+.algorithm-selector {
+  margin-bottom: 30rpx;
+}
+
+.selector-label {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.selector-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.algorithm-option {
+  padding: 16rpx 30rpx;
+  background-color: #eaeaea;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.algorithm-option.active {
+  background-color: #1aad19;
+  color: white;
+  font-weight: bold;
+}
+
+/* 输入区域样式 */
+.input-area {
+  background-color: white;
+  padding: 24rpx;
+  border-radius: 8rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+  margin-bottom: 20rpx;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.input-field {
+  border: 2rpx solid #ddd;
+  padding: 12rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 背包物品输入样式 */
+.knapsack-items {
+  margin-top: 20rpx;
+}
+
+.items-header {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 10rpx;
+  padding: 12rpx 0;
+  font-weight: bold;
+  font-size: 28rpx;
+  border-bottom: 2rpx solid #eee;
+  color: #555;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 10rpx;
+  padding: 12rpx 0;
+  align-items: center;
+  border-bottom: 1rpx solid #eee;
+}
+
+.item-row input {
+  border: 1rpx solid #ddd;
+  padding: 8rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 28rpx;
+}
+
+.items-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.items-actions button {
+  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  margin: 0;
+  width: 48%;
+}
+
+/* 控制按钮样式 */
+.control-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.control-buttons button {
+  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-radius: 8rpx;
+  width: 24%;
+  margin: 0;
+  text-align: center;
+}
+
+.start-button {
+  background-color: #1aad19;
+  color: white;
+}
+
+.step-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.auto-button {
+  background-color: #f39c12;
+  color: white;
+}
+
+.auto-button.active {
+  background-color: #e67e22;
+}
+
+.reset-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+button[disabled] {
+  background-color: #cccccc !important;
+  color: #999999 !important;
+}
+
+/* 可视化区域样式 */
+.visualization-area {
+  background-color: white;
+  padding: 24rpx;
+  border-radius: 8rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.step-description {
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  color: #555;
+  margin-bottom: 20rpx;
+  min-height: 80rpx;
+}
+
+/* 斐波那契可视化样式 */
+.fibonacci-visualization {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.fibonacci-tree {
+  position: relative;
+  width: 100%;
+  height: 500rpx;
+  margin-bottom: 30rpx;
+}
+
+.fibonacci-canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.fibonacci-node {
+  position: absolute;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #3498db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 26rpx;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.fibonacci-node .node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.node-value {
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.node-param {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.fibonacci-node.current {
+  background-color: #e74c3c;
+  transform: scale(1.1);
+  box-shadow: 0 0 20rpx rgba(231, 76, 60, 0.5);
+}
+
+.fibonacci-node.calculated {
+  background-color: #2ecc71;
+}
+
+.fibonacci-node.waiting {
+  background-color: #f39c12;
+}
+
+.fibonacci-memo {
+  width: 100%;
+  max-width: 400rpx;
+}
+
+.memo-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #555;
+}
+
+.memo-table {
+  border: 2rpx solid #ddd;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.memo-row {
+  display: flex;
+  border-bottom: 1rpx solid #eee;
+}
+
+.memo-row:last-child {
+  border-bottom: none;
+}
+
+.memo-cell {
+  flex: 1;
+  padding: 10rpx;
+  text-align: center;
+  font-size: 26rpx;
+}
+
+.memo-cell:first-child {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  border-right: 1rpx solid #eee;
+}
+
+.memo-cell.current {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.memo-cell.calculated {
+  background-color: #2ecc71;
+  color: white;
+}
+
+/* 背包问题可视化样式 */
+.knapsack-visualization {
+  display: flex;
+  flex-direction: column;
+}
+
+.dp-table-container {
+  margin-bottom: 30rpx;
+  overflow-x: auto;
+}
+
+.dp-table-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #555;
+}
+
+.dp-table {
+  border: 2rpx solid #ddd;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.dp-table-header {
+  display: flex;
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.dp-table-row {
+  display: flex;
+}
+
+.dp-cell {
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1rpx solid #eee;
+  border-bottom: 1rpx solid #eee;
+  font-size: 26rpx;
+  overflow: hidden;
+}
+
+.dp-row-header {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.dp-cell.current {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.dp-cell.considered {
+  background-color: #f39c12;
+  color: white;
+}
+
+.dp-cell.calculated {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.knapsack-current-state {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.current-item, .selected-items {
+  background-color: #f8f9fa;
+  border-radius: 6rpx;
+  padding: 16rpx;
+}
+
+.current-item-title, .selected-items-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #555;
+}
+
+.current-item-details, .selected-item {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  font-size: 26rpx;
+  color: #666;
+  padding: 10rpx;
+  background-color: white;
+  border-radius: 4rpx;
+  margin-bottom: 10rpx;
+}
+
+.no-items {
+  font-size: 26rpx;
+  color: #999;
+  font-style: italic;
+}
+
+/* 最长公共子序列可视化样式 */
+.lcs-visualization {
+  display: flex;
+  flex-direction: column;
+}
+
+.lcs-char {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.lcs-result {
+  margin-top: 30rpx;
+}
+
+.lcs-result-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #555;
+}
+
+.lcs-result-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1aad19;
+  margin-bottom: 20rpx;
+  background-color: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 6rpx;
+  text-align: center;
+  font-family: monospace;
+}
+
+.lcs-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.str-display {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 28rpx;
+  color: #555;
+  background-color: #f8f9fa;
+  padding: 16rpx;
+  border-radius: 6rpx;
+}
+
+.str-display text.highlight {
+  color: #e74c3c;
+  font-weight: bold;
+  background-color: #ffeaa7;
+  padding: 2rpx 6rpx;
+  border-radius: 4rpx;
+}
+
+/* 结果区域样式 */
+.result-area {
+  background-color: #e8f5e9;
+  padding: 24rpx;
+  border-radius: 8rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #1b5e20;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  font-size: 30rpx;
+  color: #2e7d32;
+}
+
+/* 算法信息区域样式 */
+.algorithm-info {
+  background-color: #f5f5f5;
+  padding: 24rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.info-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.info-label {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #555;
+}
+
+.info-value {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+} 

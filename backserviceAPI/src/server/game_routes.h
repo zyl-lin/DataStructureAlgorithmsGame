@@ -3,4 +3,4 @@
 #include "crow.h"
 #include "database.h"
 
-void registerGameRoutes(crow::App& app, Database& db); 
+void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db); 

@@ -1,0 +1,171 @@
+.dp-game-page {
+  padding: 30rpx;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* 页面头部样式 */
+.header {
+  margin-bottom: 40rpx;
+}
+
+.title {
+  font-size: 42rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.description {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+/* 关卡选择区域样式 */
+.level-selector {
+  margin-bottom: 40rpx;
+}
+
+.level-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.levels {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.level-item {
+  flex: 1;
+  background-color: #eee;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 5rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.level-item.active {
+  background-color: #1aad19;
+  color: white;
+  transform: translateY(-5rpx);
+  box-shadow: 0 5rpx 15rpx rgba(26, 173, 25, 0.3);
+}
+
+.level-number {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.level-name {
+  font-size: 26rpx;
+}
+
+/* 算法说明区域样式 */
+.algorithm-intro {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.intro-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  border-bottom: 2rpx solid #eee;
+  padding-bottom: 15rpx;
+}
+
+.intro-content {
+  font-size: 28rpx;
+  color: #555;
+}
+
+.intro-item {
+  margin-bottom: 20rpx;
+}
+
+.item-title {
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #444;
+}
+
+.item-content {
+  line-height: 1.6;
+}
+
+/* 当前关卡说明样式 */
+.current-level-intro {
+  background-color: #ecf8ee;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.level-intro-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1b5e20;
+  margin-bottom: 20rpx;
+}
+
+.level-intro-content {
+  font-size: 28rpx;
+  color: #2e7d32;
+  line-height: 1.6;
+}
+
+.formula {
+  font-family: monospace;
+  font-size: 30rpx;
+  padding: 20rpx;
+  margin: 10rpx 0;
+  background-color: #e8f5e9;
+  border-radius: 8rpx;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 动态规划游戏组件样式 */
+.dp-game {
+  margin-bottom: 40rpx;
+}
+
+/* 底部导航样式 */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40rpx;
+  padding-top: 30rpx;
+  border-top: 2rpx solid #eee;
+}
+
+.nav-btn {
+  background-color: #1aad19;
+  color: white;
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(26, 173, 25, 0.3);
+  transition: all 0.3s ease;
+}
+
+.nav-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 1rpx 3rpx rgba(26, 173, 25, 0.3);
+} 

@@ -3,4 +3,4 @@
 #include "crow.h"
 #include "database.h"
 
-void registerUserRoutes(crow::App& app, Database& db); 
+void registerUserRoutes(crow::App<crow::CORSHandler>& app, Database& db); 

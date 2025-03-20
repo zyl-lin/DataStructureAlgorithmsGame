@@ -4,7 +4,7 @@
 
 using json = nlohmann::json;
 
-void registerUserRoutes(crow::App& app, Database& db) {
+void registerUserRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     // 用户注册
     CROW_ROUTE(app, "/api/user/register").methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
@@ -42,13 +42,30 @@ void registerUserRoutes(crow::App& app, Database& db) {
         std::string password = body["password"];
         
         // 验证用户凭据
-        if (db.authenticateUser(username, password)) {
-            json result;
-            json profile = db.getUserProfile(1); // 传入合适的userId
-            // 继续处理...
+        bool authenticated = db.authenticateUser(username, password);
+        if (!authenticated) {
+            return crow::response(401, "{\"error\":\"用户名或密码错误\"}");
         }
         
-        return crow::response(401, "{\"error\":\"用户名或密码错误\"}");
+        // 获取用户ID
+        json user = db.executeSelect("SELECT id FROM users WHERE username = '" + username + "'");
+        if (user.empty()) {
+            return crow::response(500, "{\"error\":\"系统错误\"}");
+        }
+        
+        int userId = user[0]["id"];
+        
+        // 生成JWT令牌
+        std::string token = generateJWT(userId, username);
+        
+        // 返回带令牌的响应
+        json response = {
+            {"token", token},
+            {"user_id", userId},
+            {"username", username}
+        };
+        
+        return crow::response(200, response.dump());
     });
     
     // 获取用户信息

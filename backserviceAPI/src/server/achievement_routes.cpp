@@ -3,7 +3,7 @@
 
 using json = nlohmann::json;
 
-void registerAchievementRoutes(crow::App& app, Database& db) {
+void registerAchievementRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     // 获取所有成就
     CROW_ROUTE(app, "/api/achievements").methods(crow::HTTPMethod::GET)
     ([&db](const crow::request& req) {

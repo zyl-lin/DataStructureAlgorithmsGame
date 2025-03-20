@@ -1,0 +1,100 @@
+<view class="dp-game-page">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="title">动态规划算法可视化</view>
+    <view class="description">
+      动态规划是一种算法设计范式，通过将复杂问题分解为简单子问题，并存储子问题的解来避免重复计算
+    </view>
+  </view>
+  
+  <!-- 关卡选择区域 -->
+  <view class="level-selector">
+    <view class="level-title">选择关卡：</view>
+    <view class="levels">
+      <view 
+        class="level-item {{currentLevel === 1 ? 'active' : ''}}" 
+        bindtap="selectLevel" 
+        data-level="1"
+      >
+        <view class="level-number">1</view>
+        <view class="level-name">斐波那契数列</view>
+      </view>
+      <view 
+        class="level-item {{currentLevel === 2 ? 'active' : ''}}" 
+        bindtap="selectLevel" 
+        data-level="2"
+      >
+        <view class="level-number">2</view>
+        <view class="level-name">背包问题</view>
+      </view>
+      <view 
+        class="level-item {{currentLevel === 3 ? 'active' : ''}}" 
+        bindtap="selectLevel" 
+        data-level="3"
+      >
+        <view class="level-number">3</view>
+        <view class="level-name">最长公共子序列</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 算法说明区域 -->
+  <view class="algorithm-intro">
+    <view class="intro-title">动态规划基本概念</view>
+    <view class="intro-content">
+      <view class="intro-item">
+        <view class="item-title">定义:</view>
+        <view class="item-content">动态规划是一种将问题分解为子问题，并利用子问题的解决方案来解决原问题的方法。</view>
+      </view>
+      <view class="intro-item">
+        <view class="item-title">适用情况:</view>
+        <view class="item-content">
+          <view>1. 问题可以分解为相互独立的重叠子问题</view>
+          <view>2. 子问题的解可以存储和重用</view>
+          <view>3. 问题具有最优子结构性质</view>
+        </view>
+      </view>
+      <view class="intro-item">
+        <view class="item-title">核心思想:</view>
+        <view class="item-content">使用"记忆化"避免重复计算子问题，通常使用表格（DP表）记录子问题的解。</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 当前关卡说明 -->
+  <view class="current-level-intro">
+    <view class="level-intro-title">
+      关卡 {{currentLevel}} - {{levelNames[currentLevel-1]}}
+    </view>
+    <view class="level-intro-content">
+      <block wx:if="{{currentLevel === 1}}">
+        <view>斐波那契数列是一个简单但经典的动态规划例子，定义为：</view>
+        <view class="formula">F(n) = F(n-1) + F(n-2), 其中 F(0) = 0, F(1) = 1</view>
+        <view>使用动态规划可以避免递归计算中的重复工作，大大提高效率。</view>
+      </block>
+      
+      <block wx:elif="{{currentLevel === 2}}">
+        <view>背包问题：给定一组物品，每种物品都有自己的重量和价值，在限定的总重量内，如何选择才能使物品总价值最大。</view>
+        <view>动态规划通过构建一个表格，记录不同容量和不同物品组合下的最优解。</view>
+      </block>
+      
+      <block wx:elif="{{currentLevel === 3}}">
+        <view>最长公共子序列(LCS)：找出两个字符串中最长的公共子序列(不一定连续)。</view>
+        <view>例如：字符串"ABCD"和"ACBD"的最长公共子序列为"ABD"，长度为3。</view>
+        <view>通过构建二维表格，比较字符串中的每个字符并记录结果。</view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 动态规划游戏组件 -->
+  <dp-game 
+    level="{{currentLevel}}"
+    class="dp-game"
+  ></dp-game>
+  
+  <!-- 页面底部导航 -->
+  <view class="bottom-nav">
+    <navigator url="/src/pages/index/index" open-type="navigate" class="nav-btn">返回首页</navigator>
+    <navigator url="/src/pages/learning/learning" open-type="navigate" class="nav-btn">学习中心</navigator>
+  </view>
+</view> 
