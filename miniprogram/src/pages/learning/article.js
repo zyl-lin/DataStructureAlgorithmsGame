@@ -161,7 +161,7 @@ Page({
   navigateToArticle: function (e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/learning/article?id=${id}`
+      url: `/src/pages/learning/article?id=${id}`
     });
   },
   
