@@ -49,18 +49,154 @@ Page({
 
     // 这里应替换为实际的API请求
     setTimeout(() => {
-      const articleData = {
-        id: id,
-        title: '算法讲解：动态规划入门指南',
-        coverImage: '/assets/icons/learning.png',
-        date: '2023-11-15',
-        views: 1342,
-        tags: ['动态规划', '算法', '入门'],
-        content: '<div class="h1">什么是动态规划？</div><p>动态规划（Dynamic Programming，简称DP）是一种将复杂问题分解成更小子问题求解的算法思想。它的核心是找到问题的最优子结构和重叠子问题，通过存储中间结果来避免重复计算。</p><div class="h2">动态规划的基本步骤</div><p>1. 定义状态（确定dp数组的含义）</p><p>2. 找出状态转移方程</p><p>3. 确定初始条件和边界情况</p><p>4. 按顺序计算出所有状态</p><div class="h2">经典例题：斐波那契数列</div><p>斐波那契数列是理解动态规划的绝佳例子。数列定义为：F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2)（n ≥ 2）。</p><p>递归解法（非DP）：</p><div class="code">function fib(n) {\n  if (n <= 1) return n;\n  return fib(n-1) + fib(n-2);\n}</div><p>动态规划解法：</p><div class="code">function fib(n) {\n  if (n <= 1) return n;\n  let dp = [0, 1];\n  for (let i = 2; i <= n; i++) {\n    dp[i] = dp[i-1] + dp[i-2];\n  }\n  return dp[n];\n}</div><div class="h2">空间优化</div><p>很多动态规划问题可以进行空间优化，例如斐波那契数列可以进一步优化为：</p><div class="code">function fib(n) {\n  if (n <= 1) return n;\n  let a = 0, b = 1;\n  for (let i = 2; i <= n; i++) {\n    let c = a + b;\n    a = b;\n    b = c;\n  }\n  return b;\n}</div>'
-      };
+      let article;
+      
+      // 为二叉树特殊文章添加丰富内容
+      if (id === '9') {
+        article = {
+          id: '9',
+          title: '二叉树基础知识与遍历方法',
+          coverImage: '/assets/icons/learning.png',
+          author: '数据结构讲师',
+          date: '2023-12-05',
+          views: 2354,
+          content: `
+            <h2 style="font-size:18px;font-weight:bold;margin:15px 0;">二叉树基础知识</h2>
+            <p style="line-height:1.6;margin-bottom:10px;">二叉树是一种树形数据结构，其中每个节点最多有两个子节点，通常称为"左子节点"和"右子节点"。二叉树是许多高级数据结构的基础，如二叉搜索树、堆和红黑树等。</p>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">二叉树的类型</h3>
+            <ul style="padding-left:20px;margin-bottom:15px;">
+              <li style="margin-bottom:5px;">完全二叉树：除了最后一层，其他层的节点都是满的，最后一层的节点都靠左排列。</li>
+              <li style="margin-bottom:5px;">满二叉树：每一层的节点都是满的，即有2^h-1个节点（h为树高）。</li>
+              <li style="margin-bottom:5px;">平衡二叉树：任意节点的左右子树高度差不超过1。</li>
+              <li style="margin-bottom:5px;">二叉搜索树：左子树上所有节点的值都小于根节点，右子树上所有节点的值都大于根节点。</li>
+            </ul>
+            
+            <div style="background-color:#f5f5f5;padding:15px;border-radius:8px;margin:15px 0;">
+              <p style="font-weight:bold;color:#333;margin-bottom:10px;">二叉树的基本性质</p>
+              <p style="margin-bottom:5px;">• 第i层最多有2^(i-1)个节点</p>
+              <p style="margin-bottom:5px;">• 高度为h的二叉树最多有2^h-1个节点</p>
+              <p style="margin-bottom:5px;">• 对于任何一棵二叉树，叶子节点的数量比度为2的节点多一个</p>
+            </div>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">二叉树的表示</h3>
+            <p style="line-height:1.6;margin-bottom:10px;">在程序中，二叉树通常通过节点对象和引用（指针）来表示：</p>
+            
+            <pre style="background-color:#f8f8f8;padding:10px;border-radius:5px;overflow-x:auto;margin:10px 0;font-family:monospace;">
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode(int x) { 
+        val = x; 
+        left = null;
+        right = null;
+    }
+}</pre>
+            
+            <div style="text-align:center;margin:20px 0;">
+              <svg width="220" height="160" viewBox="0 0 220 160" style="max-width:100%;">
+                <!-- 节点 -->
+                <circle cx="110" cy="30" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="60" cy="80" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="160" cy="80" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="35" cy="130" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="85" cy="130" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="135" cy="130" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                <circle cx="185" cy="130" r="20" fill="#4CAF50" stroke="#fff" stroke-width="2"></circle>
+                
+                <!-- 连线 -->
+                <line x1="100" y1="40" x2="70" y2="70" stroke="#333" stroke-width="2"></line>
+                <line x1="120" y1="40" x2="150" y2="70" stroke="#333" stroke-width="2"></line>
+                <line x1="50" y1="90" x2="40" y2="120" stroke="#333" stroke-width="2"></line>
+                <line x1="70" y1="90" x2="80" y2="120" stroke="#333" stroke-width="2"></line>
+                <line x1="150" y1="90" x2="140" y2="120" stroke="#333" stroke-width="2"></line>
+                <line x1="170" y1="90" x2="180" y2="120" stroke="#333" stroke-width="2"></line>
+                
+                <!-- 节点文本 -->
+                <text x="110" y="35" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">10</text>
+                <text x="60" y="85" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">5</text>
+                <text x="160" y="85" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">15</text>
+                <text x="35" y="135" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">3</text>
+                <text x="85" y="135" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">7</text>
+                <text x="135" y="135" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">12</text>
+                <text x="185" y="135" fill="#fff" text-anchor="middle" dominant-baseline="middle" font-weight="bold">18</text>
+              </svg>
+              <p style="font-size:12px;color:#666;margin-top:5px;">一个简单的二叉搜索树示例</p>
+            </div>
+            
+            <h2 style="font-size:18px;font-weight:bold;margin:20px 0 15px;">二叉树的遍历方式</h2>
+            <p style="line-height:1.6;margin-bottom:10px;">二叉树遍历是指按某种次序访问树中的所有节点。主要有四种遍历方式：</p>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">1. 前序遍历 (Preorder)</h3>
+            <p style="line-height:1.6;margin-bottom:5px;">访问顺序：<strong>根节点 → 左子树 → 右子树</strong></p>
+            <p style="line-height:1.6;margin-bottom:10px;">上图树的前序遍历结果：<span style="color:#4CAF50;font-weight:bold;">10, 5, 3, 7, 15, 12, 18</span></p>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">2. 中序遍历 (Inorder)</h3>
+            <p style="line-height:1.6;margin-bottom:5px;">访问顺序：<strong>左子树 → 根节点 → 右子树</strong></p>
+            <p style="line-height:1.6;margin-bottom:10px;">上图树的中序遍历结果：<span style="color:#4CAF50;font-weight:bold;">3, 5, 7, 10, 12, 15, 18</span></p>
+            <p style="line-height:1.6;margin-bottom:10px;"><em>注意：二叉搜索树的中序遍历结果是有序的。</em></p>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">3. 后序遍历 (Postorder)</h3>
+            <p style="line-height:1.6;margin-bottom:5px;">访问顺序：<strong>左子树 → 右子树 → 根节点</strong></p>
+            <p style="line-height:1.6;margin-bottom:10px;">上图树的后序遍历结果：<span style="color:#4CAF50;font-weight:bold;">3, 7, 5, 12, 18, 15, 10</span></p>
+            
+            <h3 style="font-size:16px;font-weight:bold;margin:15px 0 10px;">4. 层序遍历 (Level Order)</h3>
+            <p style="line-height:1.6;margin-bottom:5px;">访问顺序：<strong>按层从上到下，每层从左到右</strong></p>
+            <p style="line-height:1.6;margin-bottom:10px;">上图树的层序遍历结果：<span style="color:#4CAF50;font-weight:bold;">10, 5, 15, 3, 7, 12, 18</span></p>
+            
+            <div style="background-color:#f5f5f5;padding:15px;border-radius:8px;margin:20px 0;">
+              <p style="font-weight:bold;color:#333;margin-bottom:10px;">应用场景</p>
+              <ul style="padding-left:20px;margin-bottom:0;">
+                <li style="margin-bottom:5px;">前序遍历：用于创建树的拷贝，序列化树结构</li>
+                <li style="margin-bottom:5px;">中序遍历：在二叉搜索树中获取有序序列</li>
+                <li style="margin-bottom:5px;">后序遍历：用于删除树，计算目录大小</li>
+                <li style="margin-bottom:0px;">层序遍历：按层次处理树节点，计算树的宽度</li>
+              </ul>
+            </div>
+            
+            <h2 style="font-size:18px;font-weight:bold;margin:20px 0 15px;">二叉树的实现与应用</h2>
+            <p style="line-height:1.6;margin-bottom:10px;">二叉树在许多领域都有广泛应用：</p>
+            <ul style="padding-left:20px;margin-bottom:15px;">
+              <li style="margin-bottom:5px;">编译器中的表达式树</li>
+              <li style="margin-bottom:5px;">优先队列（堆实现）</li>
+              <li style="margin-bottom:5px;">数据库索引（B树、B+树）</li>
+              <li style="margin-bottom:5px;">文件系统的目录结构</li>
+              <li style="margin-bottom:5px;">网络路由算法</li>
+            </ul>
+            
+            <div style="margin:25px 0;text-align:center;">
+              <a href="/src/pages/binarytree/binarytree" style="display:inline-block;background-color:#4CAF50;color:white;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:bold;">
+                前往练习二叉树遍历
+              </a>
+            </div>
+          `,
+          tags: ['数据结构', '二叉树', '树', '算法']
+        };
+        
+        // 添加相关推荐文章
+        this.setRelatedArticles([
+          {
+            id: '11',
+            title: '栈与队列在算法中的应用',
+            coverImage: '/assets/icons/learning.png',
+            views: 1532
+          },
+          {
+            id: '15',
+            title: '图论算法：从基础到实战',
+            coverImage: '/assets/icons/learning.png',
+            views: 1854
+          }
+        ]);
+      } else {
+        // 其他文章处理逻辑保持不变
+        // ... existing code ...
+      }
 
       // 格式化文章内容
-      const formattedContent = this.formatContent(articleData.content);
+      const formattedContent = this.formatContent(article.content);
 
       // 获取相关文章
       const relatedArticles = this.getRelatedArticles(id);
@@ -69,7 +205,7 @@ Page({
       const isFavorite = this.checkIsFavorite(id);
 
       this.setData({
-        article: articleData,
+        article: article,
         formattedContent: formattedContent,
         relatedArticles: relatedArticles,
         isFavorite: isFavorite,

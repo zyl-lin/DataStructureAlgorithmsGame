@@ -177,6 +177,16 @@ Page({
     // 模拟文章数据
     const allArticles = [
       {
+        id: '9',
+        title: '二叉树基础知识与遍历方法',
+        description: '详细讲解二叉树的基本概念、类型及四种遍历方式，包括前序、中序、后序和层序遍历的实现与应用。',
+        coverImage: '/assets/icons/learning.png',
+        date: '2023-12-05',
+        views: 2354,
+        category: 'dataStructure',
+        tags: ['数据结构', '二叉树', '树']
+      },
+      {
         id: '10',
         title: '链表基础与常用操作',
         description: '详细讲解链表的基本概念、类型及其在实际编程中的常用操作，包括增删改查及经典应用。',
