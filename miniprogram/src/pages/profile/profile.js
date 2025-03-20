@@ -167,19 +167,19 @@ Page({
 
   navigateToHistory: function() {
     wx.navigateTo({
-      url: '/pages/history/history'
+      url: '/src/pages/history/history'
     })
   },
 
   navigateToFavorites: function() {
     wx.navigateTo({
-      url: '/pages/favorites/favorites'
+      url: '/src/pages/favorites/favorites'
     })
   },
 
   navigateToAchievement: function() {
     wx.navigateTo({
-      url: '/pages/achievement/achievement'
+      url: '/src/pages/achievements/achievements'
     })
   },
 
@@ -199,7 +199,7 @@ Page({
 
   showAbout: function() {
     wx.navigateTo({
-      url: '/pages/about/about'
+      url: '/src/pages/about/about'
     })
   },
 
@@ -239,13 +239,13 @@ Page({
 
   navigateToIndex: function() {
     wx.switchTab({
-      url: '/pages/index/index'
+      url: '/src/pages/index/index'
     })
   },
 
   navigateToLearning: function() {
     wx.switchTab({
-      url: '/pages/learning/learning'
+      url: '/src/pages/learning/learning'
     })
   }
 }) 

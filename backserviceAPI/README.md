@@ -359,3 +359,24 @@
   4. `src/server/game_routes.h`
   5. `src/server/achievement_routes.h`
   6. `CMakeLists.txt`
+
+## 2024-03-27 16:30:00
+
+错误总结
+重复导入 Crow
+
+你通过 FetchContent_Declare(Crow) 已自动下载并集成 Crow 源码。
+
+后续的 find_package(Crow REQUIRED) 会尝试查找系统安装的 Crow 库，导致冲突。
+
+Crow 的 CMake 配置文件 (CrowConfig.cmake) 可能不兼容 FetchContent 的源码集成方式。
+
+ALIAS 目标冲突
+
+find_package(Crow) 会尝试创建 Crow::Crow 别名目标，但该目标可能已被 FetchContent 定义。
+
+错误类型	解决方法
+Crow 重复导入	移除 find_package(Crow) 和模块路径设置
+ALIAS 目标冲突	使用 FetchContent 替代系统查找 Crow
+Boost 链接方式错误	移除 Boost::boost，改用头文件包含
+

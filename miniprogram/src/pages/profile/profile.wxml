@@ -3,7 +3,7 @@
   <view class="header">
     <view class="user-info">
       <view class="avatar-container">
-        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" mode="aspectFill"></image>
+        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/profile.png'}}" mode="aspectFill"></image>
         <view class="avatar-button" bindtap="getUserProfile" wx:if="{{!userInfo.avatarUrl}}">
           <text>点击登录</text>
         </view>
@@ -53,17 +53,17 @@
       <view class="menu-item" bindtap="navigateToAchievement">
         <image src="/assets/icons/achievement.png" class="menu-icon"></image>
         <view class="menu-text">我的成就</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
       <view class="menu-item" bindtap="navigateToFavorites">
-        <image src="/assets/icons/favorite-menu.png" class="menu-icon"></image>
+        <image src="/assets/icons/favorite.png" class="menu-icon"></image>
         <view class="menu-text">我的收藏</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
       <view class="menu-item" bindtap="navigateToHistory">
-        <image src="/assets/icons/history.png" class="menu-icon"></image>
+        <image src="/assets/icons/learning.png" class="menu-icon"></image>
         <view class="menu-text">学习记录</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
     </view>
   </view>
@@ -71,19 +71,19 @@
   <view class="section">
     <view class="menu-list">
       <view class="menu-item" bindtap="showFeedback">
-        <image src="/assets/icons/feedback.png" class="menu-icon"></image>
+        <image src="/assets/icons/profile.png" class="menu-icon"></image>
         <view class="menu-text">意见反馈</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
       <view class="menu-item" bindtap="showAbout">
-        <image src="/assets/icons/about.png" class="menu-icon"></image>
+        <image src="/assets/icons/profile.png" class="menu-icon"></image>
         <view class="menu-text">关于我们</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
       <view class="menu-item" bindtap="clearStorage" wx:if="{{isLoggedIn}}">
-        <image src="/assets/icons/clear-data.png" class="menu-icon"></image>
+        <image src="/assets/icons/profile.png" class="menu-icon"></image>
         <view class="menu-text">清除缓存</view>
-        <image src="/assets/icons/arrow-right.png" class="arrow-icon"></image>
+        <image src="/assets/icons/game.png" class="arrow-icon"></image>
       </view>
     </view>
   </view>
