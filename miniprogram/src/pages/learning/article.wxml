@@ -1,42 +1,61 @@
-<!-- 文章详情页 -->
+<!-- 文章详情页面 -->
 <view class="article-page">
+  <!-- 文章头部 -->
   <view class="article-header">
-    <image class="article-cover" src="{{article.coverImage}}" mode="aspectFill"></image>
-    <view class="article-info">
+    <image class="cover-image" src="{{article.coverImage}}" mode="aspectFill"></image>
+    <view class="header-content">
       <view class="article-title">{{article.title}}</view>
       <view class="article-meta">
-        <view class="article-category">{{article.category}}</view>
-        <view class="article-date">{{article.date}}</view>
+        <view class="meta-item">
+          <image class="meta-icon" src="/assets/icons/calendar.png" mode="aspectFit"></image>
+          <text>{{article.date}}</text>
+        </view>
+        <view class="meta-item">
+          <image class="meta-icon" src="/assets/icons/eye.png" mode="aspectFit"></image>
+          <text>{{article.views}} 阅读</text>
+        </view>
+      </view>
+      <view class="article-tags">
+        <view class="tag" wx:for="{{article.tags}}" wx:key="*this">{{item}}</view>
       </view>
     </view>
   </view>
-  
+
+  <!-- 文章内容 -->
   <view class="article-content">
     <rich-text nodes="{{formattedContent}}"></rich-text>
   </view>
-  
-  <view class="related-articles" wx:if="{{relatedArticles.length > 0}}">
-    <view class="section-title">相关文章</view>
+
+  <!-- 相关文章推荐 -->
+  <view class="related-section" wx:if="{{relatedArticles.length > 0}}">
+    <view class="section-title">相关推荐</view>
     <view class="related-list">
       <view class="related-item" wx:for="{{relatedArticles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
         <image class="related-image" src="{{item.coverImage}}" mode="aspectFill"></image>
-        <view class="related-title">{{item.title}}</view>
+        <view class="related-content">
+          <view class="related-title">{{item.title}}</view>
+          <view class="related-meta">
+            <view class="related-tag" wx:if="{{item.tags.length > 0}}">{{item.tags[0]}}</view>
+            <view class="related-views">{{item.views}} 阅读</view>
+          </view>
+        </view>
       </view>
     </view>
   </view>
-  
-  <view class="article-actions">
-    <button class="action-btn" open-type="share">
-      <image src="/assets/icons/share.png" class="action-icon"></image>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar">
+    <view class="action-btn" bindtap="toggleFavorite">
+      <image class="action-icon" src="{{isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" mode="aspectFit"></image>
+      <text>收藏</text>
+    </view>
+    <view class="action-btn" bindtap="shareArticle">
+      <image class="action-icon" src="/assets/icons/share.png" mode="aspectFit"></image>
       <text>分享</text>
-    </button>
-    <button class="action-btn" bindtap="toggleFavorite">
-      <image src="{{isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" class="action-icon"></image>
-      <text>{{isFavorite ? '已收藏' : '收藏'}}</text>
-    </button>
-    <button class="action-btn" bindtap="navigateBack">
-      <image src="/assets/icons/back.png" class="action-icon"></image>
-      <text>返回</text>
+    </view>
+    <button class="action-btn share-btn" open-type="share">
+      <image class="action-icon" src="/assets/icons/wechat.png" mode="aspectFit"></image>
+      <text>微信</text>
     </button>
   </view>
 </view> 

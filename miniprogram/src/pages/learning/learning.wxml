@@ -1,52 +1,96 @@
 <!-- 学习页面 -->
 <view class="learning-page">
-  <view class="header">
-    <view class="title">算法学习</view>
-    <view class="subtitle">掌握核心数据结构与算法概念</view>
+  <!-- 顶部搜索栏 -->
+  <view class="search-container">
+    <view class="search-box">
+      <icon type="search" size="16" color="#999"></icon>
+      <input type="text" placeholder="搜索算法与数据结构" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch"></input>
+    </view>
   </view>
-  
-  <view class="search-box">
-    <view class="search-input">
-      <image src="/assets/icons/search.png" class="search-icon"></image>
-      <input type="text" placeholder="搜索算法知识" bindinput="onSearchInput" value="{{searchKeyword}}"/>
-      <view class="clear-btn" wx:if="{{searchKeyword}}" bindtap="clearSearch">
-        <image src="/assets/icons/clear.png" class="clear-icon"></image>
+
+  <!-- 分类标签栏 -->
+  <scroll-view scroll-x="true" class="category-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="category-container">
+      <view class="category-item {{currentCategory === 'all' ? 'active' : ''}}" bindtap="changeCategory" data-category="all">
+        全部
+      </view>
+      <view wx:for="{{categories}}" wx:key="id" class="category-item {{currentCategory === item.id ? 'active' : ''}}" bindtap="changeCategory" data-category="{{item.id}}">
+        {{item.name}}
       </view>
     </view>
-  </view>
-  
-  <view class="category-tabs">
-    <view class="tab {{currentCategory === 'all' ? 'active' : ''}}" data-category="all" bindtap="selectCategory">
-      全部
-    </view>
-    <view class="tab {{currentCategory === 'dataStructure' ? 'active' : ''}}" data-category="dataStructure" bindtap="selectCategory">
-      数据结构
-    </view>
-    <view class="tab {{currentCategory === 'algorithm' ? 'active' : ''}}" data-category="algorithm" bindtap="selectCategory">
-      算法
-    </view>
-  </view>
-  
-  <view class="article-list">
-    <block wx:for="{{filteredArticles}}" wx:key="id">
-      <view class="article-card" bindtap="navigateToArticle" data-id="{{item.id}}">
-        <view class="article-image">
+  </scroll-view>
+
+  <!-- 内容区域 -->
+  <scroll-view scroll-y="true" class="content-scroll" bindscrolltolower="loadMoreArticles" refresher-enabled refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onRefresh">
+    <!-- 顶部轮播图 -->
+    <swiper class="banner-swiper" indicator-dots autoplay circular>
+      <swiper-item wx:for="{{featuredArticles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
+        <view class="banner-item">
           <image src="{{item.coverImage}}" mode="aspectFill"></image>
+          <view class="banner-title">{{item.title}}</view>
         </view>
-        <view class="article-info">
-          <view class="article-title">{{item.title}}</view>
-          <view class="article-description">{{item.description}}</view>
-          <view class="article-meta">
-            <view class="article-tag">{{item.category}}</view>
-            <view class="article-date">{{item.date}}</view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 推荐文章 -->
+    <view class="section-container" wx:if="{{recommendedArticles.length > 0}}">
+      <view class="section-header">
+        <view class="section-title">精选推荐</view>
+        <view class="view-more" bindtap="viewMore" data-type="recommended">查看更多</view>
+      </view>
+      <view class="article-list">
+        <view class="article-card recommended" wx:for="{{recommendedArticles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
+          <image class="article-image" src="{{item.coverImage}}" mode="aspectFill"></image>
+          <view class="article-info">
+            <view class="article-title">{{item.title}}</view>
+            <view class="article-desc">{{item.description}}</view>
+            <view class="article-meta">
+              <view class="meta-tags">
+                <view wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="tag">{{tag}}</view>
+              </view>
+              <view class="meta-views">{{item.views}} 阅读</view>
+            </view>
           </view>
         </view>
       </view>
-    </block>
-    
-    <view class="empty-result" wx:if="{{filteredArticles.length === 0}}">
-      <image src="/assets/icons/empty.png" class="empty-icon"></image>
-      <view class="empty-text">没有找到相关文章</view>
     </view>
+
+    <!-- 最新文章 -->
+    <view class="section-container">
+      <view class="section-header">
+        <view class="section-title">{{currentCategory === 'all' ? '最新文章' : categoryName}}</view>
+        <view class="view-more" wx:if="{{currentCategory === 'all'}}" bindtap="viewMore" data-type="latest">查看更多</view>
+      </view>
+      <block wx:if="{{articles.length > 0}}">
+        <view class="article-list">
+          <view class="article-item" wx:for="{{articles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
+            <image class="article-thumb" src="{{item.coverImage}}" mode="aspectFill"></image>
+            <view class="article-content">
+              <view class="article-title">{{item.title}}</view>
+              <view class="article-desc">{{item.description}}</view>
+              <view class="article-meta">
+                <view class="meta-date">{{item.date}}</view>
+                <view class="meta-views">{{item.views}} 阅读</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <!-- 加载更多 -->
+        <view class="loading-container" wx:if="{{isLoading}}">
+          <view class="loading-spinner"></view>
+          <text>加载中...</text>
+        </view>
+        <view class="end-line" wx:if="{{noMoreData && !isLoading}}">已显示全部内容</view>
+      </block>
+      <view class="empty-container" wx:else>
+        <image src="/assets/images/empty.png" mode="aspectFit"></image>
+        <text>暂无相关内容</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 返回顶部按钮 -->
+  <view class="back-to-top" wx:if="{{showBackToTop}}" bindtap="scrollToTop">
+    <image src="/assets/icons/arrow-up.png" mode="aspectFit"></image>
   </view>
 </view> 
