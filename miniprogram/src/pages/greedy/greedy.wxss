@@ -1,0 +1,159 @@
+/* 贪心算法页面样式 */
+.greedy-page {
+  padding: 30rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 页面标题样式 */
+.header {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 关卡选择器样式 */
+.level-selector {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.level-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.level-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.level-option {
+  padding: 15rpx 25rpx;
+  background-color: #eef2f7;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  color: #5a6877;
+  transition: all 0.3s;
+}
+
+.level-option.active {
+  background-color: #3498db;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 算法介绍样式 */
+.algorithm-intro {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.intro-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15rpx;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10rpx;
+}
+
+.intro-content {
+  padding: 10rpx;
+}
+
+.intro-text {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.6;
+}
+
+.intro-paragraph {
+  margin-bottom: 15rpx;
+}
+
+.bold {
+  font-weight: bold;
+  color: #333;
+}
+
+/* 当前关卡信息样式 */
+.current-level-info {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  border-left: 5rpx solid #3498db;
+}
+
+.level-info-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.level-info-content {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* 游戏组件样式 */
+.greedy-game {
+  margin-bottom: 30rpx;
+  display: block;
+}
+
+/* 页脚样式 */
+.page-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50rpx;
+  margin-bottom: 30rpx;
+}
+
+.share-btn, .nav-btn {
+  background-color: #3498db;
+  color: #fff;
+  font-size: 28rpx;
+  padding: 15rpx 30rpx;
+  border-radius: 40rpx;
+  width: 45%;
+  text-align: center;
+}
+
+.nav-btn {
+  background-color: #95a5a6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 适配不同设备 */
+@media (max-width: 375px) {
+  .level-options {
+    flex-direction: column;
+  }
+} 

@@ -1,0 +1,274 @@
+<view class="greedy-game-container">
+  <!-- 算法选择部分 -->
+  <view class="algorithm-selector">
+    <view class="selector-label">选择贪心算法：</view>
+    <view class="algorithm-options">
+      <view class="algorithm-option {{greedyType === 'coin' ? 'active' : ''}}" 
+            bindtap="changeGreedyType" 
+            data-type="coin">零钱兑换</view>
+      <view class="algorithm-option {{greedyType === 'activity' ? 'active' : ''}}" 
+            bindtap="changeGreedyType" 
+            data-type="activity">活动安排</view>
+      <view class="algorithm-option {{greedyType === 'huffman' ? 'active' : ''}}" 
+            bindtap="changeGreedyType" 
+            data-type="huffman">哈夫曼编码</view>
+    </view>
+  </view>
+
+  <!-- 参数输入部分 -->
+  <view class="input-area">
+    <!-- 零钱兑换输入 -->
+    <block wx:if="{{greedyType === 'coin'}}">
+      <view class="input-group">
+        <view class="input-label">需要兑换的金额：</view>
+        <input class="input-field" type="number" value="{{coinAmount}}" bindinput="onCoinAmountChange" />
+      </view>
+      <view class="coin-settings">
+        <view class="coin-settings-header">可用硬币面值:</view>
+        <view class="coin-list">
+          <view wx:for="{{availableCoins}}" wx:key="index" 
+                class="coin-item {{selectedCoins[index] ? 'selected' : ''}}"
+                bindtap="toggleCoin" data-index="{{index}}">
+            {{item}}
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 活动安排输入 -->
+    <block wx:elif="{{greedyType === 'activity'}}">
+      <view class="activities-header">
+        <view class="activity-label">活动列表：</view>
+        <view class="activity-actions">
+          <button class="small-btn" bindtap="addActivity">添加活动</button>
+          <button class="small-btn" bindtap="removeActivity">删除活动</button>
+        </view>
+      </view>
+      <view class="activities-input">
+        <view class="activity-row activity-header-row">
+          <view class="activity-id">ID</view>
+          <view class="activity-time">开始时间</view>
+          <view class="activity-time">结束时间</view>
+        </view>
+        <view class="activity-row" wx:for="{{activities}}" wx:key="id">
+          <view class="activity-id">{{item.id + 1}}</view>
+          <input class="activity-time-input" type="number" value="{{item.start}}" 
+                 bindinput="onActivityChange" data-index="{{index}}" data-field="start" />
+          <input class="activity-time-input" type="number" value="{{item.end}}" 
+                 bindinput="onActivityChange" data-index="{{index}}" data-field="end" />
+        </view>
+      </view>
+    </block>
+
+    <!-- 哈夫曼编码输入 -->
+    <block wx:elif="{{greedyType === 'huffman'}}">
+      <view class="input-group">
+        <view class="input-label">需要编码的文本：</view>
+        <textarea class="input-textarea" value="{{huffmanText}}" bindinput="onHuffmanTextChange" />
+      </view>
+    </block>
+  </view>
+
+  <!-- 控制按钮部分 -->
+  <view class="control-buttons">
+    <button class="control-btn start-btn" bindtap="startVisualization" disabled="{{isVisualizing && isCompleted}}">
+      {{isCompleted ? '重新开始' : (isVisualizing ? '重新开始' : '开始可视化')}}
+    </button>
+    <button class="control-btn step-btn" bindtap="nextStep" disabled="{{!isVisualizing || isCompleted}}">下一步</button>
+    <button class="control-btn auto-btn {{isAutoPlaying ? 'active' : ''}}" 
+            bindtap="toggleAutoPlay"
+            disabled="{{!isVisualizing || isCompleted}}">
+      {{isAutoPlaying ? '暂停' : '自动播放'}}
+    </button>
+    <button class="control-btn reset-btn" bindtap="resetVisualization" disabled="{{!isVisualizing}}">重置</button>
+  </view>
+
+  <!-- 可视化部分 -->
+  <view class="visualization-area">
+    <view class="step-description" wx:if="{{isVisualizing}}">{{currentStepDescription}}</view>
+
+    <!-- 零钱兑换可视化 -->
+    <block wx:if="{{greedyType === 'coin' && isVisualizing}}">
+      <view class="coin-visualization">
+        <view class="remaining-amount">剩余金额: {{remainingAmount}}</view>
+        <view class="coin-container">
+          <view wx:for="{{coinSelections}}" wx:key="index" class="coin-selection {{item.status}}">
+            {{item.value}}
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 活动安排可视化 -->
+    <block wx:elif="{{greedyType === 'activity' && isVisualizing}}">
+      <view class="activity-visualization">
+        <!-- 时间轴 -->
+        <view class="time-line">
+          <view class="time-markers">
+            <view class="time-marker" wx:for="{{timelineHours}}" wx:key="index">
+              {{item}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 活动列表 -->
+        <view class="activity-timeline">
+          <view wx:for="{{sortedActivities}}" wx:key="id" 
+                class="timeline-activity {{item.status}}"
+                style="margin-left: {{item.startPercent}}%; width: {{item.widthPercent}}%;">
+            活动{{item.id + 1}}
+          </view>
+        </view>
+        
+        <!-- 已选活动 -->
+        <view class="selected-activities" wx:if="{{selectedActivities.length > 0}}">
+          <view class="selected-label">已选择的活动：</view>
+          <view class="selected-list">
+            <view wx:for="{{selectedActivities}}" wx:key="id" class="selected-activity">
+              活动{{item.id + 1}} ({{item.start}}-{{item.end}})
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 哈夫曼编码可视化 -->
+    <block wx:elif="{{greedyType === 'huffman' && isVisualizing}}">
+      <view class="huffman-visualization">
+        <!-- 频率表 -->
+        <view class="frequency-table">
+          <view class="frequency-table-header">
+            <view class="frequency-char">字符</view>
+            <view class="frequency-count">频率</view>
+            <view class="frequency-code">编码</view>
+          </view>
+          <view wx:for="{{charFrequencies}}" wx:key="char" 
+                class="frequency-row {{item.status}}">
+            <view class="frequency-char">'{{item.char}}'</view>
+            <view class="frequency-count">{{item.frequency}}</view>
+            <view class="frequency-code">{{item.code}}</view>
+          </view>
+        </view>
+        
+        <!-- 哈夫曼树可视化 -->
+        <view class="huffman-tree">
+          <canvas id="huffman-canvas" type="2d" class="huffman-canvas"></canvas>
+          <view wx:for="{{huffmanNodes}}" wx:key="id" 
+                class="huffman-node {{item.status}}"
+                style="left: {{item.x}}px; top: {{item.y}}px;">
+            <view class="node-content">
+              {{item.char !== null ? item.char : ''}}
+              <view class="node-freq">{{item.frequency}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 结果部分 -->
+  <view class="result-area" wx:if="{{isCompleted}}">
+    <view class="result-title">执行结果:</view>
+    <!-- 零钱兑换结果 -->
+    <block wx:if="{{greedyType === 'coin'}}">
+      <view class="result-content">
+        共使用 {{coinResult.count}} 个硬币: {{coinResult.coins.join(', ')}}
+      </view>
+    </block>
+    
+    <!-- 活动安排结果 -->
+    <block wx:elif="{{greedyType === 'activity'}}">
+      <view class="result-content">
+        最多可安排 {{activityResult.count}} 个活动
+        <view class="activity-list">
+          <view wx:for="{{activityResult.activities}}" wx:key="id" class="result-activity">
+            活动 {{item.id + 1}} ({{item.start}}-{{item.end}})
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 哈夫曼编码结果 -->
+    <block wx:elif="{{greedyType === 'huffman'}}">
+      <view class="result-content">
+        <view>原始长度: {{huffmanResult.originalLength}} bits</view>
+        <view>压缩后长度: {{huffmanResult.compressedLength}} bits</view>
+        <view>压缩率: {{huffmanResult.compressionRatio}}%</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 算法信息部分 -->
+  <view class="algorithm-info">
+    <view class="info-title">算法信息</view>
+    
+    <!-- 零钱兑换信息 -->
+    <block wx:if="{{greedyType === 'coin'}}">
+      <view class="info-content">
+        <view class="info-item">
+          <view class="info-label">时间复杂度:</view>
+          <view class="info-value">O(n)，其中n为硬币种类</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">空间复杂度:</view>
+          <view class="info-value">O(1)</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">贪心策略:</view>
+          <view class="info-value">每次选择面值最大的硬币</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">应用场景:</view>
+          <view class="info-value">找零系统、资源分配</view>
+        </view>
+        <view class="info-note">
+          注意：贪心算法在某些特殊硬币体系中可能不会得到最优解
+        </view>
+      </view>
+    </block>
+    
+    <!-- 活动安排信息 -->
+    <block wx:elif="{{greedyType === 'activity'}}">
+      <view class="info-content">
+        <view class="info-item">
+          <view class="info-label">时间复杂度:</view>
+          <view class="info-value">O(n log n)，主要是排序的时间</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">空间复杂度:</view>
+          <view class="info-value">O(n)</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">贪心策略:</view>
+          <view class="info-value">按结束时间排序，每次选择结束最早且不冲突的活动</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">应用场景:</view>
+          <view class="info-value">会议室安排、课程表规划、任务调度</view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 哈夫曼编码信息 -->
+    <block wx:elif="{{greedyType === 'huffman'}}">
+      <view class="info-content">
+        <view class="info-item">
+          <view class="info-label">时间复杂度:</view>
+          <view class="info-value">O(n log n)，其中n为不同字符数量</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">空间复杂度:</view>
+          <view class="info-value">O(n)</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">贪心策略:</view>
+          <view class="info-value">每次合并两个频率最小的节点</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">应用场景:</view>
+          <view class="info-value">文件压缩、数据传输优化、密码学</view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view> 

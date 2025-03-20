@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "贪心算法可视化",
+  "usingComponents": {
+    "greedy-game": "../../components/greedy-game/greedy-game"
+  }
+} 

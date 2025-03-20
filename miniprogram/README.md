@@ -394,3 +394,40 @@
   7. `src/pages/dp/dp.js`（创建）
   8. `src/pages/dp/dp.json`（创建）
   9. `app.json`（更新，添加动态规划算法页面路径）
+
+## 2024-03-27 12:00:00
+- **会话的主要目的**：实现贪心算法可视化游戏功能，并将其添加到微信小程序中。
+- **完成的主要任务**：
+  1. 创建了贪心算法游戏组件，包括：
+     - 组件布局（greedy-game.wxml）
+     - 组件样式（greedy-game.wxss）
+     - 组件逻辑（greedy-game.js），实现三种贪心算法：零钱兑换、活动安排和哈夫曼编码
+     - 组件配置（greedy-game.json）
+  2. 创建了贪心算法页面，包括：
+     - 页面布局（greedy.wxml）
+     - 页面样式（greedy.wxss）
+     - 页面逻辑（greedy.js），实现关卡系统和算法选择
+     - 页面配置（greedy.json）
+  3. 将贪心算法页面添加到app.json中，使其在小程序中可访问
+- **关键决策和解决方案**：
+  1. 实现了三种经典贪心算法的可视化，覆盖了不同应用场景的贪心问题
+  2. 设计了详细的步骤动画和状态展示，使算法执行过程可视化
+  3. 提供了自动播放和手动步进两种查看模式，满足不同学习需求
+  4. 对每种算法提供了时间复杂度、空间复杂度和核心思想的讲解
+  5. 使用了统一的设计风格，保持与其他游戏页面的一致性
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript（贪心算法实现）
+  3. WXML/WXSS（界面和样式）
+  4. 自定义组件（组件化开发）
+  5. Canvas（哈夫曼树可视化）
+- **修改了哪些文件**：
+  1. `src/components/greedy-game/greedy-game.wxml`（创建）
+  2. `src/components/greedy-game/greedy-game.wxss`（创建）
+  3. `src/components/greedy-game/greedy-game.js`（创建）
+  4. `src/components/greedy-game/greedy-game.json`（创建）
+  5. `src/pages/greedy/greedy.wxml`（创建）
+  6. `src/pages/greedy/greedy.wxss`（创建）
+  7. `src/pages/greedy/greedy.js`（创建）
+  8. `src/pages/greedy/greedy.json`（创建）
+  9. `app.json`（更新，添加贪心算法页面路径）

@@ -1,0 +1,592 @@
+/* 贪心算法游戏容器 */
+.greedy-game-container {
+  padding: 20rpx;
+  background-color: #f8f9fa;
+  border-radius: 10rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 算法选择区域 */
+.algorithm-selector {
+  margin-bottom: 20rpx;
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.selector-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  font-weight: 500;
+}
+
+.algorithm-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.algorithm-option {
+  padding: 12rpx 20rpx;
+  background-color: #eef2f7;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #5a6877;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.algorithm-option.active {
+  background-color: #3498db;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 输入区域 */
+.input-area {
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+  margin-bottom: 15rpx;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.input-field {
+  width: 100%;
+  height: 70rpx;
+  border: 1px solid #ddd;
+  border-radius: 6rpx;
+  padding: 0 15rpx;
+  font-size: 28rpx;
+}
+
+.input-textarea {
+  width: 100%;
+  height: 150rpx;
+  border: 1px solid #ddd;
+  border-radius: 6rpx;
+  padding: 10rpx 15rpx;
+  font-size: 28rpx;
+}
+
+/* 硬币设置 */
+.coin-settings {
+  margin-top: 20rpx;
+}
+
+.coin-settings-header {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.coin-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.coin-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #eef2f7;
+  color: #5a6877;
+  font-size: 30rpx;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.coin-item.selected {
+  background-color: #3498db;
+  color: #fff;
+}
+
+/* 活动输入 */
+.activities-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.activity-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.activity-actions {
+  display: flex;
+  gap: 10rpx;
+}
+
+.small-btn {
+  font-size: 24rpx;
+  padding: 6rpx 15rpx;
+  line-height: 1.5;
+  min-height: auto;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.activities-input {
+  margin-bottom: 15rpx;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 80rpx 1fr 1fr;
+  gap: 10rpx;
+  margin-bottom: 10rpx;
+  align-items: center;
+}
+
+.activity-header-row {
+  font-size: 26rpx;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 15rpx;
+}
+
+.activity-id {
+  text-align: center;
+  font-size: 26rpx;
+}
+
+.activity-time {
+  text-align: center;
+}
+
+.activity-time-input {
+  height: 60rpx;
+  border: 1px solid #ddd;
+  border-radius: 6rpx;
+  text-align: center;
+  font-size: 26rpx;
+}
+
+/* 控制按钮 */
+.control-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
+}
+
+.control-btn {
+  flex: 1;
+  font-size: 26rpx;
+  padding: 15rpx 10rpx;
+  line-height: 1.5;
+  min-height: auto;
+  border-radius: 6rpx;
+}
+
+.start-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.step-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.auto-btn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.auto-btn.active {
+  background-color: #e67e22;
+}
+
+.reset-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.control-btn[disabled] {
+  background-color: #95a5a6 !important;
+  color: #ecf0f1 !important;
+}
+
+/* 可视化区域 */
+.visualization-area {
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  min-height: 300rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.step-description {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding: 15rpx;
+  background-color: #f8f9fa;
+  border-radius: 6rpx;
+  border-left: 4rpx solid #3498db;
+}
+
+/* 零钱兑换可视化 */
+.coin-visualization {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.remaining-amount {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.coin-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  margin-top: 10rpx;
+}
+
+.coin-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #eef2f7;
+  color: #5a6877;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.coin-selection.current {
+  background-color: #3498db;
+  color: #fff;
+  animation: pulse 1s infinite;
+}
+
+.coin-selection.used {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 活动安排可视化 */
+.activity-visualization {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.time-line {
+  margin-bottom: 15rpx;
+}
+
+.time-markers {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10rpx;
+}
+
+.time-marker {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.activity-timeline {
+  position: relative;
+  background-color: #f5f5f5;
+  height: 200rpx;
+  margin: 20rpx 0;
+  border-radius: 6rpx;
+  overflow: hidden;
+  padding: 10rpx 0;
+}
+
+.timeline-activity {
+  position: relative;
+  height: 60rpx;
+  background-color: #95a5a6;
+  color: white;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6rpx;
+  margin: 5rpx 0;
+  transition: all 0.3s;
+  opacity: 0.7;
+}
+
+.timeline-activity.current {
+  background-color: #f39c12;
+  opacity: 1;
+  border: 2px solid #e67e22;
+}
+
+.timeline-activity.selected {
+  background-color: #2ecc71;
+  opacity: 1;
+}
+
+.timeline-activity.rejected {
+  background-color: #e74c3c;
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.selected-activities {
+  margin-top: 10rpx;
+}
+
+.selected-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.selected-activity {
+  background-color: #2ecc71;
+  color: white;
+  padding: 8rpx 15rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+/* 哈夫曼编码可视化 */
+.huffman-visualization {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.frequency-table {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.frequency-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  background-color: #f5f5f5;
+  padding: 10rpx;
+  font-weight: 500;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.frequency-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  padding: 10rpx;
+  font-size: 26rpx;
+  border-top: 1px solid #ddd;
+}
+
+.frequency-row.current {
+  background-color: #e8f4fd;
+}
+
+.frequency-char {
+  text-align: center;
+}
+
+.frequency-count {
+  text-align: center;
+}
+
+.frequency-code {
+  text-align: center;
+  font-family: monospace;
+}
+
+.huffman-tree {
+  position: relative;
+  height: 400rpx;
+  background-color: #f8f9fa;
+  border-radius: 6rpx;
+  margin-top: 20rpx;
+  overflow: hidden;
+}
+
+.huffman-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.huffman-node {
+  position: absolute;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #95a5a6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-size: 24rpx;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s;
+}
+
+.huffman-node.current {
+  background-color: #f39c12;
+  border: 2px solid #e67e22;
+  z-index: 3;
+}
+
+.huffman-node.processed {
+  background-color: #3498db;
+}
+
+.node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.node-freq {
+  font-size: 20rpx;
+  margin-top: 4rpx;
+}
+
+/* 结果区域 */
+.result-area {
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.result-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15rpx;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10rpx;
+}
+
+.result-content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.activity-list {
+  margin-top: 10rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.result-activity {
+  background-color: #2ecc71;
+  color: white;
+  padding: 6rpx 15rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+/* 算法信息 */
+.algorithm-info {
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.info-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15rpx;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10rpx;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.info-item {
+  display: flex;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.info-label {
+  width: 180rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.info-value {
+  flex: 1;
+  color: #555;
+}
+
+.info-note {
+  font-size: 24rpx;
+  color: #e74c3c;
+  line-height: 1.5;
+  margin-top: 10rpx;
+  padding: 10rpx;
+  background-color: #f8d7da;
+  border-radius: 6rpx;
+} 

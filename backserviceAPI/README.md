@@ -294,3 +294,25 @@
 - src/server/game_routes.cpp
 - src/server/achievement_routes.h
 - src/server/achievement_routes.cpp
+
+## 2024-03-27 10:00:00
+
+- **会话的主要目的**：解决Crow库编译错误问题
+- **完成的主要任务**：
+  1. 添加了必要的Crow库头文件
+  2. 修正了Crow应用的类型声明
+  3. 更新了CMake配置文件
+- **关键决策和解决方案**：
+  1. 添加了`<crow/middlewares/cors.h>`头文件
+  2. 确保所有使用Crow应用的地方都使用`crow::App<crow::CORSHandler>`类型
+  3. 更新了CMakeLists.txt以正确链接Crow库
+- **使用的技术栈**：
+  1. C++
+  2. Crow框架
+  3. CMake
+- **修改了哪些文件**：
+  1. `src/server/main.cpp`
+  2. `src/server/game_routes.h`
+  3. `src/server/user_routes.h`
+  4. `src/server/achievement_routes.h`
+  5. `CMakeLists.txt`

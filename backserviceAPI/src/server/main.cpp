@@ -4,6 +4,7 @@
 #include "user_routes.h"
 #include "game_routes.h"
 #include "achievement_routes.h"
+#include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;
 

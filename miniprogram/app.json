@@ -13,7 +13,8 @@
     "src/pages/graph/graph",
     "src/pages/sorting/sorting",
     "src/pages/search/search",
-    "src/pages/dp/dp"
+    "src/pages/dp/dp",
+    "src/pages/greedy/greedy"
   ],
   "window": {
     "navigationBarTitleText": "数据结构与算法游戏",

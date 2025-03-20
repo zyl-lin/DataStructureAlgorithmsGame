@@ -1,0 +1,80 @@
+<view class="greedy-page">
+  <view class="header">
+    <view class="title">贪心算法可视化</view>
+    <view class="subtitle">通过可视化理解贪心策略</view>
+  </view>
+
+  <view class="level-selector">
+    <view class="level-title">选择关卡：</view>
+    <view class="level-options">
+      <view class="level-option {{currentLevel === 1 ? 'active' : ''}}" bindtap="selectLevel" data-level="1">
+        零钱兑换
+      </view>
+      <view class="level-option {{currentLevel === 2 ? 'active' : ''}}" bindtap="selectLevel" data-level="2">
+        活动安排
+      </view>
+      <view class="level-option {{currentLevel === 3 ? 'active' : ''}}" bindtap="selectLevel" data-level="3">
+        哈夫曼编码
+      </view>
+    </view>
+  </view>
+
+  <view class="algorithm-intro">
+    <view class="intro-title">算法介绍</view>
+    <view class="intro-content">
+      <block wx:if="{{currentLevel === 1}}">
+        <view class="intro-text">
+          <view class="intro-paragraph">
+            <text class="bold">零钱兑换问题</text>是一个经典的贪心算法应用。其核心思想是每次选择面值最大的硬币，以尽可能减少所需硬币数量。此策略在特定条件下可以得到全局最优解。
+          </view>
+          <view class="intro-paragraph">
+            通过可视化，你可以观察贪心选择如何逐步建立最终解决方案，以及在不同硬币体系下贪心算法的表现。
+          </view>
+        </view>
+      </block>
+      <block wx:elif="{{currentLevel === 2}}">
+        <view class="intro-text">
+          <view class="intro-paragraph">
+            <text class="bold">活动安排问题</text>涉及在同一资源上安排多个活动，每个活动有开始时间和结束时间，目标是安排最多的非冲突活动。
+          </view>
+          <view class="intro-paragraph">
+            贪心策略是按照活动结束时间排序，每次选择结束最早且不冲突的活动。可以证明，这种策略能得到最优解。
+          </view>
+        </view>
+      </block>
+      <block wx:elif="{{currentLevel === 3}}">
+        <view class="intro-text">
+          <view class="intro-paragraph">
+            <text class="bold">哈夫曼编码</text>是一种变长编码方法，用于数据压缩。其核心思想是对出现频率高的字符使用较短的编码，对出现频率低的字符使用较长的编码。
+          </view>
+          <view class="intro-paragraph">
+            贪心策略体现在每次选择两个频率最小的节点合并，不断迭代直到形成哈夫曼树。通过可视化，你可以理解哈夫曼树的构建过程及其编码原理。
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="current-level-info">
+    <view class="level-info-title">当前关卡：</view>
+    <view class="level-info-content">
+      <block wx:if="{{currentLevel === 1}}">
+        零钱兑换 - 使用贪心策略找到最少数量的硬币组合
+      </block>
+      <block wx:elif="{{currentLevel === 2}}">
+        活动安排 - 在不冲突的情况下安排最多的活动
+      </block>
+      <block wx:elif="{{currentLevel === 3}}">
+        哈夫曼编码 - 构建哈夫曼树实现文本压缩
+      </block>
+    </view>
+  </view>
+
+  <!-- 引入贪心算法游戏组件 -->
+  <greedy-game class="greedy-game" level="{{currentLevel}}"></greedy-game>
+
+  <view class="page-footer">
+    <button class="share-btn" open-type="share">分享给好友</button>
+    <navigator class="nav-btn" url="/src/pages/index/index" open-type="navigate">返回首页</navigator>
+  </view>
+</view> 
