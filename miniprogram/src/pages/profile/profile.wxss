@@ -185,4 +185,214 @@
 .tab-icon image {
   width: 100%;
   height: 100%;
+}
+
+/* 个人中心页面样式 */
+.profile-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-bottom: 30rpx;
+}
+
+/* 头部样式 */
+.header {
+  background-color: #3498db;
+  padding: 30rpx;
+  color: #fff;
+  border-bottom-left-radius: 30rpx;
+  border-bottom-right-radius: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(52, 152, 219, 0.2);
+}
+
+/* 用户信息样式 */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.avatar-container {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 25rpx;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.avatar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24rpx;
+}
+
+.user-detail {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.user-level {
+  display: flex;
+  align-items: center;
+}
+
+.level-tag {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  margin-right: 15rpx;
+}
+
+.user-title {
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+/* 用户统计信息样式 */
+.user-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12rpx;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 5rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+/* 区块样式 */
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  margin: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  padding: 25rpx;
+  border-bottom: 1rpx solid #eee;
+  position: relative;
+}
+
+/* 学习进度样式 */
+.progress-list {
+  padding: 10rpx 25rpx 25rpx;
+}
+
+.progress-item {
+  margin-top: 20rpx;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.progress-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.progress-percent {
+  font-size: 28rpx;
+  color: #3498db;
+  font-weight: 500;
+}
+
+.progress-bar {
+  height: 14rpx;
+  background-color: #f0f0f0;
+  border-radius: 7rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #3498db;
+  border-radius: 7rpx;
+}
+
+/* 菜单列表样式 */
+.menu-list {
+  padding: 10rpx 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 25rpx;
+  position: relative;
+}
+
+.menu-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 84rpx;
+  right: 0;
+  bottom: 0;
+  height: 1rpx;
+  background-color: #f0f0f0;
+}
+
+.menu-icon {
+  width: 44rpx;
+  height: 44rpx;
+  margin-right: 20rpx;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.arrow-icon {
+  width: 32rpx;
+  height: 32rpx;
+  opacity: 0.3;
+}
+
+/* 底部信息样式 */
+.app-info {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 50rpx;
+  padding: 0 30rpx;
 } 

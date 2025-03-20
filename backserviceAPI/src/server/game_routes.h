@@ -2,6 +2,6 @@
 
 #include "crow.h"
 #include "database.h"
+#include <crow/middlewares/cors.h>
 
-// 不使用 CORSHandler，直接使用普通的 App
-void registerGameRoutes(crow::App& app, Database& db); 
+void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db); 

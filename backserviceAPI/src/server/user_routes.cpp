@@ -4,10 +4,9 @@
 
 using json = nlohmann::json;
 
-void registerUserRoutes(crow::App& app, Database& db) {
+void registerUserRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     // 用户注册
-    CROW_ROUTE(app, "/api/user/register")
-    .methods(crow::HTTPMethod::POST)
+    CROW_ROUTE(app, "/api/user/register").methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
         auto body = json::parse(req.body);
         
