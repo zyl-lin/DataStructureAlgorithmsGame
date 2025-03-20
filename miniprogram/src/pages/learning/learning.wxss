@@ -13,7 +13,7 @@
   background-color: #ffffff;
   z-index: 100;
   padding: 20rpx 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
 .title {
@@ -217,7 +217,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background-color: #f5f7f9;
+  background-color: #f0f3f9;
   height: 72rpx;
   border-radius: 36rpx;
   padding: 0 30rpx;
@@ -306,27 +306,31 @@
 /* 内容区域样式 */
 .content-scroll {
   flex: 1;
-  margin-top: 180rpx;
+  margin-top: 200rpx;
   padding-bottom: 30rpx;
 }
 
 /* 轮播图样式 */
 .banner-swiper {
-  height: 320rpx;
+  height: 280rpx;
   margin: 20rpx 30rpx;
   border-radius: 16rpx;
   overflow: hidden;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .banner-item {
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 16rpx;
+  overflow: hidden;
 }
 
 .banner-item image {
   width: 100%;
   height: 100%;
+  border-radius: 16rpx;
 }
 
 .banner-title {
@@ -339,13 +343,16 @@
   font-size: 32rpx;
   font-weight: bold;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  border-radius: 0 0 16rpx 16rpx;
 }
 
 /* 文章区块样式 */
 .section-container {
-  margin: 30rpx 0;
+  margin: 20rpx 30rpx;
   background-color: #fff;
   padding: 30rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
 
 .section-header {
@@ -386,30 +393,46 @@
   overflow: hidden;
   margin-bottom: 30rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .article-card:last-child {
   margin-bottom: 0;
 }
 
-.article-image {
+.article-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.article-card .article-image {
   width: 100%;
-  height: 320rpx;
+  height: 240rpx;
+  object-fit: cover;
 }
 
-.article-info {
+.article-card .article-info {
   padding: 24rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.article-title {
+.article-card .article-title {
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
   margin-bottom: 16rpx;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.article-desc {
+.article-card .article-desc {
   font-size: 28rpx;
   color: #666;
   line-height: 1.5;
@@ -418,22 +441,25 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+  flex: 1;
 }
 
-.article-meta {
+.article-card .article-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.meta-tags {
-  display: flex;
   flex-wrap: wrap;
 }
 
-.tag {
+.article-card .meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.article-card .tag {
   font-size: 24rpx;
-  padding: 4rpx 16rpx;
+  padding: 6rpx 16rpx;
   background-color: #f0f3ff;
   color: #4a6ef5;
   border-radius: 20rpx;
@@ -441,9 +467,31 @@
   margin-bottom: 6rpx;
 }
 
-.meta-views {
+.article-card .meta-views {
+  display: flex;
+  align-items: center;
   font-size: 24rpx;
   color: #999;
+  margin-left: auto;
+  margin-right: 20rpx;
+}
+
+.article-card .meta-views image {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 6rpx;
+}
+
+.article-card .favorite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.article-card .favorite-btn image {
+  width: 36rpx;
+  height: 36rpx;
+  transition: all 0.3s;
 }
 
 /* 文章列表样式 */
@@ -537,6 +585,7 @@
   width: 200rpx;
   height: 200rpx;
   margin-bottom: 30rpx;
+  opacity: 0.7;
 }
 
 .empty-container text {
@@ -553,11 +602,16 @@
   height: 80rpx;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 90;
+  transition: all 0.3s ease;
+}
+
+.back-to-top:active {
+  transform: scale(0.95);
 }
 
 .back-to-top image {
@@ -742,11 +796,12 @@
 .search-history {
   background-color: #fff;
   border-radius: 12rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.15);
   margin-top: 10rpx;
   position: absolute;
-  width: 100%;
+  width: calc(100% - 110rpx);
   z-index: 1000;
+  overflow: hidden;
 }
 
 .history-header {
@@ -851,16 +906,123 @@
 .back-to-all {
   display: flex;
   align-items: center;
+  justify-content: center;
   background-color: #fff;
   padding: 20rpx 30rpx;
   font-size: 28rpx;
-  color: #4A6EF5;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
-  margin-bottom: 20rpx;
+  color: #4a6ef5;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  margin: 0 30rpx 20rpx;
+  border-radius: 12rpx;
 }
 
 .back-to-all image {
   width: 32rpx;
   height: 32rpx;
   margin-right: 10rpx;
+}
+
+/* 文章列表样式 - 水平布局 */
+.article-list.horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.article-item {
+  display: flex;
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.article-item:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.article-thumb {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.article-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.article-content .article-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10rpx;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-content .article-desc {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.article-content .article-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 24rpx;
+}
+
+.article-content .meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 10rpx;
+}
+
+.article-content .tag {
+  font-size: 22rpx;
+  padding: 4rpx 10rpx;
+  background-color: #f0f3ff;
+  color: #4a6ef5;
+  border-radius: 10rpx;
+  margin-right: 8rpx;
+  margin-bottom: 4rpx;
+}
+
+.article-content .meta-views {
+  display: flex;
+  align-items: center;
+  color: #999;
+}
+
+.article-content .meta-views image {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 4rpx;
+}
+
+.article-content .favorite-btn {
+  margin-left: 16rpx;
+}
+
+.article-content .favorite-btn image {
+  width: 32rpx;
+  height: 32rpx;
 } 

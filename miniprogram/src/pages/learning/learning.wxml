@@ -67,10 +67,10 @@
         <view class="section-title">精选推荐</view>
         <view class="view-more" bindtap="viewMore" data-type="recommended">查看更多</view>
       </view>
-      <view class="article-list">
-        <view class="article-card recommended" wx:for="{{recommendedArticles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
-          <image class="article-image" src="{{item.coverImage}}" mode="aspectFill"></image>
-          <view class="article-info">
+      <view class="article-list horizontal">
+        <view class="article-item" wx:for="{{recommendedArticles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
+          <image class="article-thumb" src="{{item.coverImage}}" mode="aspectFill"></image>
+          <view class="article-content">
             <view class="article-title">{{item.title}}</view>
             <view class="article-desc">{{item.description}}</view>
             <view class="article-meta">
@@ -91,22 +91,19 @@
         <view class="view-more" wx:if="{{currentCategory === 'all'}}" bindtap="viewMore" data-type="latest">查看更多</view>
       </view>
       <block wx:if="{{articles.length > 0}}">
-        <view class="article-list">
-          <view class="article-item" wx:for="{{articles}}" wx:key="id" data-id="{{item.id}}" bindtap="navigateToArticle">
-            <view class="article-cover">
-              <image src="{{item.coverImage}}" mode="aspectFill" lazy-load></image>
-              <view class="article-category">{{item.categoryName}}</view>
-            </view>
-            <view class="article-info">
+        <view class="article-list horizontal">
+          <view class="article-item" wx:for="{{articles}}" wx:key="id" bindtap="navigateToArticle" data-id="{{item.id}}">
+            <image class="article-thumb" src="{{item.coverImage}}" mode="aspectFill" lazy-load></image>
+            <view class="article-content">
               <view class="article-title">{{item.title}}</view>
+              <view class="article-desc">{{item.description}}</view>
               <view class="article-meta">
-                <view class="meta-item">
-                  <image src="/assets/icons/time.png" mode="aspectFit"></image>
-                  <text>{{item.createTime}}</text>
+                <view class="meta-tags">
+                  <view wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="tag">{{tag}}</view>
                 </view>
-                <view class="meta-item">
-                  <image src="/assets/icons/view.png" mode="aspectFit"></image>
-                  <text>{{item.viewCount}}</text>
+                <view class="meta-views">
+                  <image src="/assets/icons/eye.png" mode="aspectFit"></image>
+                  <text>{{item.views}} 阅读</text>
                 </view>
                 <view class="favorite-btn" catchtap="toggleFavorite" data-id="{{item.id}}">
                   <image src="{{item.isFavorite ? '/assets/icons/favorite-filled.png' : '/assets/icons/favorite.png'}}" mode="aspectFit"></image>
