@@ -15,6 +15,7 @@
     "src/pages/search/search",
     "src/pages/dp/dp",
     "src/pages/greedy/greedy",
+    "src/pages/achievement/achievement",
     "src/pages/achievements/achievements",
     "src/pages/history/history",
     "src/pages/favorites/favorites",
@@ -45,12 +46,6 @@
         "text": "学习",
         "iconPath": "assets/icons/learning.png",
         "selectedIconPath": "assets/icons/learning-active.png"
-      },
-      {
-        "pagePath": "src/pages/achievements/achievements",
-        "text": "成就",
-        "iconPath": "assets/icons/achievement.png",
-        "selectedIconPath": "assets/icons/achievement-active.png"
       },
       {
         "pagePath": "src/pages/profile/profile",

@@ -1,38 +1,42 @@
-<view class="container">
+<view class="achievement-page">
   <view class="header">
     <text class="title">我的成就</text>
-  </view>
-
-  <view class="achievement-list">
-    <block wx:for="{{achievements}}" wx:key="id">
-      <view class="achievement" bindtap="viewAchievementDetail" data-id="{{item.id}}">
-        <view class="achievement-icon">
-          <!-- 使用自定义图标组件或本地图标 -->
-          <text class="icon-placeholder">{{item.icon.charAt(0).toUpperCase()}}</text>
-        </view>
-        <view class="achievement-info">
-          <text class="achievement-title">{{item.title}}</text>
-          <text class="achievement-description">{{item.description}}</text>
-        </view>
-        <view class="achievement-status">
-          <text class="status {{item.status === '已获得' ? 'completed' : ''}}">{{item.status}}</text>
-        </view>
-      </view>
-    </block>
+    <text class="subtitle">记录你的学习旅程</text>
   </view>
 
   <view class="stats-container">
     <view class="stats-item">
-      <text class="stats-value">{{achievements.filter(a => a.status === '已获得').length}}</text>
-      <text class="stats-label">已获得</text>
+      <text class="stats-value">{{totalCompleted}}</text>
+      <text class="stats-label">已完成</text>
     </view>
     <view class="stats-item">
-      <text class="stats-value">{{achievements.filter(a => a.status.indexOf('进度') === 0).length}}</text>
+      <text class="stats-value">{{totalInProgress}}</text>
       <text class="stats-label">进行中</text>
     </view>
     <view class="stats-item">
-      <text class="stats-value">{{achievements.filter(a => a.status === '未开始').length}}</text>
-      <text class="stats-label">未开始</text>
+      <text class="stats-value">{{completionRate}}%</text>
+      <text class="stats-label">完成率</text>
     </view>
+  </view>
+
+  <view class="achievement-list">
+    <block wx:for="{{achievements}}" wx:key="id">
+      <view class="achievement-item" bindtap="viewAchievementDetail" data-id="{{item.id}}">
+        <view class="achievement-icon {{item.progress >= item.maxProgress ? 'completed' : item.progress > 0 ? 'in-progress' : 'locked'}}">
+          <image src="{{item.iconPath}}" mode="aspectFit"></image>
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="achievement-info">
+          <text class="achievement-name">{{item.title}}</text>
+          <text class="achievement-desc">{{item.description}}</text>
+          <view class="progress-container">
+            <view class="progress-bar">
+              <view class="progress-filled" style="width: {{(item.progress / item.maxProgress) * 100}}%;"></view>
+            </view>
+            <text class="progress-text">{{item.status}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
   </view>
 </view> 

@@ -37,8 +37,17 @@
       <view wx:for="{{categories}}" wx:key="id" class="category-item {{currentCategory === item.id ? 'active' : ''}}" bindtap="changeCategory" data-category="{{item.id}}">
         {{item.name}}
       </view>
+      <view class="category-item {{currentCategory === 'favorites' ? 'active' : ''}}" bindtap="showMyFavorites">
+        收藏
+      </view>
     </view>
   </scroll-view>
+
+  <!-- 当前显示收藏页面时的返回按钮 -->
+  <view class="back-to-all" wx:if="{{currentCategory === 'favorites'}}" bindtap="backToAllArticles">
+    <image src="/assets/icons/back.png" mode="aspectFit"></image>
+    <text>返回全部</text>
+  </view>
 
   <!-- 内容区域 -->
   <scroll-view scroll-y="true" class="content-scroll" bindscrolltolower="loadMoreArticles" refresher-enabled refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onRefresh">

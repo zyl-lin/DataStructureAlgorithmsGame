@@ -28,7 +28,7 @@
 
   <!-- 评论区域 -->
   <view class="comments-section">
-    <view class="section-title">评论区</view>
+    <view class="section-title">评论区 <text class="comment-count">({{comments.length}})</text></view>
     
     <view class="comments-list" wx:if="{{comments.length > 0}}">
       <view class="comment-item" wx:for="{{comments}}" wx:key="id">
@@ -71,7 +71,20 @@
     
     <view class="comment-input-area">
       <input class="comment-input" type="text" placeholder="{{replyTo ? '回复 '+replyTo+':' : '写下你的评论...'}}" value="{{commentContent}}" bindinput="onCommentInput" />
+      <view class="emoji-btn" bindtap="toggleEmojiPanel">
+        <image src="/assets/icons/emoji.png" mode="aspectFit"></image>
+      </view>
+      <view class="cancel-reply" wx:if="{{replyTo}}" bindtap="cancelReply">取消</view>
       <button class="comment-submit" disabled="{{!commentContent}}" bindtap="submitComment">发布</button>
+    </view>
+    
+    <!-- 表情面板 -->
+    <view class="emoji-panel" wx:if="{{showEmoji}}">
+      <view class="emoji-list">
+        <view class="emoji-item" wx:for="{{emojis}}" wx:key="*this" bindtap="selectEmoji" data-emoji="{{item}}">
+          {{item}}
+        </view>
+      </view>
     </view>
   </view>
 

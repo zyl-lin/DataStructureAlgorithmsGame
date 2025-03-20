@@ -14,7 +14,9 @@ Page({
     comments: [],
     commentContent: '',
     replyTo: '',
-    replyToCommentId: null
+    replyToCommentId: null,
+    showEmoji: false,
+    emojis: ['😊', '👍', '🎉', '❤️', '😄', '🤔', '👏', '🙏', '😎', '🔥']
   },
 
   /**
@@ -210,7 +212,7 @@ Page({
     const article = this.data.article;
     return {
       title: article.title,
-      path: `/src/pages/learning/article?id=${article.id}`,
+      path: `../learning/article?id=${article.id}`,
       imageUrl: article.coverImage
     };
   },
@@ -271,10 +273,20 @@ Page({
     const commentId = e.currentTarget.dataset.id;
     const comments = this.data.comments.map(comment => {
       if (comment.id === commentId) {
+        const newIsLiked = !comment.isLiked;
+        const newLikeCount = comment.isLiked ? (comment.likeCount - 1) : (comment.likeCount + 1);
+        
+        // 显示点赞动画效果
+        if (newIsLiked) {
+          wx.vibrateShort({
+            type: 'light'
+          });
+        }
+        
         return {
           ...comment,
-          isLiked: !comment.isLiked,
-          likeCount: comment.isLiked ? (comment.likeCount - 1) : (comment.likeCount + 1)
+          isLiked: newIsLiked,
+          likeCount: newLikeCount
         };
       }
       return comment;
@@ -287,7 +299,8 @@ Page({
     // 实际项目中应发送请求至服务器更新点赞状态
     wx.showToast({
       title: comments.find(c => c.id === commentId).isLiked ? '点赞成功' : '已取消点赞',
-      icon: 'none'
+      icon: 'none',
+      duration: 1000
     });
   },
   
@@ -395,6 +408,12 @@ Page({
       replyTo: '',
       replyToCommentId: null
     });
+    
+    wx.showToast({
+      title: '已取消回复',
+      icon: 'none',
+      duration: 800
+    });
   },
 
   /**
@@ -410,6 +429,26 @@ Page({
       title: '已返回顶部',
       icon: 'none',
       duration: 1500
+    });
+  },
+
+  /**
+   * 打开/关闭表情面板
+   */
+  toggleEmojiPanel: function() {
+    this.setData({
+      showEmoji: !this.data.showEmoji
+    });
+  },
+  
+  /**
+   * 选择表情
+   */
+  selectEmoji: function(e) {
+    const emoji = e.currentTarget.dataset.emoji;
+    this.setData({
+      commentContent: this.data.commentContent + emoji,
+      showEmoji: false
     });
   }
 }) 

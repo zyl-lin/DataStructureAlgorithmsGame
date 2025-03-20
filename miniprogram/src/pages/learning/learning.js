@@ -435,7 +435,7 @@ Page({
   navigateToArticle: function(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '/src/pages/learning/article?id=' + id
+      url: '../learning/article?id=' + id
     });
   },
 
@@ -558,10 +558,32 @@ Page({
       this.setData({
         articles: myFavorites,
         currentCategory: 'favorites',
+        categoryName: '我的收藏',
         isEmpty: myFavorites.length === 0
       });
       
       wx.hideLoading();
     }, 1000);
   },
+  
+  /**
+   * 返回全部文章
+   */
+  backToAllArticles: function() {
+    if (this.data.currentCategory === 'favorites') {
+      this.setData({
+        currentCategory: 'all',
+        categoryName: '',
+        pageNum: 1,
+        noMoreData: false
+      });
+      this.loadArticles();
+      
+      wx.showToast({
+        title: '已返回全部文章',
+        icon: 'none',
+        duration: 1500
+      });
+    }
+  }
 }) 
