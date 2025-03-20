@@ -1,49 +1,52 @@
-<view class="container">
+<!-- 学习页面 -->
+<view class="learning-page">
   <view class="header">
-    <text class="title">学习资料</text>
+    <view class="title">算法学习</view>
+    <view class="subtitle">掌握核心数据结构与算法概念</view>
   </view>
   
-  <view class="learning-categories">
-    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-category="{{item}}">
-      <view class="category-icon">
-        <image src="{{item.icon}}" mode="aspectFit"></image>
+  <view class="search-box">
+    <view class="search-input">
+      <image src="/assets/icons/search.png" class="search-icon"></image>
+      <input type="text" placeholder="搜索算法知识" bindinput="onSearchInput" value="{{searchKeyword}}"/>
+      <view class="clear-btn" wx:if="{{searchKeyword}}" bindtap="clearSearch">
+        <image src="/assets/icons/clear.png" class="clear-icon"></image>
       </view>
-      <view class="category-name">{{item.name}}</view>
     </view>
   </view>
-
-  <view class="recommended-section" wx:if="{{recommendedArticles.length > 0}}">
-    <view class="section-title">推荐阅读</view>
-    <view class="article-list">
-      <view class="article-item" wx:for="{{recommendedArticles}}" wx:key="id" bindtap="onArticleTap" data-article="{{item}}">
-        <view class="article-title">{{item.title}}</view>
-        <view class="article-desc">{{item.summary}}</view>
-        <view class="article-meta">
-          <text class="article-date">{{item.date}}</text>
-          <text class="article-views">{{item.views}} 阅读</text>
+  
+  <view class="category-tabs">
+    <view class="tab {{currentCategory === 'all' ? 'active' : ''}}" data-category="all" bindtap="selectCategory">
+      全部
+    </view>
+    <view class="tab {{currentCategory === 'dataStructure' ? 'active' : ''}}" data-category="dataStructure" bindtap="selectCategory">
+      数据结构
+    </view>
+    <view class="tab {{currentCategory === 'algorithm' ? 'active' : ''}}" data-category="algorithm" bindtap="selectCategory">
+      算法
+    </view>
+  </view>
+  
+  <view class="article-list">
+    <block wx:for="{{filteredArticles}}" wx:key="id">
+      <view class="article-card" bindtap="navigateToArticle" data-id="{{item.id}}">
+        <view class="article-image">
+          <image src="{{item.coverImage}}" mode="aspectFill"></image>
+        </view>
+        <view class="article-info">
+          <view class="article-title">{{item.title}}</view>
+          <view class="article-description">{{item.description}}</view>
+          <view class="article-meta">
+            <view class="article-tag">{{item.category}}</view>
+            <view class="article-date">{{item.date}}</view>
+          </view>
         </view>
       </view>
-    </view>
-  </view>
-
-  <view class="tab-bar">
-    <view class="tab-item" bindtap="navigateToIndex">
-      <view class="tab-icon">
-        <image src="/assets/icons/game.png" mode="aspectFit"></image>
-      </view>
-      <text>游戏</text>
-    </view>
-    <view class="tab-item active">
-      <view class="tab-icon">
-        <image src="/assets/icons/learning-active.png" mode="aspectFit"></image>
-      </view>
-      <text>学习</text>
-    </view>
-    <view class="tab-item" bindtap="navigateToProfile">
-      <view class="tab-icon">
-        <image src="/assets/icons/profile.png" mode="aspectFit"></image>
-      </view>
-      <text>我的</text>
+    </block>
+    
+    <view class="empty-result" wx:if="{{filteredArticles.length === 0}}">
+      <image src="/assets/icons/empty.png" class="empty-icon"></image>
+      <view class="empty-text">没有找到相关文章</view>
     </view>
   </view>
 </view> 

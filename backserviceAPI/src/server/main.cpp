@@ -4,7 +4,6 @@
 #include "user_routes.h"
 #include "game_routes.h"
 #include "achievement_routes.h"
-#include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;
 
@@ -13,15 +12,27 @@ int main() {
     Database db("game_database.db");
     db.initialize();
     
-    // 创建Crow应用
-    crow::App<crow::CORSHandler> app;
+    // 创建Crow应用 - 移除 CORSHandler
+    crow::App app;
     
-    // 启用CORS
-    auto& cors = app.get_middleware<crow::CORSHandler>();
-    cors
-        .global()
-        .headers("Content-Type")
-        .methods("POST", "GET", "PUT", "DELETE");
+    // 手动添加 CORS 头部
+    app.after_handle([](crow::request& req, crow::response& res){
+        res.add_header("Access-Control-Allow-Origin", "*");
+        res.add_header("Access-Control-Allow-Headers", "Content-Type");
+        res.add_header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
+    });
+    
+    // 添加 OPTIONS 方法的处理
+    CROW_ROUTE(app, "/<path>")
+    .methods(crow::HTTPMethod::OPTIONS)
+    ([](const crow::request&, std::string path) {
+        crow::response res;
+        res.add_header("Access-Control-Allow-Origin", "*");
+        res.add_header("Access-Control-Allow-Headers", "Content-Type");
+        res.add_header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
+        res.code = 204;
+        return res;
+    });
     
     // 注册路由
     registerUserRoutes(app, db);

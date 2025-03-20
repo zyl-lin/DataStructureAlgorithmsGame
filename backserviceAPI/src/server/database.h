@@ -40,12 +40,13 @@ public:
     json getUserProgress(int userId);
     bool syncUserProgress(int userId, const json& progressData);
 
+    json executeSelect(const std::string& query);
+
 private:
     sqlite3* db;
     
     // 辅助方法
     bool executeQuery(const std::string& query);
-    json executeSelect(const std::string& query);
     
     // 初始化和成就检查方法
     void populateInitialData();

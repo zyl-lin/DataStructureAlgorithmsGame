@@ -3,4 +3,5 @@
 #include "crow.h"
 #include "database.h"
 
-void registerAchievementRoutes(crow::App<crow::CORSHandler>& app, Database& db); 
+// 不使用 CORSHandler，直接使用普通的 App
+void registerAchievementRoutes(crow::App& app, Database& db); 
