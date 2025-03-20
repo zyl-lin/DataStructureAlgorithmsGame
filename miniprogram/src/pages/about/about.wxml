@@ -1,0 +1,71 @@
+<!-- 关于我们页面 -->
+<view class="about-page">
+  <view class="header">
+    <image class="logo" src="/assets/icons/app-logo.png" mode="aspectFit"></image>
+    <view class="app-name">数据结构与算法游戏</view>
+    <view class="app-version">v1.0.0</view>
+  </view>
+
+  <view class="content">
+    <view class="section">
+      <view class="section-title">关于应用</view>
+      <view class="section-content">
+        <text class="about-text">
+          「数据结构与算法游戏」是一款致力于通过互动游戏方式帮助用户学习数据结构与算法的教育应用。我们相信学习应该是有趣的，通过可视化和交互式体验，可以让抽象概念变得更加生动和易于理解。
+        </text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">主要功能</view>
+      <view class="feature-list">
+        <view class="feature-item">
+          <image class="feature-icon" src="/assets/icons/feature-game.png" mode="aspectFit"></image>
+          <view class="feature-text">
+            <view class="feature-title">算法游戏</view>
+            <view class="feature-desc">通过互动游戏学习各类算法</view>
+          </view>
+        </view>
+        <view class="feature-item">
+          <image class="feature-icon" src="/assets/icons/feature-visual.png" mode="aspectFit"></image>
+          <view class="feature-text">
+            <view class="feature-title">算法可视化</view>
+            <view class="feature-desc">直观展示算法执行过程</view>
+          </view>
+        </view>
+        <view class="feature-item">
+          <image class="feature-icon" src="/assets/icons/feature-progress.png" mode="aspectFit"></image>
+          <view class="feature-text">
+            <view class="feature-title">学习进度</view>
+            <view class="feature-desc">记录学习历程和成就</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">联系我们</view>
+      <view class="contact-list">
+        <view class="contact-item">
+          <image class="contact-icon" src="/assets/icons/email.png" mode="aspectFit"></image>
+          <text class="contact-text">support@example.com</text>
+        </view>
+        <view class="contact-item">
+          <image class="contact-icon" src="/assets/icons/website.png" mode="aspectFit"></image>
+          <text class="contact-text">www.example.com</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">版权信息</view>
+      <view class="section-content">
+        <text class="copyright-text">© 2023 数据结构与算法游戏团队版权所有</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="btn-feedback" bindtap="showFeedback">意见反馈</view>
+  </view>
+</view> 

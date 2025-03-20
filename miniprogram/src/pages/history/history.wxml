@@ -1,0 +1,105 @@
+<!-- 学习记录页面 -->
+<view class="history-page">
+  <view class="header">
+    <view class="title">学习记录</view>
+    <view class="tabs">
+      <view class="tab {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="0">最近学习</view>
+      <view class="tab {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="1">学习统计</view>
+    </view>
+  </view>
+
+  <view class="content">
+    <!-- 最近学习记录 -->
+    <view class="recent-list" wx:if="{{currentTab === 0}}">
+      <block wx:if="{{historyList.length > 0}}">
+        <view class="history-item" wx:for="{{historyList}}" wx:key="id">
+          <view class="item-left">
+            <image class="game-icon" src="{{item.icon}}" mode="aspectFit"></image>
+          </view>
+          <view class="item-content">
+            <view class="item-title">{{item.title}}</view>
+            <view class="item-desc">{{item.description}}</view>
+            <view class="item-info">
+              <text class="item-time">{{item.time}}</text>
+              <text class="item-duration">用时: {{item.duration}}分钟</text>
+            </view>
+          </view>
+          <view class="item-right">
+            <view class="item-status {{item.completed ? 'completed' : ''}}">
+              {{item.completed ? '已完成' : '进行中'}}
+            </view>
+            <view class="btn-continue" bindtap="continueGame" data-id="{{item.id}}">继续</view>
+          </view>
+        </view>
+      </block>
+
+      <view class="empty-state" wx:else>
+        <image class="empty-icon" src="/assets/icons/empty-history.png" mode="aspectFit"></image>
+        <view class="empty-text">暂无学习记录</view>
+        <view class="empty-desc">快去开始你的数据结构与算法学习之旅吧！</view>
+        <view class="btn-start" bindtap="navigateToIndex">开始学习</view>
+      </view>
+    </view>
+
+    <!-- 学习统计 -->
+    <view class="statistics" wx:elif="{{currentTab === 1}}">
+      <view class="stat-card">
+        <view class="stat-title">学习概览</view>
+        <view class="stat-row">
+          <view class="stat-block">
+            <view class="stat-value">{{statistics.totalGames}}</view>
+            <view class="stat-label">学习项目</view>
+          </view>
+          <view class="stat-block">
+            <view class="stat-value">{{statistics.completedGames}}</view>
+            <view class="stat-label">已完成</view>
+          </view>
+          <view class="stat-block">
+            <view class="stat-value">{{statistics.totalDays}}</view>
+            <view class="stat-label">学习天数</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="stat-card">
+        <view class="stat-title">学习时长</view>
+        <view class="study-time">
+          <view class="time-block">
+            <view class="time-value">{{statistics.totalHours}}</view>
+            <view class="time-label">总时长(小时)</view>
+          </view>
+          <view class="time-block">
+            <view class="time-value">{{statistics.avgDailyMinutes}}</view>
+            <view class="time-label">日均(分钟)</view>
+          </view>
+        </view>
+
+        <view class="chart-container">
+          <view class="chart-title">近7天学习时长(分钟)</view>
+          <view class="bar-chart">
+            <view class="chart-bar" wx:for="{{statistics.weeklyData}}" wx:key="day">
+              <view class="bar-fill" style="height: {{item.percent}}%"></view>
+              <view class="bar-value">{{item.value}}</view>
+              <view class="bar-label">{{item.day}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="stat-card">
+        <view class="stat-title">类别完成率</view>
+        <view class="category-list">
+          <view class="category-item" wx:for="{{statistics.categories}}" wx:key="name">
+            <view class="category-info">
+              <view class="category-name">{{item.name}}</view>
+              <view class="category-percent">{{item.percent}}%</view>
+            </view>
+            <view class="category-bar">
+              <view class="category-fill" style="width: {{item.percent}}%"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

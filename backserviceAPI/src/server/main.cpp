@@ -20,8 +20,11 @@ int main() {
     auto& cors = app.get_middleware<crow::CORSHandler>();
     cors
         .global()
-        .headers("Content-Type")
-        .methods("POST", "GET", "PUT", "DELETE");
+        .methods(crow::HTTPMethod::POST)
+        .methods(crow::HTTPMethod::GET)
+        .methods(crow::HTTPMethod::PUT)
+        .methods(crow::HTTPMethod::DELETE)
+        .headers("Content-Type");
     
     // 注册路由
     registerUserRoutes(app, db);

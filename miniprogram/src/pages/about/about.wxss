@@ -1,0 +1,168 @@
+/* 关于我们页面样式 */
+.about-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-bottom: 30rpx;
+}
+
+/* 头部样式 */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50rpx 30rpx;
+  background-color: #3498db;
+  color: #fff;
+  border-bottom-left-radius: 30rpx;
+  border-bottom-right-radius: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(52, 152, 219, 0.2);
+}
+
+.logo {
+  width: 150rpx;
+  height: 150rpx;
+  margin-bottom: 25rpx;
+  border-radius: 30rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 15rpx;
+}
+
+.app-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.app-version {
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+/* 内容区域 */
+.content {
+  padding: 30rpx;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 25rpx;
+  margin-bottom: 25rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20rpx;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6rpx;
+  width: 6rpx;
+  height: 30rpx;
+  background-color: #3498db;
+  border-radius: 3rpx;
+}
+
+.section-content {
+  padding: 0 10rpx;
+}
+
+.about-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 功能列表 */
+.feature-list {
+  padding: 0 10rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25rpx;
+}
+
+.feature-item:last-child {
+  margin-bottom: 0;
+}
+
+.feature-icon {
+  width: 70rpx;
+  height: 70rpx;
+  margin-right: 20rpx;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+.feature-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 6rpx;
+}
+
+.feature-desc {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 联系方式 */
+.contact-list {
+  padding: 0 10rpx;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 15rpx;
+}
+
+.contact-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 版权信息 */
+.copyright-text {
+  font-size: 26rpx;
+  color: #999;
+  text-align: center;
+  display: block;
+}
+
+/* 底部 */
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 30rpx;
+}
+
+.btn-feedback {
+  font-size: 28rpx;
+  color: #fff;
+  background-color: #3498db;
+  border-radius: 40rpx;
+  padding: 16rpx 40rpx;
+} 

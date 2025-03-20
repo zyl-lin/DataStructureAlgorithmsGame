@@ -1,12 +1,14 @@
 #include "user_routes.h"
 #include "jwt_utils.h"
 #include <iostream>
+#include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;
 
 void registerUserRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     // 用户注册
-    CROW_ROUTE(app, "/api/user/register").methods(crow::HTTPMethod::POST)
+    CROW_ROUTE(app, "/api/user/register")
+        .methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
         auto body = json::parse(req.body);
         
@@ -29,7 +31,8 @@ void registerUserRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
     });
     
     // 用户登录
-    CROW_ROUTE(app, "/api/user/login").methods(crow::HTTPMethod::POST)
+    CROW_ROUTE(app, "/api/user/login")
+        .methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
         auto body = json::parse(req.body);
         

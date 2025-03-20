@@ -336,3 +336,26 @@
   4. FetchContent
 - **修改了哪些文件**：
   1. `CMakeLists.txt`
+
+## 2024-03-27 16:00:00
+
+- **会话的主要目的**：解决Crow库编译错误问题
+- **完成的主要任务**：
+  1. 修正了CORS配置的语法错误
+  2. 统一了路由注册函数的参数类型
+  3. 确保所有相关文件正确包含Crow头文件
+- **关键决策和解决方案**：
+  1. 将`methods`调用改为逐个添加HTTP方法
+  2. 确保所有路由注册函数使用`crow::App<crow::CORSHandler>`类型
+  3. 添加了必要的头文件包含
+- **使用的技术栈**：
+  1. C++
+  2. Crow框架
+  3. CMake
+- **修改了哪些文件**：
+  1. `src/server/main.cpp`
+  2. `src/server/user_routes.h`
+  3. `src/server/user_routes.cpp`
+  4. `src/server/game_routes.h`
+  5. `src/server/achievement_routes.h`
+  6. `CMakeLists.txt`

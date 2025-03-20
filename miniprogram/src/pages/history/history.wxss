@@ -1,0 +1,322 @@
+/* 学习记录页面样式 */
+.history-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-bottom: 30rpx;
+}
+
+/* 头部样式 */
+.header {
+  background-color: #3498db;
+  padding: 30rpx 30rpx 20rpx;
+  color: #fff;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 25rpx;
+}
+
+.tabs {
+  display: flex;
+  border-radius: 10rpx;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 28rpx;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  background-color: #fff;
+  color: #3498db;
+  font-weight: 500;
+}
+
+/* 内容区域 */
+.content {
+  padding: 30rpx 0;
+}
+
+/* 历史记录列表 */
+.recent-list {
+  padding: 0 30rpx;
+}
+
+.history-item {
+  display: flex;
+  background-color: #fff;
+  padding: 25rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 20rpx;
+}
+
+.item-left {
+  margin-right: 20rpx;
+}
+
+.game-icon {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 12rpx;
+}
+
+.item-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.item-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.item-desc {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.item-info {
+  display: flex;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.item-time {
+  margin-right: 20rpx;
+}
+
+.item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-left: 20rpx;
+}
+
+.item-status {
+  font-size: 24rpx;
+  color: #ff9800;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+  background-color: rgba(255, 152, 0, 0.1);
+}
+
+.item-status.completed {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.btn-continue {
+  font-size: 24rpx;
+  color: #fff;
+  background-color: #3498db;
+  border-radius: 30rpx;
+  padding: 10rpx 20rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+}
+
+.btn-start {
+  font-size: 28rpx;
+  color: #fff;
+  background-color: #3498db;
+  border-radius: 40rpx;
+  padding: 16rpx 40rpx;
+}
+
+/* 统计页样式 */
+.statistics {
+  padding: 0 30rpx;
+}
+
+.stat-card {
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  padding: 25rpx;
+  margin-bottom: 25rpx;
+}
+
+.stat-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-block {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 42rpx;
+  font-weight: bold;
+  color: #3498db;
+  margin-bottom: 6rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 学习时长 */
+.study-time {
+  display: flex;
+  margin-bottom: 25rpx;
+}
+
+.time-block {
+  flex: 1;
+  text-align: center;
+  padding: 15rpx 0;
+  border-radius: 8rpx;
+}
+
+.time-value {
+  font-size: 38rpx;
+  font-weight: bold;
+  color: #3498db;
+  margin-bottom: 6rpx;
+}
+
+.time-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 图表样式 */
+.chart-container {
+  margin-top: 20rpx;
+}
+
+.chart-title {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.bar-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 200rpx;
+  padding: 0 10rpx;
+}
+
+.chart-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.bar-fill {
+  width: 24rpx;
+  background-color: #3498db;
+  border-radius: 12rpx 12rpx 0 0;
+  position: absolute;
+  bottom: 40rpx;
+}
+
+.bar-value {
+  font-size: 22rpx;
+  color: #666;
+  position: absolute;
+  bottom: 40rpx;
+  transform: translateY(-30rpx);
+}
+
+.bar-label {
+  font-size: 22rpx;
+  color: #999;
+  position: absolute;
+  bottom: 0;
+}
+
+/* 类别完成率 */
+.category-list {
+  margin-top: 10rpx;
+}
+
+.category-item {
+  margin-bottom: 15rpx;
+}
+
+.category-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6rpx;
+}
+
+.category-name {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.category-percent {
+  font-size: 26rpx;
+  color: #3498db;
+  font-weight: 500;
+}
+
+.category-bar {
+  height: 14rpx;
+  background-color: #f0f0f0;
+  border-radius: 7rpx;
+  overflow: hidden;
+}
+
+.category-fill {
+  height: 100%;
+  background-color: #3498db;
+  border-radius: 7rpx;
+} 
