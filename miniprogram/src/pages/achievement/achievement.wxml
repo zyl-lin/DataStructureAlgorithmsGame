@@ -1,0 +1,47 @@
+<!-- 成就页面 -->
+<view class="achievement-page">
+  <view class="header">
+    <view class="title">我的成就</view>
+    <view class="subtitle">记录你的学习旅程</view>
+  </view>
+  
+  <view class="achievement-stats">
+    <view class="stat-item">
+      <view class="stat-value">{{totalCompleted}}</view>
+      <view class="stat-label">已完成</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{totalAchievements}}</view>
+      <view class="stat-label">总成就</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{completionRate}}%</view>
+      <view class="stat-label">完成率</view>
+    </view>
+  </view>
+  
+  <view class="achievement-list">
+    <block wx:for="{{achievements}}" wx:key="id">
+      <view class="achievement-item {{item.completed ? 'completed' : ''}}">
+        <view class="achievement-icon">
+          <image src="{{item.iconPath}}" mode="aspectFit"></image>
+        </view>
+        <view class="achievement-info">
+          <view class="achievement-title">{{item.title}}</view>
+          <view class="achievement-description">{{item.description}}</view>
+          <view class="achievement-progress" wx:if="{{item.totalSteps > 1}}">
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{item.completedSteps / item.totalSteps * 100}}%;"></view>
+            </view>
+            <view class="progress-text">{{item.completedSteps}}/{{item.totalSteps}}</view>
+          </view>
+        </view>
+        <view class="achievement-status">
+          <view wx:if="{{item.completed}}" class="status-completed">已获得</view>
+          <view wx:elif="{{item.completedSteps > 0}}" class="status-in-progress">进行中</view>
+          <view wx:else class="status-locked">未开始</view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view> 

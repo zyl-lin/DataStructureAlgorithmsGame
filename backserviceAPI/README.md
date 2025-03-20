@@ -316,3 +316,23 @@
   3. `src/server/user_routes.h`
   4. `src/server/achievement_routes.h`
   5. `CMakeLists.txt`
+
+## 2024-03-27 15:30:00
+
+- **会话的主要目的**：解决CMake处理Crow库时的ALIAS目标错误
+- **完成的主要任务**：
+  1. 诊断了CMake在处理Crow库时的配置错误
+  2. 提供了修改CMakeLists.txt的解决方案
+  3. 提供了多种替代配置方案
+- **关键决策和解决方案**：
+  1. 删除了有问题的`find_package(Crow REQUIRED)`命令
+  2. 将链接库从`Crow::Crow`修改为直接使用`Crow`
+  3. 添加了Crow源码的头文件路径
+  4. 提供了更完整的依赖处理替代方案
+- **使用的技术栈**：
+  1. C++
+  2. CMake
+  3. Crow框架
+  4. FetchContent
+- **修改了哪些文件**：
+  1. `CMakeLists.txt`

@@ -14,7 +14,8 @@
     "src/pages/sorting/sorting",
     "src/pages/search/search",
     "src/pages/dp/dp",
-    "src/pages/greedy/greedy"
+    "src/pages/greedy/greedy",
+    "src/pages/achievement/achievement"
   ],
   "window": {
     "navigationBarTitleText": "数据结构与算法游戏",
