@@ -1,3 +1,6 @@
 {
+    "navigationBarTitleText": "数据结构与算法游戏",
+    "enablePullDownRefresh": true,
+    "backgroundTextStyle": "dark",
     "usingComponents": {}
 }

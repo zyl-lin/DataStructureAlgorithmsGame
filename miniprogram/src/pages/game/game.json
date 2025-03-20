@@ -3,6 +3,9 @@
   "usingComponents": {
     "linked-list-game": "/src/components/linked-list-game/linked-list-game",
     "maze-game": "/src/components/maze-game/maze-game",
-    "sorting-game": "/src/components/sorting-game/sorting-game"
+    "sorting-game": "/src/components/sorting-game/sorting-game",
+    "binary-tree-game": "/src/components/binary-tree-game/binary-tree-game",
+    "queue-game": "/src/components/queue-game/queue-game",
+    "graph-game": "/src/components/graph-game/graph-game"
   }
 } 

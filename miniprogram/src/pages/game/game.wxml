@@ -6,33 +6,75 @@
     </view>
   </view>
 
+  <view wx:if="{{currentTask}}" class="status-panel">
+    <text class="status-text">当前任务: {{currentTask}}</text>
+  </view>
+
   <view class="game-content">
     <block wx:if="{{gameType === 'linkedList'}}">
       <linked-list-game 
         nodes="{{nodes}}"
+        currentLevel="{{currentLevel}}"
         bind:nodeTap="onNodeTap"
         bind:operation="onOperation"
+        bind:complete="onLevelComplete"
       />
     </block>
     <block wx:elif="{{gameType === 'maze'}}">
       <maze-game 
         maze="{{maze}}"
         player="{{player}}"
+        currentLevel="{{currentLevel}}"
         bind:move="onMove"
         bind:algorithm="onAlgorithmSelect"
+        bind:complete="onLevelComplete"
       />
     </block>
     <block wx:elif="{{gameType === 'sorting'}}">
       <sorting-game 
         array="{{array}}"
+        currentLevel="{{currentLevel}}"
         bind:sort="onSort"
         bind:algorithm="onAlgorithmSelect"
+        bind:complete="onLevelComplete"
       />
     </block>
+    <block wx:elif="{{gameType === 'binaryTree'}}">
+      <binary-tree-game 
+        tree="{{tree}}"
+        currentLevel="{{currentLevel}}"
+        bind:nodeSelect="onNodeSelect"
+        bind:traversal="onTraversal"
+        bind:complete="onLevelComplete"
+      />
+    </block>
+    <block wx:elif="{{gameType === 'queue'}}">
+      <queue-game 
+        queue="{{queue}}"
+        currentLevel="{{currentLevel}}"
+        bind:enqueue="onEnqueue"
+        bind:dequeue="onDequeue"
+        bind:complete="onLevelComplete"
+      />
+    </block>
+    <block wx:elif="{{gameType === 'graph'}}">
+      <graph-game 
+        graph="{{graph}}"
+        currentLevel="{{currentLevel}}"
+        bind:nodeSelect="onNodeSelect"
+        bind:algorithmSelect="onAlgorithmSelect"
+        bind:complete="onLevelComplete"
+      />
+    </block>
+    
+    <!-- 添加提示按钮 -->
+    <view class="hint-button" bindtap="showHint">
+      <text class="hint-icon">?</text>
+    </view>
   </view>
 
   <view class="controls">
-    <view class="operation-buttons">
+    <view class="operation-buttons" wx:if="{{operations.length > 0}}">
       <button 
         wx:for="{{operations}}" 
         wx:key="id"
@@ -54,7 +96,7 @@
       <button 
         class="nav-btn next" 
         bindtap="nextLevel"
-        disabled="{{currentLevel === totalLevels}}"
+        disabled="{{currentLevel === totalLevels || !levelCompleted}}"
       >
         下一关
       </button>

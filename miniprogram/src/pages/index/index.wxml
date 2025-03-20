@@ -7,13 +7,22 @@
     <view class="game-category" wx:for="{{gameCategories}}" wx:key="id">
       <view class="category-title">{{item.name}}</view>
       <view class="game-grid">
-        <game-card 
+        <view 
           wx:for="{{item.games}}" 
           wx:key="id" 
           wx:for-item="game"
-          game="{{game}}"
-          bind:tap="onGameTap"
-        />
+          bindtap="onGameTap"
+          data-game="{{game}}"
+          class="game-item"
+        >
+          <view class="game-card">
+            <image class="game-icon" src="{{game.icon || '/assets/default-game-icon.png'}}" mode="aspectFit" />
+            <view class="game-info">
+              <text class="game-name">{{game.name}}</text>
+              <text class="game-description">{{game.description}}</text>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -23,8 +32,10 @@
       <image src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}" />
     </view>
     <view class="user-details">
-      <text class="nickname">{{userInfo.nickName || '未登录'}}</text>
+      <text class="nickname">{{userInfo.nickName || '微信用户'}}</text>
       <text class="level">Level {{userInfo.level || 1}}</text>
     </view>
   </view>
+  
+  <view class="bottom-space"></view>
 </view> 

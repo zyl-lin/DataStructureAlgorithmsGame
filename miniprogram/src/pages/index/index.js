@@ -14,14 +14,20 @@ Page({
           {
             id: 1,
             name: '链表操作',
-            icon: '/assets/linked-list.png',
+            icon: '/assets/images/games/linked-list.png',
             description: '学习链表的基本操作'
           },
           {
             id: 2,
             name: '栈与队列',
-            icon: '/assets/stack-queue.png',
+            icon: '/assets/images/games/stack-queue.png',
             description: '掌握栈和队列的应用'
+          },
+          {
+            id: 5,
+            name: '二叉树遍历',
+            icon: '/assets/images/games/binary-tree.png',
+            description: '学习二叉树的四种遍历方式'
           }
         ]
       },
@@ -32,14 +38,20 @@ Page({
           {
             id: 3,
             name: '迷宫寻路',
-            icon: '/assets/maze.png',
+            icon: '/assets/images/games/maze.png',
             description: '使用不同算法解决迷宫问题'
           },
           {
             id: 4,
             name: '排序可视化',
-            icon: '/assets/sorting.png',
+            icon: '/assets/images/games/sorting.png',
             description: '可视化各种排序算法'
+          },
+          {
+            id: 6,
+            name: '图遍历算法',
+            icon: '/assets/images/games/graph.png',
+            description: '学习图的DFS和BFS遍历'
           }
         ]
       }
@@ -108,7 +120,7 @@ Page({
   onGameTap(e) {
     const { game } = e.currentTarget.dataset;
     wx.navigateTo({
-      url: `/pages/game/game?id=${game.id}&name=${game.name}`
+      url: `/src/pages/game/game?id=${game.id}&name=${game.name}`
     });
   }
 }); 
