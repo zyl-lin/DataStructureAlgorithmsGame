@@ -204,12 +204,7 @@ Page({
       gameType: 'queue',
       queue: queue,
       currentTask: task,
-      currentHint: hint,
-      operations: [
-        { id: 1, name: '入队' },
-        { id: 2, name: '出队' },
-        { id: 3, name: '查看队首' }
-      ]
+      currentHint: hint
     })
   },
 
@@ -220,7 +215,6 @@ Page({
     let task = ''
     let hint = ''
     
-    // 根据不同关卡生成不同的迷宫
     if (level === 1) {
       maze = [
         [0, 0, 1, 1, 1],
@@ -260,12 +254,7 @@ Page({
       maze: maze,
       player: player,
       currentTask: task,
-      currentHint: hint,
-      operations: [
-        { id: 1, name: 'DFS' },
-        { id: 2, name: 'BFS' },
-        { id: 3, name: 'A*' }
-      ]
+      currentHint: hint
     })
   },
 
@@ -363,13 +352,7 @@ Page({
       gameType: 'binaryTree',
       tree: tree,
       currentTask: task,
-      currentHint: hint,
-      operations: [
-        { id: 1, name: '前序遍历' },
-        { id: 2, name: '中序遍历' },
-        { id: 3, name: '后序遍历' },
-        { id: 4, name: '层序遍历' }
-      ]
+      currentHint: hint
     })
   },
   
@@ -564,5 +547,13 @@ Page({
   onUnload() {
     // 页面卸载时保存游戏进度
     this.saveGameProgress()
+    
+    // 如果当前是二叉树游戏，重置服务端的二叉树状态
+    if (this.data.gameType === 'binaryTree') {
+      const api = require('../../services/api')
+      api.binaryTree.reset().catch(error => {
+        console.error('重置二叉树状态失败:', error)
+      })
+    }
   }
 }) 

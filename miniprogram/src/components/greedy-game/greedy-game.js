@@ -6,6 +6,10 @@ Component({
     level: {
       type: Number,
       value: 1
+    },
+    useApi: {
+      type: Boolean,
+      value: true
     }
   },
 
@@ -15,6 +19,13 @@ Component({
   data: {
     // 算法类型
     greedyType: 'coin', // 'coin', 'activity', 'huffman'
+    
+    // API相关状态
+    isApiMode: true,
+    isLoading: false,
+    apiError: '',
+    animationSpeed: 5,
+    showSpeedControl: false,
     
     // 可视化状态
     isVisualizing: false,
@@ -205,17 +216,17 @@ Component({
       // 重置状态
       this.resetVisualization();
       
-      // 准备可视化步骤
-      this.prepareVisualizationSteps();
-      
-      // 开始可视化
-      this.setData({
-        isVisualizing: true,
-        currentStepIndex: -1
-      });
-      
-      // 执行第一步
-      this.nextStep();
+      if (this.data.isApiMode) {
+        this.startApiVisualization();
+      } else {
+        // 使用原有的本地实现
+        this.prepareVisualizationSteps();
+        this.setData({
+          isVisualizing: true,
+          currentStepIndex: -1
+        });
+        this.nextStep();
+      }
     },
 
     // 下一步
@@ -900,6 +911,136 @@ Component({
             }
           }
         });
+    },
+
+    // API相关方法
+    toggleApiMode() {
+      if (this.data.isVisualizing || this.data.isLoading) {
+        wx.showToast({
+          title: '请等待当前操作完成',
+          icon: 'none'
+        });
+        return;
+      }
+
+      const isApiMode = !this.data.isApiMode;
+      this.setData({
+        isApiMode,
+        showSpeedControl: isApiMode,
+        apiError: ''
+      });
+
+      wx.showToast({
+        title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
+        icon: 'none'
+      });
+
+      // 重置状态
+      this.resetVisualization();
+    },
+
+    // 调整动画速度
+    setAnimationSpeed(e) {
+      const value = e.detail.value;
+      this.setData({
+        animationSpeed: value,
+        autoPlaySpeed: (11 - value) * 200 // 速度从2000ms到200ms
+      });
+    },
+
+    // 调用API执行贪心算法
+    async startApiVisualization() {
+      const { greedyType } = this.data;
+      
+      this.setData({
+        isLoading: true,
+        apiError: ''
+      });
+
+      try {
+        let params = {};
+        if (greedyType === 'coin') {
+          const { coinAmount, availableCoins, selectedCoins } = this.data;
+          params = {
+            amount: coinAmount,
+            coins: availableCoins.filter((_, i) => selectedCoins[i])
+          };
+        } else if (greedyType === 'activity') {
+          params = {
+            activities: this.data.activities
+          };
+        } else if (greedyType === 'huffman') {
+          params = {
+            text: this.data.huffmanText
+          };
+        }
+
+        const api = require('../../services/api');
+        const response = await api.callGreedyAlgorithm(greedyType, params);
+        
+        if (response.success) {
+          // 转换API返回的动画帧为可视化步骤
+          this.handleApiResponse(response.data);
+        } else {
+          throw new Error(response.message || '请求失败');
+        }
+      } catch (error) {
+        this.setData({
+          apiError: error.message || '执行算法时出错',
+          isLoading: false
+        });
+        return;
+      }
+
+      this.setData({
+        isLoading: false
+      });
+    },
+
+    // 处理API响应数据
+    handleApiResponse(data) {
+      const { greedyType } = this.data;
+      const steps = [];
+
+      // 转换API返回的动画帧为可视化步骤
+      for (const frame of data.frames) {
+        const step = {
+          type: `${greedyType}-${frame.type}`,
+          description: frame.description
+        };
+
+        if (greedyType === 'coin') {
+          step.remainingAmount = frame.remainingAmount;
+          step.coinSelections = frame.selections;
+          if (frame.result) {
+            step.result = frame.result;
+          }
+        } else if (greedyType === 'activity') {
+          step.hours = frame.hours;
+          step.activities = frame.activities;
+          step.selectedActivities = frame.selected;
+          if (frame.result) {
+            step.result = frame.result;
+          }
+        } else if (greedyType === 'huffman') {
+          step.charFrequencies = frame.frequencies;
+          step.huffmanNodes = frame.nodes;
+          if (frame.result) {
+            step.result = frame.result;
+          }
+        }
+
+        steps.push(step);
+      }
+
+      this.setData({
+        visualizationSteps: steps,
+        isVisualizing: true,
+        currentStepIndex: -1
+      });
+
+      // 执行第一步
+      this.nextStep();
     }
   }
 }) 

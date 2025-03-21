@@ -15,6 +15,45 @@
     </view>
   </view>
 
+  <!-- API模式切换 -->
+  <view class="mode-selector">
+    <view class="mode-label">执行模式：</view>
+    <view class="mode-options">
+      <view class="mode-option {{isApiMode ? 'active' : ''}}" 
+            bindtap="toggleApiMode" 
+            data-mode="api">
+        API模式
+      </view>
+      <view class="mode-option {{!isApiMode ? 'active' : ''}}" 
+            bindtap="toggleApiMode" 
+            data-mode="local">
+        本地模式
+      </view>
+    </view>
+  </view>
+
+  <!-- 速度控制 -->
+  <view class="speed-control" wx:if="{{isApiMode && showSpeedControl}}">
+    <view class="speed-label">动画速度：</view>
+    <slider class="speed-slider" 
+            min="1" 
+            max="10" 
+            value="{{animationSpeed}}" 
+            bindchange="setAnimationSpeed"
+            show-value/>
+  </view>
+
+  <!-- API错误提示 -->
+  <view class="api-error" wx:if="{{apiError}}">
+    {{apiError}}
+  </view>
+
+  <!-- 加载指示器 -->
+  <view class="loading-indicator" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text>正在执行算法...</text>
+  </view>
+
   <!-- 参数输入部分 -->
   <view class="input-area">
     <!-- 零钱兑换输入 -->

@@ -4,6 +4,7 @@
 #include "user_routes.h"
 #include "game_routes.h"
 #include "achievement_routes.h"
+#include "game_animation_routes.h"
 #include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;
@@ -30,6 +31,7 @@ int main() {
     registerUserRoutes(app, db);
     registerGameRoutes(app, db);
     registerAchievementRoutes(app, db);
+    registerGameAnimationRoutes(app, db);
     
     // 健康检查端点
     CROW_ROUTE(app, "/api/health")

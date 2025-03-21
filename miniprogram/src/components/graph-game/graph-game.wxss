@@ -118,7 +118,7 @@
 }
 
 .mode-option-active {
-  background-color: #2196f3;
+  background-color: #4caf50;
   color: white;
   font-weight: bold;
 }
@@ -209,6 +209,6 @@
 }
 
 .show-btn {
-  background-color: #2196f3;
+  background-color: #4caf50;
   color: white;
 } 

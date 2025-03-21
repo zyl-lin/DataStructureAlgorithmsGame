@@ -49,8 +49,55 @@ public:
     void checkAchievements(int userId);
     bool unlockAchievement(int userId, int achievementId);
 
+    // 通用的游戏状态管理方法
+    json getGameState(const std::string& gameType);
+    bool updateGameState(const std::string& gameType, const json& state);
+    
+    // 数据结构游戏状态管理
+    // 链表游戏状态
+    json getLinkedListState();
+    bool updateLinkedListState(const json& state);
+    
+    // 队列游戏状态
+    json getQueueState();
+    bool updateQueueState(const json& state);
+    
+    // 栈游戏状态
+    json getStackState();
+    bool updateStackState(const json& state);
+    
+    // 二叉树游戏状态
+    json getBinaryTreeState();
+    bool updateBinaryTreeState(const json& state);
+    
+    // 图游戏状态
+    json getGraphState();
+    bool updateGraphState(const json& state);
+    
+    // 排序游戏状态
+    json getSortingState();
+    bool updateSortingState(const json& state);
+    
+    // 搜索游戏状态
+    json getSearchState();
+    bool updateSearchState(const json& state);
+    
+    // 迷宫游戏状态
+    json getMazeState();
+    bool updateMazeState(const json& state);
+
 private:
+    // 数据库连接相关
     sqlite3* db;
+    std::string dbPath;
     
-    
+    // 游戏状态
+    json linkedListState;  // 链表游戏状态
+    json queueState;      // 队列游戏状态
+    json stackState;      // 栈游戏状态
+    json binaryTreeState; // 二叉树游戏状态
+    json graphState;      // 图游戏状态
+    json sortingState;    // 排序游戏状态
+    json searchState;     // 搜索游戏状态
+    json mazeState;      // 迷宫游戏状态
 }; 

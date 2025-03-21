@@ -9,61 +9,159 @@
   <view class="traversal-selector">
     <view class="selector-title">遍历方式</view>
     <view class="selector-options">
-      <view class="selector-option {{traversalMode === 'preorder' ? 'active' : ''}}" 
-            bindtap="changeTraversalMode" 
+      <view class="selector-option {{traversalMode === 'preorder' ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}" 
+            bindtap="{{isLoading ? '' : 'changeTraversalMode'}}" 
             data-mode="preorder">
         前序遍历 (Preorder)
       </view>
-      <view class="selector-option {{traversalMode === 'inorder' ? 'active' : ''}}" 
-            bindtap="changeTraversalMode" 
+      <view class="selector-option {{traversalMode === 'inorder' ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}" 
+            bindtap="{{isLoading ? '' : 'changeTraversalMode'}}" 
             data-mode="inorder">
         中序遍历 (Inorder)
       </view>
-      <view class="selector-option {{traversalMode === 'postorder' ? 'active' : ''}}" 
-            bindtap="changeTraversalMode" 
+      <view class="selector-option {{traversalMode === 'postorder' ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}" 
+            bindtap="{{isLoading ? '' : 'changeTraversalMode'}}" 
             data-mode="postorder">
         后序遍历 (Postorder)
       </view>
-      <view class="selector-option {{traversalMode === 'levelorder' ? 'active' : ''}}" 
-            bindtap="changeTraversalMode" 
+      <view class="selector-option {{traversalMode === 'levelorder' ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}" 
+            bindtap="{{isLoading ? '' : 'changeTraversalMode'}}" 
             data-mode="levelorder">
         层序遍历 (Level Order)
       </view>
+    </view>
+    
+    <!-- API模式切换 -->
+    <view class="mode-selector">
+      <view class="mode-option {{isApiMode ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}"
+            bindtap="{{isLoading ? '' : 'toggleApiMode'}}"
+            data-mode="api">
+        API模式
+      </view>
+      <view class="mode-option {{!isApiMode ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}"
+            bindtap="{{isLoading ? '' : 'toggleApiMode'}}"
+            data-mode="local">
+        本地模式
+      </view>
+    </view>
+
+    <!-- 动画速度控制 -->
+    <view class="speed-control {{showSpeedControl ? 'show' : ''}}" wx:if="{{isApiMode}}">
+      <view class="speed-title" bindtap="toggleSpeedControl">
+        动画速度 <text class="toggle-icon">{{showSpeedControl ? '▼' : '▶'}}</text>
+      </view>
+      <view class="speed-slider" wx:if="{{showSpeedControl}}">
+        <slider min="1" max="10" value="{{animationSpeed}}" bindchange="setAnimationSpeed" 
+                disabled="{{isLoading}}" show-value/>
+      </view>
+    </view>
+  </view>
+
+  <!-- API错误提示 -->
+  <view class="api-error" wx:if="{{apiError}}">
+    {{apiError}}
+  </view>
+
+  <!-- 加载状态指示器 -->
+  <view class="loading-indicator" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在处理请求...</text>
+  </view>
+
+  <!-- 节点插入操作区 -->
+  <view class="insert-node-panel">
+    <view class="insert-title">插入节点</view>
+    <view class="insert-operation">
+      <input class="node-value-input" type="number" placeholder="输入节点值" 
+             value="{{nodeValueInput}}" bindinput="onNodeValueInput" 
+             disabled="{{isLoading}}"/>
+      <button class="insert-btn" bindtap="insertNode" disabled="{{isLoading || !nodeValueInput}}">插入节点</button>
+    </view>
+    <view class="insert-hint" wx:if="{{!hasNodes}}">
+      请先插入节点才能进行遍历操作
     </view>
   </view>
 
   <!-- 二叉树可视化 -->
   <view class="tree-visualization">
-    <block wx:for="{{treeLayout}}" wx:for-item="level" wx:for-index="levelIndex" wx:key="levelIndex">
-      <view class="tree-level">
-        <block wx:for="{{level}}" wx:key="id">
-          <view class="tree-node-wrapper" style="width: calc(100% / {{Math.pow(2, levelIndex)}});">
-            <view class="tree-node {{selectedNodes.includes(item.id) ? 'selected' : ''}} {{highlightedNodes.includes(item.id) ? 'highlighted' : ''}}"
+    <block wx:if="{{hasNodes}}">
+      <!-- 循环创建树的每一层 -->
+      <view wx:for="{{treeLayout}}" wx:for-item="level" wx:for-index="levelIndex" wx:key="levelIndex" class="tree-level">
+        <!-- 每层创建对应个数的节点位置 -->
+        <view wx:for="{{level}}" wx:for-item="node" wx:for-index="posIndex" wx:key="posIndex" 
+              class="tree-node-wrapper" 
+              style="left: {{posIndex * (100 / level.length)}}%; width: {{100 / level.length}}%;">
+          <!-- 检查当前位置是否有节点 -->
+          <block wx:if="{{node}}">
+            <view class="tree-node {{selectedNodes.includes(node.id) ? 'selected' : ''}} {{highlightedNodes.includes(node.id) ? 'highlighted' : ''}}"
                   bindtap="onNodeTap"
-                  data-id="{{item.id}}"
-                  data-value="{{item.value}}">
-              {{item.value}}
+                  data-id="{{node.id}}"
+                  data-value="{{node.value}}">
+              {{node.value}}
+              <!-- 节点连接线 - 动态计算连接线长度 -->
+              <block wx:for="{{nodeConnections}}" wx:for-item="connection" wx:key="index">
+                <!-- 如果当前节点是连接的起点，则显示连接线 -->
+                <block wx:if="{{connection.from === node.id}}">
+                  <view 
+                    class="branch {{connection.type === 'left' ? 'branch-left' : 'branch-right'}}"
+                    style="height: {{connection.length}}rpx;">
+                  </view>
+                </block>
+              </block>
             </view>
-            <!-- 节点连接线 (简化版) -->
-            <view wx:if="{{item.hasLeft}}" class="branch branch-left"></view>
-            <view wx:if="{{item.hasRight}}" class="branch branch-right"></view>
-          </view>
-        </block>
+          </block>
+          <block wx:else>
+            <!-- 显示空位置 -->
+            <view class="tree-node-placeholder"></view>
+          </block>
+        </view>
       </view>
     </block>
+    <view class="empty-tree" wx:else>
+      <image class="empty-tree-icon" src="/assets/icons/tree.png" mode="aspectFit"></image>
+      <view class="empty-tree-text">二叉树为空，请先插入节点</view>
+    </view>
   </view>
 
   <!-- 用户遍历序列 -->
   <view class="sequence-panel">
-    <view class="sequence-title">您的遍历序列</view>
+    <view class="sequence-title">
+      {{traversalMode === 'preorder' ? '前序遍历' : 
+        traversalMode === 'inorder' ? '中序遍历' : 
+        traversalMode === 'postorder' ? '后序遍历' : '层序遍历'}}
+      结果
+    </view>
     <view class="sequence-list">
-      <block wx:if="{{userSequence.length > 0}}">
-        <view class="sequence-item" wx:for="{{userSequence}}" wx:key="index">
-          {{item}}
-        </view>
+      <block wx:if="{{traversalResult && traversalResult.length > 0}}">
+        <block wx:for="{{traversalResult}}" wx:key="index">
+          <view class="sequence-item">{{item}}</view>
+          <text wx:if="{{index < traversalResult.length-1}}" class="sequence-separator">→</text>
+        </block>
+      </block>
+      <block wx:elif="{{userSequence.length > 0}}">
+        <block wx:for="{{userSequence}}" wx:key="index">
+          <view class="sequence-item">{{item}}</view>
+          <text wx:if="{{index < userSequence.length-1}}" class="sequence-separator">→</text>
+        </block>
       </block>
       <block wx:else>
-        <view class="sequence-empty">点击树节点开始遍历</view>
+        <view class="sequence-empty">{{hasNodes ? '点击树节点开始遍历或点击"开始遍历"按钮' : '请先插入节点'}}</view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 插入历史 -->
+  <view class="insert-history-panel">
+    <view class="sequence-title">插入历史</view>
+    <view class="sequence-list">
+      <block wx:if="{{insertHistory.length > 0}}">
+        <block wx:for="{{insertHistory}}" wx:key="index">
+          <view class="sequence-item insert-history-item">{{index + 1}}: {{item}}</view>
+          <text wx:if="{{index < insertHistory.length-1}}" class="sequence-separator">→</text>
+        </block>
+      </block>
+      <block wx:else>
+        <view class="sequence-empty">暂无插入记录</view>
       </block>
     </view>
   </view>
@@ -85,9 +183,9 @@
 
   <!-- 操作按钮 -->
   <view class="action-buttons">
-    <button class="action-btn" bindtap="restart">重新开始</button>
-    <button class="action-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}">
-      查看正确遍历
+    <button class="action-btn" bindtap="restart" disabled="{{isLoading}}">重新开始</button>
+    <button class="action-btn" bindtap="startTraversal" disabled="{{isLoading || !hasNodes}}">
+      开始遍历
     </button>
   </view>
 </view> 

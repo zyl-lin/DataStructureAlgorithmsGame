@@ -589,4 +589,110 @@
   padding: 10rpx;
   background-color: #f8d7da;
   border-radius: 6rpx;
+}
+
+/* API模式选择器 */
+.mode-selector {
+  margin: 20rpx 0;
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.mode-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  font-weight: 500;
+}
+
+.mode-options {
+  display: flex;
+  gap: 20rpx;
+}
+
+.mode-option {
+  flex: 1;
+  padding: 15rpx 30rpx;
+  text-align: center;
+  background-color: #eef2f7;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #5a6877;
+  transition: all 0.3s;
+}
+
+.mode-option.active {
+  background-color: #3498db;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 速度控制 */
+.speed-control {
+  margin: 20rpx 0;
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.speed-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.speed-slider {
+  margin: 20rpx 0;
+}
+
+/* API错误提示 */
+.api-error {
+  margin: 20rpx 0;
+  padding: 20rpx;
+  background-color: #fff2f0;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #f5222d;
+  text-align: center;
+}
+
+/* 加载指示器 */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20rpx 0;
+  padding: 30rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8rpx;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-indicator text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 禁用状态 */
+.mode-option.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 } 

@@ -1,11 +1,23 @@
 #include "database.h"
 #include <iostream>
 
-Database::Database(const std::string& dbPath) : db(nullptr) {
-    int rc = sqlite3_open(dbPath.c_str(), &db);
-    if (rc != SQLITE_OK) {
+Database::Database(const std::string& path) : dbPath(path) {
+    db = nullptr;
+    
+    // 初始化游戏状态为空
+    linkedListState = json::object();
+    queueState = json::object();
+    stackState = json::object();
+    binaryTreeState = json::object();
+    graphState = json::object();
+    sortingState = json::object();
+    searchState = json::object();
+    mazeState = json::object();
+    
+    // 初始化数据库连接
+    if (sqlite3_open(dbPath.c_str(), &db) != SQLITE_OK) {
         std::cerr << "Cannot open database: " << sqlite3_errmsg(db) << std::endl;
-        sqlite3_close(db);
+        return;
     }
 }
 
@@ -445,4 +457,131 @@ bool Database::unlockAchievement(int userId, int achievementId) {
     std::string query = "INSERT INTO user_achievements (user_id, achievement_id) VALUES (" +
                         std::to_string(userId) + ", " + std::to_string(achievementId) + ")";
     return executeQuery(query);
+}
+
+// 通用的游戏状态管理方法
+json Database::getGameState(const std::string& gameType) {
+    if (gameType == "linkedlist") {
+        return getLinkedListState();
+    } else if (gameType == "queue") {
+        return getQueueState();
+    } else if (gameType == "stack") {
+        return getStackState();
+    } else if (gameType == "binarytree") {
+        return getBinaryTreeState();
+    } else if (gameType == "graph") {
+        return getGraphState();
+    } else if (gameType == "sorting") {
+        return getSortingState();
+    } else if (gameType == "search") {
+        return getSearchState();
+    } else if (gameType == "maze") {
+        return getMazeState();
+    } else {
+        // 对于未知的游戏类型，返回空对象
+        return json::object();
+    }
+}
+
+bool Database::updateGameState(const std::string& gameType, const json& state) {
+    if (gameType == "linkedlist") {
+        return updateLinkedListState(state);
+    } else if (gameType == "queue") {
+        return updateQueueState(state);
+    } else if (gameType == "stack") {
+        return updateStackState(state);
+    } else if (gameType == "binarytree") {
+        return updateBinaryTreeState(state);
+    } else if (gameType == "graph") {
+        return updateGraphState(state);
+    } else if (gameType == "sorting") {
+        return updateSortingState(state);
+    } else if (gameType == "search") {
+        return updateSearchState(state);
+    } else if (gameType == "maze") {
+        return updateMazeState(state);
+    } else {
+        // 对于未知的游戏类型，返回失败
+        return false;
+    }
+}
+
+// 链表游戏状态
+json Database::getLinkedListState() {
+    return linkedListState;
+}
+
+bool Database::updateLinkedListState(const json& state) {
+    linkedListState = state;
+    return true;
+}
+
+// 队列游戏状态
+json Database::getQueueState() {
+    return queueState;
+}
+
+bool Database::updateQueueState(const json& state) {
+    queueState = state;
+    return true;
+}
+
+// 栈游戏状态
+json Database::getStackState() {
+    return stackState;
+}
+
+bool Database::updateStackState(const json& state) {
+    stackState = state;
+    return true;
+}
+
+// 二叉树游戏状态
+json Database::getBinaryTreeState() {
+    return binaryTreeState;
+}
+
+bool Database::updateBinaryTreeState(const json& state) {
+    binaryTreeState = state;
+    return true;
+}
+
+// 图游戏状态
+json Database::getGraphState() {
+    return graphState;
+}
+
+bool Database::updateGraphState(const json& state) {
+    graphState = state;
+    return true;
+}
+
+// 排序游戏状态
+json Database::getSortingState() {
+    return sortingState;
+}
+
+bool Database::updateSortingState(const json& state) {
+    sortingState = state;
+    return true;
+}
+
+// 搜索游戏状态
+json Database::getSearchState() {
+    return searchState;
+}
+
+bool Database::updateSearchState(const json& state) {
+    searchState = state;
+    return true;
+}
+
+// 迷宫游戏状态
+json Database::getMazeState() {
+    return mazeState;
+}
+
+bool Database::updateMazeState(const json& state) {
+    mazeState = state;
+    return true;
 } 

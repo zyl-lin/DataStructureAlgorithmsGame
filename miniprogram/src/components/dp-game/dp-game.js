@@ -1,3 +1,5 @@
+const api = require('../../services/api');
+
 Component({
   /**
    * 组件的属性列表
@@ -6,6 +8,10 @@ Component({
     level: {
       type: Number,
       value: 1
+    },
+    useApi: {
+      type: Boolean,
+      value: true
     }
   },
 
@@ -56,7 +62,14 @@ Component({
     
     // 自动播放计时器
     autoPlayTimer: null,
-    autoPlaySpeed: 800 // 毫秒
+    autoPlaySpeed: 800, // 毫秒
+    
+    // API相关状态
+    isApiMode: true,
+    isLoading: false,
+    apiError: '',
+    animationSpeed: 5,
+    showSpeedControl: false
   },
 
   /**
@@ -184,17 +197,19 @@ Component({
       // 重置状态
       this.resetVisualization();
       
-      // 准备可视化步骤
-      this.prepareVisualizationSteps();
-      
-      // 开始可视化
-      this.setData({
-        isVisualizing: true,
-        currentStepIndex: -1
-      });
-      
-      // 执行第一步
-      this.nextStep();
+      if (this.data.useApi) {
+        this.startApiVisualization();
+      } else {
+        // 原有的本地可视化逻辑
+        this.prepareVisualizationSteps();
+        
+        this.setData({
+          isVisualizing: true,
+          currentStepIndex: -1
+        });
+        
+        this.nextStep();
+      }
     },
 
     // 下一步
@@ -298,7 +313,13 @@ Component({
         lcsDpTable: [],
         lcsHighlight1: [],
         lcsHighlight2: [],
-        lcsResult: ''
+        lcsResult: '',
+        
+        // 添加API相关状态重置
+        isLoading: false,
+        apiError: '',
+        animationSpeed: 5,
+        showSpeedControl: false
       });
     },
 
@@ -989,6 +1010,180 @@ Component({
             }
           }
         });
+    },
+
+    // 切换API模式
+    toggleApiMode: function(e) {
+      if (this.data.isLoading) return;
+      
+      const useApi = e.currentTarget.dataset.mode === 'api';
+      this.setData({ 
+        useApi,
+        isApiMode: useApi
+      });
+      
+      wx.showToast({
+        title: useApi ? '已切换到API模式' : '已切换到本地模式',
+        icon: 'none',
+        duration: 1500
+      });
+      
+      this.resetVisualization();
+    },
+
+    // 调整动画速度
+    setAnimationSpeed: function(e) {
+      this.setData({
+        animationSpeed: e.detail.value
+      });
+    },
+
+    // 切换显示速度控制器
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
+    },
+
+    // 使用API进行可视化
+    startApiVisualization() {
+      const { dpType, fibN, knapsackCapacity, knapsackItems, lcsStr1, lcsStr2, animationSpeed } = this.data;
+      
+      this.setData({
+        isLoading: true,
+        apiError: ''
+      });
+
+      // 准备API请求数据
+      let requestData = {};
+      let apiMethod = '';
+      
+      if (dpType === 'fibonacci') {
+        requestData = { n: fibN };
+        apiMethod = 'fibonacci';
+      } else if (dpType === 'knapsack') {
+        requestData = { 
+          capacity: knapsackCapacity,
+          items: knapsackItems
+        };
+        apiMethod = 'knapsack';
+      } else if (dpType === 'lcs') {
+        requestData = { 
+          str1: lcsStr1,
+          str2: lcsStr2
+        };
+        apiMethod = 'lcs';
+      }
+
+      // 调用对应的API
+      api.dp[apiMethod](requestData, true, animationSpeed)
+        .then(response => {
+          if (response.success) {
+            this.handleApiResponse(response.data);
+          } else {
+            this.setData({
+              apiError: '操作失败',
+              isLoading: false
+            });
+            
+            wx.showToast({
+              title: '操作失败',
+              icon: 'none'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('API请求失败:', error);
+          this.setData({
+            apiError: error.message || '网络请求失败',
+            isLoading: false
+          });
+          
+          wx.showToast({
+            title: '网络请求失败',
+            icon: 'none'
+          });
+        });
+    },
+
+    // 处理API返回的数据
+    handleApiResponse(data) {
+      if (data.animation && data.animation.frames) {
+        // 将API返回的动画帧转换为可视化步骤
+        const visualizationSteps = this.convertApiFramesToSteps(data.animation.frames);
+        
+        this.setData({
+          visualizationSteps,
+          isLoading: false,
+          isVisualizing: true,
+          currentStepIndex: -1
+        });
+        
+        // 开始执行步骤
+        this.nextStep();
+      } else {
+        // 直接显示结果
+        this.setData({
+          isLoading: false,
+          isVisualizing: true,
+          isCompleted: true
+        });
+        
+        if (this.data.dpType === 'fibonacci') {
+          this.setData({
+            fibResult: data.result,
+            currentStepDescription: `计算完成! F(${this.data.fibN}) = ${data.result}`
+          });
+        } else if (this.data.dpType === 'knapsack') {
+          this.setData({
+            knapsackResult: data.result,
+            selectedKnapsackItems: data.selectedItems || [],
+            currentStepDescription: `计算完成! 最大价值: ${data.result}`
+          });
+        } else if (this.data.dpType === 'lcs') {
+          this.setData({
+            lcsResult: data.result,
+            currentStepDescription: `计算完成! 最长公共子序列: ${data.result}`
+          });
+        }
+      }
+    },
+
+    // 将API返回的动画帧转换为可视化步骤
+    convertApiFramesToSteps(frames) {
+      const { dpType } = this.data;
+      const steps = [];
+      
+      frames.forEach(frame => {
+        if (dpType === 'fibonacci') {
+          steps.push({
+            type: 'fibonacci',
+            description: frame.description,
+            currentNode: frame.currentNode,
+            memo: frame.memo,
+            nodes: frame.nodes
+          });
+        } else if (dpType === 'knapsack') {
+          steps.push({
+            type: 'knapsack',
+            description: frame.description,
+            dpTable: frame.dpTable,
+            currentItem: frame.currentItem,
+            selectedItems: frame.selectedItems
+          });
+        } else if (dpType === 'lcs') {
+          steps.push({
+            type: 'lcs',
+            description: frame.description,
+            dpTable: frame.dpTable,
+            highlight1: frame.highlight1,
+            highlight2: frame.highlight2,
+            result: frame.result
+          });
+        }
+      });
+      
+      return steps;
     }
   }
 }) 

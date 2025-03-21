@@ -34,7 +34,7 @@
   </view>
   
   <!-- 遍历模式选择 -->
-  <view class="mode-selector" wx:if="{{task}}">
+  <view class="mode-selector">
     <view class="mode-label">遍历模式:</view>
     <view class="mode-options">
       <view 

@@ -521,4 +521,109 @@ button[disabled] {
   font-size: 26rpx;
   color: #666;
   line-height: 1.5;
+}
+
+/* 添加API模式切换和速度控制的样式 */
+
+/* API模式切换 */
+.mode-selector {
+  display: flex;
+  justify-content: center;
+  margin: 15rpx 0;
+  padding: 10rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
+.mode-option {
+  padding: 10rpx 20rpx;
+  margin: 0 10rpx;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  color: #666;
+  background: #fff;
+  transition: all 0.3s;
+}
+
+.mode-option.active {
+  background: #1890ff;
+  color: #fff;
+}
+
+.mode-option.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 速度控制 */
+.speed-control {
+  margin: 15rpx 0;
+  padding: 15rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.speed-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.toggle-icon {
+  font-size: 24rpx;
+  color: #666;
+  transition: transform 0.3s;
+}
+
+.speed-control.show .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.speed-slider {
+  margin-top: 15rpx;
+  padding: 0 10rpx;
+}
+
+/* API错误提示 */
+.api-error {
+  margin: 15rpx;
+  padding: 15rpx;
+  background: #ffebee;
+  color: #f5222d;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+/* 加载状态指示器 */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30rpx 0;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 } 

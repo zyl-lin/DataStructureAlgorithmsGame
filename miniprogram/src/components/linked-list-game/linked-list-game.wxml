@@ -7,11 +7,76 @@
   <view class="linked-list-container" wx:if="{{nodes.length > 0}}">
     <block wx:for="{{nodes}}" wx:key="index">
       <view class="linked-list-node">
-        <view class="node-value">{{item.value}}</view>
+        <view class="node-value {{highlightIndex === index ? 'highlight' : ''}}">{{item.value}}</view>
         <view class="node-pointer" wx:if="{{index < nodes.length - 1}}">→</view>
         <view class="node-pointer last" wx:else>NULL</view>
       </view>
     </block>
+  </view>
+  
+  <!-- 空链表提示 -->
+  <view class="empty-list" wx:else>
+    <text>链表为空</text>
+  </view>
+  
+  <!-- 操作结果显示 -->
+  <view class="operation-result" wx:if="{{operationResult}}">
+    <view class="result-text {{targetFound ? 'success' : ''}}">{{operationResult}}</view>
+  </view>
+  
+  <!-- API模式切换 -->
+  <view class="api-toggle">
+    <text>API模式：</text>
+    <switch checked="{{useApi}}" bindchange="toggleApiMode" disabled="{{isPlaying || loading}}" />
+  </view>
+  
+  <!-- 动画速度控制 -->
+  <view class="speed-control" wx:if="{{useApi}}">
+    <text>动画速度：</text>
+    <slider min="1" max="10" value="{{animationSpeed}}" show-value bindchange="changeSpeed" disabled="{{isPlaying || loading}}" />
+  </view>
+  
+  <!-- 操作区域 -->
+  <view class="operations-container">
+    <!-- 插入节点 -->
+    <view class="operation-section">
+      <view class="operation-title">插入节点</view>
+      <view class="operation-inputs">
+        <input class="operation-input" type="number" placeholder="节点值" bindinput="onValueInput" value="{{inputValue}}" disabled="{{isPlaying || loading}}" />
+        <input class="operation-input" type="number" placeholder="位置索引" bindinput="onPositionInput" value="{{inputPosition}}" disabled="{{isPlaying || loading}}" />
+        <button class="operation-button" bindtap="insertNode" disabled="{{isPlaying || loading}}">插入</button>
+      </view>
+    </view>
+    
+    <!-- 删除节点 -->
+    <view class="operation-section">
+      <view class="operation-title">删除节点</view>
+      <view class="operation-inputs">
+        <input class="operation-input" type="number" placeholder="位置索引" bindinput="onPositionInput" value="{{inputPosition}}" disabled="{{isPlaying || loading}}" />
+        <button class="operation-button" bindtap="deleteNode" disabled="{{isPlaying || loading}}">删除</button>
+      </view>
+    </view>
+    
+    <!-- 查找节点 -->
+    <view class="operation-section">
+      <view class="operation-title">查找节点</view>
+      <view class="operation-inputs">
+        <input class="operation-input" type="number" placeholder="节点值" bindinput="onSearchInput" value="{{searchValue}}" disabled="{{isPlaying || loading}}" />
+        <button class="operation-button" bindtap="findNode" disabled="{{isPlaying || loading}}">查找</button>
+      </view>
+    </view>
+    
+    <!-- 反转链表 -->
+    <view class="operation-section">
+      <view class="operation-title">链表反转</view>
+      <button class="operation-button full-width" bindtap="reverseList" disabled="{{isPlaying || loading}}">反转链表</button>
+    </view>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-indicator"></view>
+    <text class="loading-text">加载中...</text>
   </view>
   
   <!-- 游戏控制区域 -->

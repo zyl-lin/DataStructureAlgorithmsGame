@@ -252,5 +252,13 @@ Page({
     if (this.data.currentLevel < this.data.totalLevels) {
       this.initLevel(this.data.currentLevel + 1);
     }
+  },
+  
+  onUnload: function() {
+    // 页面卸载时重置服务端的二叉树状态
+    const api = require('../../services/api');
+    api.binaryTree.reset().catch(error => {
+      console.error('重置二叉树状态失败:', error);
+    });
   }
 }) 

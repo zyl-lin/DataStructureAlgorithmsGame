@@ -1,23 +1,26 @@
+/* 基础容器样式 */
 .binary-tree-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   padding: 20rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
 /* 任务面板样式 */
 .task-panel {
-  background-color: #f8f8f8;
+  background: #f8f9fa;
   padding: 20rpx;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
   margin-bottom: 20rpx;
 }
 
 .task-title {
   font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
   color: #333;
+  font-weight: 600;
+  margin-bottom: 10rpx;
 }
 
 .task-description {
@@ -33,191 +36,440 @@
 
 .selector-title {
   font-size: 30rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
   color: #333;
+  margin-bottom: 15rpx;
 }
 
 .selector-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  gap: 15rpx;
 }
 
 .selector-option {
   flex: 1;
-  min-width: 150rpx;
-  padding: 15rpx 10rpx;
-  background-color: #f0f0f0;
-  border-radius: 10rpx;
+  min-width: 160rpx;
+  padding: 15rpx 20rpx;
   text-align: center;
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #666;
+  background: #f8f9fa;
+  border-radius: 6rpx;
+  transition: all 0.3s;
 }
 
 .selector-option.active {
-  background-color: #4caf50;
-  color: white;
+  background: #4caf50;
+  color: #fff;
+}
+
+.selector-option.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 节点插入操作区样式 */
+.insert-node-panel {
+  margin: 20rpx 0;
+  padding: 20rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
+.insert-title {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.insert-operation {
+  display: flex;
+  gap: 20rpx;
+}
+
+.node-value-input {
+  flex: 1;
+  height: 80rpx;
+  padding: 0 20rpx;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+}
+
+.insert-btn {
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #fff;
+  background: #4caf50;
+  border-radius: 6rpx;
+  border: none;
+  transition: all 0.3s;
+  padding: 0 30rpx;
+}
+
+.insert-btn:active {
+  opacity: 0.8;
+}
+
+.insert-btn[disabled] {
+  background: #d9d9d9;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.insert-hint {
+  font-size: 26rpx;
+  color: #faad14;
+  margin-top: 15rpx;
+}
+
+/* 空树提示样式 */
+.empty-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 20rpx;
+}
+
+.empty-tree-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-tree-text {
+  font-size: 28rpx;
+  color: #999;
 }
 
 /* 二叉树可视化样式 */
 .tree-visualization {
   margin: 30rpx 0;
-  min-height: 250rpx;
-  padding: 20rpx;
-  background-color: #f9f9f9;
-  border-radius: 10rpx;
-  overflow-x: auto;
+  padding: 30rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  overflow: hidden;
+  position: relative;
+  min-height: 400rpx;
 }
 
 .tree-level {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40rpx;
+  display: block;
   position: relative;
+  margin-bottom: 80rpx;
+  height: 70rpx;
 }
 
 .tree-node-wrapper {
+  position: absolute;
+  height: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  position: relative;
 }
 
 .tree-node {
-  width: 60rpx;
-  height: 60rpx;
-  background-color: #4caf50;
-  color: white;
+  width: 70rpx;
+  height: 70rpx;
+  background: #4caf50;
+  color: #fff;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
   position: relative;
   z-index: 2;
-  box-shadow: 0 2rpx 5rpx rgba(0, 0, 0, 0.1);
+}
+
+.tree-node-placeholder {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  opacity: 0.1;
+  border: 2rpx dashed #999;
+  position: relative;
+  z-index: 1;
 }
 
 .tree-node.selected {
-  background-color: #2196f3;
+  background: #52c41a;
+  transform: scale(1.1);
 }
 
 .tree-node.highlighted {
-  animation: pulse 0.5s infinite alternate;
+  background: #faad14;
+  transform: scale(1.1);
 }
 
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.1); }
-}
-
-/* 分支连接线样式 */
+/* 节点连接线样式 */
 .branch {
   position: absolute;
-  width: 2rpx;
-  height: 30rpx;
-  background-color: #999;
-  top: 60rpx;
+  z-index: 1;
+  top: 70rpx;
+  width: 3rpx;
+  background: #4caf50;
 }
 
 .branch-left {
   transform: rotate(45deg);
   transform-origin: top center;
-  left: 40%;
+  right: calc(50% - 35rpx);
+  position: relative;
 }
 
 .branch-right {
   transform: rotate(-45deg);
   transform-origin: top center;
-  right: 40%;
+  left: calc(50% - 35rpx);
+  position: relative;
 }
 
-/* 用户遍历序列样式 */
-.sequence-panel {
+/* 给连接线添加箭头 */
+.branch-left:after, .branch-right:after {
+  content: '';
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  bottom: 0;
+  border: solid #4caf50;
+  border-width: 0 3rpx 3rpx 0;
+  transform-origin: center;
+}
+
+.branch-left:after {
+  right: -4rpx;
+  transform: rotate(-45deg);
+}
+
+.branch-right:after {
+  left: -4rpx;
+  transform: rotate(135deg);
+}
+
+/* 序列面板样式 */
+.sequence-panel, .insert-history-panel {
   margin: 20rpx 0;
+  padding: 20rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 
 .sequence-title {
   font-size: 30rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
   color: #333;
+  margin-bottom: 15rpx;
+  font-weight: 600;
 }
 
 .sequence-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10rpx;
-  padding: 10rpx;
-  min-height: 60rpx;
-  background-color: #f0f0f0;
-  border-radius: 10rpx;
+  gap: 15rpx;
+  min-height: 80rpx;
+  padding: 15rpx;
+  background: #fff;
+  border-radius: 6rpx;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1rpx 3rpx rgba(0, 0, 0, 0.05);
 }
 
 .sequence-item {
-  width: 60rpx;
-  height: 60rpx;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 10rpx;
+  min-width: 70rpx;
+  height: 70rpx;
+  background: #4caf50;
+  color: #fff;
+  border-radius: 8rpx;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  padding: 0 15rpx;
+  box-shadow: 0 2rpx 6rpx rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+.sequence-item:hover {
+  transform: translateY(-3rpx);
+  box-shadow: 0 4rpx 8rpx rgba(76, 175, 80, 0.4);
+}
+
+.sequence-separator {
+  color: #666;
+  font-size: 28rpx;
   font-weight: bold;
+  margin: 0 5rpx;
+}
+
+.insert-history-panel .sequence-item {
+  background: #1890ff;
+  min-width: auto;
+  padding: 0 15rpx;
+  box-shadow: 0 2rpx 6rpx rgba(24, 144, 255, 0.3);
+}
+
+.insert-history-item {
+  font-size: 26rpx;
 }
 
 .sequence-empty {
   width: 100%;
-  height: 60rpx;
+  height: 70rpx;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #999;
-  font-size: 28rpx;
+  font-size: 26rpx;
+  font-style: italic;
 }
 
-/* 反馈信息样式 */
+/* 反馈面板样式 */
 .feedback-panel {
   margin: 20rpx 0;
   padding: 20rpx;
-  background-color: #f0f0f0;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
+  background: #f8f9fa;
 }
 
 .feedback-message {
-  font-size: 28rpx;
-  margin-bottom: 15rpx;
   text-align: center;
-  font-weight: bold;
+  font-size: 28rpx;
+  font-weight: 500;
+  padding: 10rpx;
 }
 
 .feedback-message.correct {
-  color: #4caf50;
+  color: #52c41a;
 }
 
 .feedback-message.incorrect {
-  color: #f44336;
-}
-
-.correct-sequence {
-  margin-top: 20rpx;
+  color: #f5222d;
 }
 
 /* 操作按钮样式 */
 .action-buttons {
   display: flex;
   gap: 20rpx;
-  margin-top: 20rpx;
+  margin-top: 30rpx;
 }
 
 .action-btn {
   flex: 1;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 10rpx;
-  padding: 15rpx 0;
-  font-size: 28rpx;
+  height: 80rpx;
+  line-height: 80rpx;
   text-align: center;
-  line-height: 1.5;
+  font-size: 28rpx;
+  color: #fff;
+  background: #4caf50;
+  border-radius: 6rpx;
+  border: none;
+  transition: all 0.3s;
+}
+
+.action-btn:active {
+  opacity: 0.8;
+}
+
+.action-btn[disabled] {
+  background: #d9d9d9;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+/* API模式切换样式 */
+.mode-selector {
+  margin: 20rpx 0;
+  padding: 15rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  display: flex;
+  justify-content: center;
+  gap: 15rpx;
+}
+
+.mode-option {
+  padding: 12rpx 25rpx;
+  font-size: 26rpx;
+  color: #666;
+  background: #fff;
+  border-radius: 6rpx;
+  transition: all 0.3s;
+}
+
+.mode-option.active {
+  background: #4caf50;
+  color: #fff;
+}
+
+/* 速度控制样式 */
+.speed-control {
+  margin: 20rpx 0;
+  padding: 20rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
+.speed-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.speed-slider {
+  padding: 0 10rpx;
+}
+
+/* 加载状态样式 */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8rpx;
+  margin: 10rpx 0;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10rpx;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* API错误提示样式 */
+.api-error {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #f5222d;
+  padding: 20rpx;
+  border-radius: 6rpx;
+  font-size: 26rpx;
+  margin: 10rpx 0;
 } 

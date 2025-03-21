@@ -4,19 +4,59 @@
     <view class="selector-label">算法：</view>
     <view class="selector-options">
       <view 
-        class="algorithm-option {{searchType === 'linear' ? 'active' : ''}}" 
+        class="algorithm-option {{searchType === 'linear' ? 'active' : ''}} {{isApiLoading ? 'disabled' : ''}}" 
         data-type="linear" 
-        bindtap="changeSearchType"
+        bindtap="{{isApiLoading ? '' : 'changeSearchType'}}"
       >
         线性搜索
       </view>
       <view 
-        class="algorithm-option {{searchType === 'binary' ? 'active' : ''}}" 
+        class="algorithm-option {{searchType === 'binary' ? 'active' : ''}} {{isApiLoading ? 'disabled' : ''}}" 
         data-type="binary" 
-        bindtap="changeSearchType"
+        bindtap="{{isApiLoading ? '' : 'changeSearchType'}}"
       >
         二分搜索
       </view>
+    </view>
+  </view>
+  
+  <!-- API模式切换 -->
+  <view class="api-mode-selector">
+    <view class="mode-label">执行模式：</view>
+    <view class="selector-options">
+      <view 
+        class="mode-option {{useApi ? 'active' : ''}} {{isSearching ? 'disabled' : ''}}" 
+        bindtap="{{isSearching ? '' : 'toggleApiMode'}}" 
+        data-mode="api"
+      >
+        后端API
+      </view>
+      <view 
+        class="mode-option {{!useApi ? 'active' : ''}} {{isSearching ? 'disabled' : ''}}" 
+        bindtap="{{isSearching ? '' : 'toggleApiMode'}}" 
+        data-mode="local"
+      >
+        本地执行
+      </view>
+    </view>
+  </view>
+  
+  <!-- 动画速度控制器 -->
+  <view class="animation-control" wx:if="{{useApi}}">
+    <view class="control-header" bindtap="toggleSpeedControl">
+      <text class="control-title">动画速度</text>
+      <text class="control-value">{{animationSpeed}}</text>
+      <text class="control-toggle">{{showSpeedControl ? '隐藏' : '显示'}}</text>
+    </view>
+    <view class="speed-slider" wx:if="{{showSpeedControl}}">
+      <slider 
+        min="1" 
+        max="10" 
+        value="{{animationSpeed}}" 
+        show-value 
+        bindchange="setAnimationSpeed" 
+        disabled="{{isApiLoading}}"
+      />
     </view>
   </view>
   
@@ -32,6 +72,12 @@
     </block>
   </view>
   
+  <!-- 加载指示器 -->
+  <view class="loading-indicator" wx:if="{{isApiLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在处理搜索请求...</text>
+  </view>
+  
   <!-- 搜索目标值输入 -->
   <view class="search-input-area">
     <view class="input-label">搜索目标值：</view>
@@ -40,14 +86,20 @@
       type="number" 
       value="{{targetValue}}" 
       bindinput="onTargetValueChange"
+      disabled="{{isApiLoading}}"
     />
     <button 
       class="search-button" 
       bindtap="startSearch"
-      disabled="{{isSearching || !targetValue}}"
+      disabled="{{isSearching || !targetValue || isApiLoading}}"
     >
       开始搜索
     </button>
+  </view>
+  
+  <!-- API错误信息 -->
+  <view class="error-message" wx:if="{{apiError}}">
+    <text>{{apiError}}</text>
   </view>
   
   <!-- 搜索步骤控制区域 -->
@@ -55,20 +107,21 @@
     <button 
       class="control-button step-button"
       bindtap="nextStep"
-      disabled="{{isCompleted}}"
+      disabled="{{isCompleted || isApiLoading}}"
     >
       下一步
     </button>
     <button 
       class="control-button auto-button {{isAutoPlaying ? 'active' : ''}}"
       bindtap="toggleAutoPlay"
-      disabled="{{isCompleted}}"
+      disabled="{{isCompleted || isApiLoading}}"
     >
       {{isAutoPlaying ? '暂停' : '自动播放'}}
     </button>
     <button 
       class="control-button reset-button"
       bindtap="resetSearch"
+      disabled="{{isApiLoading}}"
     >
       重置
     </button>

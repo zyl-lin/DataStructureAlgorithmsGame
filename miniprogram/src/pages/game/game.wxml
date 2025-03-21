@@ -74,17 +74,6 @@
   </view>
 
   <view class="controls">
-    <view class="operation-buttons" wx:if="{{operations.length > 0}}">
-      <button 
-        wx:for="{{operations}}" 
-        wx:key="id"
-        class="operation-btn"
-        bindtap="onOperationTap"
-        data-operation="{{item}}"
-      >
-        {{item.name}}
-      </button>
-    </view>
     <view class="navigation-buttons">
       <button 
         class="nav-btn prev" 

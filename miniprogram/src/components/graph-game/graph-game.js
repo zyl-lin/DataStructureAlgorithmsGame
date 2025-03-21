@@ -455,13 +455,27 @@ Component({
       this.resetTraversal();
     },
     
-    // 改变遍历模式
+    // 更改遍历模式
     changeTraversalMode: function(e) {
-      const mode = e.currentTarget.dataset.mode;
-      this.triggerEvent('modeChange', { mode });
+      const newMode = e.currentTarget.dataset.mode;
+      if (this.data.traversalMode !== newMode) {
+        this.setData({
+          traversalMode: newMode
+        });
+        
+        // 显示提示
+        wx.showToast({
+          title: newMode === 'dfs' ? '已切换到深度优先遍历' : '已切换到广度优先遍历',
+          icon: 'none',
+          duration: 1500
+        });
+        
+        // 重置遍历状态
+        this.resetTraversal();
+      }
     },
     
-    // 改变起始节点
+    // 更改起始节点
     changeStartNode: function(e) {
       const index = parseInt(e.currentTarget.dataset.index);
       this.triggerEvent('startNodeChange', { index });
