@@ -54,6 +54,47 @@
     </view>
   </view>
   
+  <!-- API模式切换 -->
+  <view class="api-mode-selector">
+    <view class="mode-label">执行模式:</view>
+    <view class="mode-options">
+      <view 
+        class="mode-option {{isApiMode ? '' : 'mode-option-active'}}"
+        data-mode="local"
+        bindtap="toggleApiMode"
+      >
+        本地执行
+      </view>
+      <view 
+        class="mode-option {{isApiMode ? 'mode-option-active' : ''}}"
+        data-mode="api"
+        bindtap="toggleApiMode"
+      >
+        API执行
+      </view>
+    </view>
+  </view>
+  
+  <!-- 动画速度控制 -->
+  <view class="speed-control" wx:if="{{isApiMode && showSpeedControl}}">
+    <view class="speed-label">动画速度: {{animationSpeed}}</view>
+    <slider 
+      min="1" 
+      max="10" 
+      value="{{animationSpeed}}" 
+      show-value="{{false}}"
+      bindchange="setAnimationSpeed"
+      activeColor="#4caf50"
+      backgroundColor="#e0e0e0"
+      block-size="24"
+      block-color="#4caf50"
+    />
+    <view class="speed-values">
+      <text>慢</text>
+      <text>快</text>
+    </view>
+  </view>
+  
   <!-- 起始节点选择区域 - 可选功能 -->
   <view class="start-node-selector" wx:if="{{graphData.nodes.length > 0 && task.allowStartNodeChange}}">
     <view class="start-label">起始节点:</view>
@@ -81,6 +122,8 @@
   <view class="action-buttons">
     <button class="action-btn restart-btn" bindtap="restart" disabled="{{isLoading}}">重新开始</button>
     <button class="action-btn show-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}" disabled="{{isLoading}}">查看正确答案</button>
+    <button class="action-btn start-btn" bindtap="startTraversal" wx:if="{{isApiMode}}" disabled="{{isLoading || isTraversalComplete}}">开始遍历</button>
+    <button class="action-btn speed-btn" bindtap="toggleSpeedControl" wx:if="{{isApiMode}}">{{showSpeedControl ? '隐藏速度控制' : '速度设置'}}</button>
   </view>
   
   <!-- 加载状态 -->

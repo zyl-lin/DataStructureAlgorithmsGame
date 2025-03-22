@@ -54,6 +54,30 @@ Page({
             description: '学习图的DFS和BFS遍历'
           }
         ]
+      },
+      {
+        id: 3,
+        name: '高级算法',
+        games: [
+          {
+            id: 7,
+            name: '搜索算法',
+            icon: '/assets/images/games/search.png',
+            description: '学习线性和二分搜索算法'
+          },
+          {
+            id: 8,
+            name: '动态规划',
+            icon: '/assets/images/games/dp.png',
+            description: '通过经典问题学习动态规划'
+          },
+          {
+            id: 9,
+            name: '贪心算法',
+            icon: '/assets/images/games/greedy.png',
+            description: '掌握贪心策略解决问题'
+          }
+        ]
       }
     ]
   },
@@ -119,8 +143,41 @@ Page({
 
   onGameTap(e) {
     const { game } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/src/pages/game/game?id=${game.id}&name=${game.name}`
-    });
+    let url = '';
+    
+    // 根据游戏id跳转到对应页面
+    switch(game.id) {
+      case 1: // 链表
+        url = `/src/pages/linkedlist/linkedlist`;
+        break;
+      case 2: // 栈与队列 (假设默认展示队列)
+        url = `/src/pages/queue/queue`;
+        break;
+      case 3: // 迷宫
+        url = `/src/pages/maze/maze`;
+        break;
+      case 4: // 排序
+        url = `/src/pages/sorting/sorting`;
+        break;
+      case 5: // 二叉树
+        url = `/src/pages/binarytree/binarytree`;
+        break;
+      case 6: // 图
+        url = `/src/pages/graph/graph`;
+        break;
+      case 7: // 搜索
+        url = `/src/pages/search/search`;
+        break;
+      case 8: // 动态规划
+        url = `/src/pages/dp/dp`;
+        break;
+      case 9: // 贪心
+        url = `/src/pages/greedy/greedy`;
+        break;
+      default:
+        url = `/src/pages/game/game?id=${game.id}&name=${game.name}`;
+    }
+    
+    wx.navigateTo({ url });
   }
 }); 

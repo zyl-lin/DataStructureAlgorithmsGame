@@ -346,12 +346,13 @@ Component({
     resetApi() {
       if (!this.data.isApiMode) return;
       
-      const api = require('../../services/api');
-      this.setData({ isLoading: true });
+      const api = require('../../services/api').greedy;
+      this.setData({ isLoading: true, apiError: '' });
       
-      api.greedy.reset()
+      api.reset()
         .then(() => {
           console.log('贪心算法状态重置成功');
+          this.resetVisualization();
         })
         .catch(error => {
           console.error('重置贪心算法状态失败:', error);
@@ -945,133 +946,190 @@ Component({
     },
 
     // API相关方法
-    toggleApiMode() {
-      if (this.data.isVisualizing || this.data.isLoading) {
-        wx.showToast({
-          title: '请等待当前操作完成',
-          icon: 'none'
-        });
-        return;
-      }
-
-      const isApiMode = !this.data.isApiMode;
-      this.setData({
+    toggleApiMode: function(e) {
+      if (this.data.isVisualizing || this.data.isLoading) return;
+      
+      const mode = e.currentTarget.dataset.mode;
+      const isApiMode = mode === 'api';
+      
+      this.setData({ 
         isApiMode,
-        showSpeedControl: isApiMode,
-        apiError: ''
+        apiError: '',
+        showSpeedControl: isApiMode
       });
-
+      
+      // 切换到API模式时重置状态
+      if (isApiMode) {
+        this.resetApi();
+      }
+      
       wx.showToast({
         title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
         icon: 'none'
       });
-
-      // 重置状态
-      this.resetVisualization();
     },
 
-    // 调整动画速度
-    setAnimationSpeed(e) {
-      const value = e.detail.value;
+    // 设置动画速度
+    setAnimationSpeed: function(e) {
       this.setData({
-        animationSpeed: value,
-        autoPlaySpeed: (11 - value) * 200 // 速度从2000ms到200ms
+        animationSpeed: e.detail.value
       });
     },
 
-    // 调用API执行贪心算法
-    async startApiVisualization() {
-      const { greedyType } = this.data;
+    // 切换速度控制显示状态
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
+    },
+
+    // 修改API可视化方法
+    startApiVisualization: function() {
+      const api = require('../../services/api').greedy;
+      const { greedyType, animationSpeed } = this.data;
       
-      this.setData({
-        isLoading: true,
-        apiError: ''
-      });
-
-      try {
-        let params = {};
-        if (greedyType === 'coin') {
-          const { coinAmount, availableCoins, selectedCoins } = this.data;
-          params = {
-            amount: coinAmount,
-            coins: availableCoins.filter((_, i) => selectedCoins[i])
+      this.setData({ isLoading: true, apiError: '' });
+      
+      let apiMethod;
+      let requestData = {};
+      
+      switch (greedyType) {
+        case 'coin':
+          apiMethod = api.coinChange;
+          requestData = {
+            amount: this.data.coinAmount,
+            coins: this.data.availableCoins.filter((coin, index) => this.data.selectedCoins[index])
           };
-        } else if (greedyType === 'activity') {
-          params = {
+          break;
+        case 'activity':
+          apiMethod = api.activitySelection;
+          requestData = {
             activities: this.data.activities
           };
-        } else if (greedyType === 'huffman') {
-          params = {
+          break;
+        case 'huffman':
+          apiMethod = api.huffmanCoding;
+          requestData = {
             text: this.data.huffmanText
           };
-        }
-
-        const api = require('../../services/api');
-        const response = await api.callGreedyAlgorithm(greedyType, params);
-        
-        if (response.success) {
-          // 转换API返回的动画帧为可视化步骤
-          this.handleApiResponse(response.data);
-        } else {
-          throw new Error(response.message || '请求失败');
-        }
-      } catch (error) {
-        this.setData({
-          apiError: error.message || '执行算法时出错',
-          isLoading: false
-        });
-        return;
+          break;
+        default:
+          this.setData({
+            apiError: '不支持的算法类型',
+            isLoading: false
+          });
+          return;
       }
-
-      this.setData({
-        isLoading: false
-      });
+      
+      apiMethod(requestData, true, animationSpeed)
+        .then(response => {
+          if (response.success) {
+            this.handleApiResponse(response.data);
+          } else {
+            this.setData({
+              apiError: '算法执行失败',
+              isLoading: false
+            });
+          }
+        })
+        .catch(error => {
+          console.error('API请求失败:', error);
+          this.setData({
+            apiError: error.message || '网络请求失败',
+            isLoading: false
+          });
+        });
     },
 
-    // 处理API响应数据
-    handleApiResponse(data) {
-      const { greedyType } = this.data;
-      const steps = [];
-
-      // 转换API返回的动画帧为可视化步骤
-      for (const frame of data.frames) {
-        const step = {
-          type: `${greedyType}-${frame.type}`,
-          description: frame.description
-        };
-
-        if (greedyType === 'coin') {
-          step.remainingAmount = frame.remainingAmount;
-          step.coinSelections = frame.selections;
-          if (frame.result) {
-            step.result = frame.result;
-          }
-        } else if (greedyType === 'activity') {
-          step.hours = frame.hours;
-          step.activities = frame.activities;
-          step.selectedActivities = frame.selected;
-          if (frame.result) {
-            step.result = frame.result;
-          }
-        } else if (greedyType === 'huffman') {
-          step.charFrequencies = frame.frequencies;
-          step.huffmanNodes = frame.nodes;
-          if (frame.result) {
-            step.result = frame.result;
-          }
-        }
-
-        steps.push(step);
+    // 修改API响应处理方法
+    handleApiResponse: function(data) {
+      if (data.animation && data.animation.frames) {
+        const steps = this.convertApiFramesToSteps(data.animation.frames);
+        this.setData({
+          visualizationSteps: steps,
+          isVisualizing: true,
+          currentStepIndex: -1,
+          isLoading: false
+        });
+        this.nextStep();
+      } else {
+        // 如果没有动画帧，直接显示结果
+        this.updateVisualizationState(data.state);
+        this.setData({
+          isVisualizing: false,
+          isCompleted: true,
+          isLoading: false
+        });
       }
+    },
 
-      this.setData({
-        visualizationSteps: steps,
-        isVisualizing: true,
-        currentStepIndex: -1
+    // 更新可视化状态
+    updateVisualizationState: function(state) {
+      if (!state) return;
+      
+      switch (this.data.greedyType) {
+        case 'coin':
+          this.setData({
+            coinSelections: state.selections || [],
+            remainingAmount: state.remaining || 0,
+            coinResult: {
+              count: state.count || 0,
+              coins: state.coins || []
+            }
+          });
+          break;
+        case 'activity':
+          this.setData({
+            sortedActivities: state.sorted || [],
+            selectedActivities: state.selected || [],
+            activityResult: {
+              count: state.count || 0,
+              activities: state.activities || []
+            }
+          });
+          break;
+        case 'huffman':
+          this.setData({
+            charFrequencies: state.frequencies || [],
+            huffmanNodes: state.nodes || [],
+            huffmanResult: {
+              originalLength: state.originalLength || 0,
+              compressedLength: state.compressedLength || 0,
+              compressionRatio: state.compressionRatio || 0
+            }
+          });
+          break;
+      }
+    },
+
+    // 将API帧转换为可视化步骤
+    convertApiFramesToSteps: function(frames) {
+      return frames.map((frame, index) => {
+        const step = {
+          description: frame.description || '',
+          type: this.data.greedyType
+        };
+        
+        switch (this.data.greedyType) {
+          case 'coin':
+            step.selections = frame.selections || [];
+            step.remaining = frame.remaining || 0;
+            step.result = frame.result;
+            break;
+          case 'activity':
+            step.sorted = frame.sorted || [];
+            step.selected = frame.selected || [];
+            step.result = frame.result;
+            break;
+          case 'huffman':
+            step.frequencies = frame.frequencies || [];
+            step.nodes = frame.nodes || [];
+            step.result = frame.result;
+            break;
+        }
+        
+        return step;
       });
-
-      // 执行第一步
-      this.nextStep();
     }
   }
 }) 

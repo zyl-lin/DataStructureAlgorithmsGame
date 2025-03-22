@@ -54,7 +54,12 @@ Component({
     highlightEdgeColor: '#4caf50', // 高亮边颜色
     firstRender: true, // 是否首次渲染
     apiError: '',
-    isLoading: false
+    isLoading: false,
+    animationSpeed: 5, // 动画速度设置
+    showSpeedControl: false, // 是否显示速度控制器
+    apiSteps: [], // 存储API返回的动画步骤
+    apiResult: [], // 存储API返回的结果序列
+    currentApiStep: 0, // 当前播放的API步骤索引
   },
 
   lifetimes: {
@@ -238,7 +243,14 @@ Component({
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(graphData.nodes[i], pos.x, pos.y);
+        
+        // 确保节点文本是字符串
+        const nodeText = typeof graphData.nodes[i] === 'string' ? 
+                        graphData.nodes[i] : 
+                        (graphData.nodes[i] !== null && graphData.nodes[i] !== undefined ? 
+                          graphData.nodes[i].toString() : '');
+        
+        ctx.fillText(nodeText, pos.x, pos.y);
       }
     },
     
@@ -269,21 +281,41 @@ Component({
     
     // 重置API状态
     resetApi: function() {
-      const api = require('../../services/api');
-      this.setData({ isLoading: true });
+      if (!this.data.isApiMode) return;
       
-      api.graph.reset()
+      // 确保正确引入API服务模块
+      const apiService = require('../../services/api');
+      const api = apiService.graph;
+      
+      this.setData({ isLoading: true, apiError: '' });
+      
+      api.reset()
         .then(() => {
           console.log('图遍历状态重置成功');
+          // 只重置前端状态，不要再次调用resetTraversal以避免循环调用
+          this.setData({
+            userSequence: [],
+            selectedNodes: [],
+            highlightedNodes: [],
+            highlightedEdges: [],
+            isTraversalComplete: false,
+            showFeedback: false,
+            feedbackMessage: '',
+            isCorrect: false,
+            animationStep: 0,
+            isLoading: false
+          }, () => {
+            if (this.data.canvasContext) {
+              this.drawGraph();
+            }
+          });
         })
         .catch(error => {
           console.error('重置图遍历状态失败:', error);
           this.setData({
-            apiError: '重置状态失败，请重试'
+            apiError: '重置状态失败，请重试',
+            isLoading: false
           });
-        })
-        .finally(() => {
-          this.setData({ isLoading: false });
         });
     },
     
@@ -511,6 +543,195 @@ Component({
     changeStartNode: function(e) {
       const index = parseInt(e.currentTarget.dataset.index);
       this.triggerEvent('startNodeChange', { index });
-    }
+    },
+
+    // 切换API模式
+    toggleApiMode: function(e) {
+      if (this.data.isTraversalComplete || this.data.isLoading) return;
+      
+      const mode = e.currentTarget.dataset.mode;
+      const isApiMode = mode === 'api';
+      
+      this.setData({ 
+        isApiMode,
+        apiError: '',
+        showSpeedControl: isApiMode
+      });
+      
+      // 切换到API模式时重置状态
+      if (isApiMode) {
+        this.resetApi();
+      }
+      
+      wx.showToast({
+        title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
+        icon: 'none'
+      });
+    },
+
+    // 设置动画速度
+    setAnimationSpeed: function(e) {
+      this.setData({
+        animationSpeed: e.detail.value
+      });
+    },
+
+    // 切换速度控制显示状态
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
+    },
+
+    // 开始遍历
+    startTraversal: function() {
+      if (this.data.isTraversalComplete || this.data.isLoading) return;
+      
+      // 如果在API模式下，调用API进行遍历
+      if (this.data.isApiMode) {
+        this.startApiTraversal();
+        return;
+      }
+      
+      // 本地遍历逻辑...
+    },
+
+    // 使用API开始遍历
+    startApiTraversal: function() {
+      // 确保正确引入API服务模块
+      const apiService = require('../../services/api');
+      const api = apiService.graph; // 访问graph子对象
+      
+      const { traversalMode, startNodeIndex, animationSpeed } = this.data;
+      const { graphData } = this.data;
+      
+      this.setData({ isLoading: true, apiError: '' });
+      
+      let apiMethod;
+      if (traversalMode === 'dfs') {
+        apiMethod = api.traverseDFS;
+      } else if (traversalMode === 'bfs') {
+        apiMethod = api.traverseBFS;
+      }
+      
+      if (!apiMethod) {
+        this.setData({
+          apiError: '不支持的遍历模式',
+          isLoading: false
+        });
+        return;
+      }
+      
+      // 构造请求数据
+      const requestData = {
+        graph: {
+          nodes: graphData.nodes || [],
+          edges: graphData.edges || []
+        },
+        startNode: startNodeIndex
+      };
+      
+      console.log('发送图遍历API请求:', requestData);
+      
+      apiMethod(requestData, true, animationSpeed)
+        .then(response => {
+          console.log('API响应:', response);
+          if (response && response.success) {
+            this.handleApiResponse(response.data);
+          } else {
+            this.setData({
+              apiError: response && response.message ? response.message : '遍历失败',
+              isLoading: false
+            });
+          }
+        })
+        .catch(error => {
+          console.error('图遍历API请求失败:', error);
+          this.setData({
+            apiError: error && error.message ? error.message : '网络请求失败',
+            isLoading: false
+          });
+        });
+    },
+
+    // 处理API响应数据
+    handleApiResponse: function(data) {
+      if (!data || !Array.isArray(data.steps)) {
+        this.setData({
+          apiError: '无效的API响应数据',
+          isLoading: false
+        });
+        return;
+      }
+      
+      console.log('处理API响应数据:', data);
+      
+      // 保存动画步骤数据
+      const steps = data.steps;
+      const result = data.result || [];
+      
+      this.setData({
+        apiSteps: steps,
+        apiResult: result,
+        currentApiStep: 0,
+        isLoading: false
+      }, () => {
+        // 开始播放动画
+        this.playApiAnimation();
+      });
+    },
+    
+    // 播放API动画
+    playApiAnimation: function() {
+      const { apiSteps, currentApiStep, animationSpeed } = this.data;
+      
+      if (!apiSteps || currentApiStep >= apiSteps.length) {
+        // 动画播放完成
+        this.completeApiTraversal();
+        return;
+      }
+      
+      // 获取当前步骤
+      const step = apiSteps[currentApiStep];
+      
+      // 更新状态
+      this.setData({
+        userSequence: step.sequence || [],
+        highlightedNodes: step.highlightedNodes || [],
+        highlightedEdges: step.highlightedEdges || [],
+        currentApiStep: currentApiStep + 1
+      }, () => {
+        // 重绘图形
+        this.drawGraph();
+        
+        // 计算下一步的延迟时间 (11 - speed，让speed值越大延迟越小)
+        const delay = Math.max(100, 1000 / animationSpeed);
+        
+        // 延迟播放下一步
+        setTimeout(() => {
+          this.playApiAnimation();
+        }, delay);
+      });
+    },
+    
+    // 完成API遍历
+    completeApiTraversal: function() {
+      const { apiResult } = this.data;
+      
+      // 更新最终状态
+      this.setData({
+        isTraversalComplete: true,
+        isLoading: false,
+        showFeedback: true,
+        isCorrect: true,
+        feedbackMessage: '遍历完成！'
+      });
+      
+      // 触发完成事件
+      this.triggerEvent('traversalComplete', {
+        isCorrect: true,
+        userSequence: apiResult
+      });
+    },
   }
 }) 

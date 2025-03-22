@@ -6,6 +6,9 @@
     "sorting-game": "/src/components/sorting-game/sorting-game",
     "binary-tree-game": "/src/components/binary-tree-game/binary-tree-game",
     "queue-game": "/src/components/queue-game/queue-game",
-    "graph-game": "/src/components/graph-game/graph-game"
+    "graph-game": "/src/components/graph-game/graph-game",
+    "search-game": "/src/components/search-game/search-game",
+    "dp-game": "/src/components/dp-game/dp-game",
+    "greedy-game": "/src/components/greedy-game/greedy-game"
   }
 } 

@@ -1,3 +1,4 @@
+#include "graph_routes.h"
 #include "game_animation_routes.h"
 #include "response_builder.h"
 #include <iostream>

@@ -1,6 +1,10 @@
 #include "game_animation_routes.h"
 #include "animation/animation_manager.h"
 #include "response_builder.h"
+#include "maze_routes.h"
+#include "greedy_routes.h"
+#include "dp_routes.h"
+#include "graph_routes.h"
 #include <sstream>
 #include <string>
 #include <vector>
@@ -48,42 +52,6 @@ AnimationParams extractAnimationParams(const crow::request& req) {
     }
     
     return params;
-}
-
-// 创建一个包含错误信息的JSON响应
-crow::response createErrorResponse(int statusCode, const std::string& message) {
-    json response = {
-        {"success", false},
-        {"error", message}
-    };
-    return crow::response(statusCode, response.dump());
-}
-
-// 创建标准成功响应（无动画）
-crow::response createSuccessResponse(const json& state) {
-    json response = {
-        {"success", true},
-        {"data", {
-            {"state", state}
-        }}
-    };
-    return crow::response(200, response.dump());
-}
-
-// 创建包含动画帧的成功响应
-crow::response createAnimationResponse(const json& state, const json& frames, int totalSteps, int speed) {
-    json response = {
-        {"success", true},
-        {"data", {
-            {"state", state},
-            {"animation", {
-                {"frames", frames},
-                {"totalSteps", totalSteps},
-                {"speed", speed}
-            }}
-        }}
-    };
-    return crow::response(200, response.dump());
 }
 
 // 构建嵌套的树结构
@@ -624,9 +592,9 @@ crow::response handleLinkedListState(const crow::request& req, Database& db) {
             db.updateGameState("linkedlist", state);
         }
         
-        return createSuccessResponse(state);
+        return crow::response(200, ResponseBuilder::createSuccessResponse(state, "linkedlist").dump());
     } catch (const std::exception& e) {
-        return createErrorResponse(500, std::string("服务器错误: ") + e.what());
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("服务器错误: ") + e.what(), "linkedlist").dump());
     }
 }
 
@@ -2883,5 +2851,315 @@ crow::response handleSearchState(const crow::request& req, Database& db) {
         return crow::response(200, ResponseBuilder::createSuccessResponse(state, "search").dump());
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("服务器错误: ") + e.what(), "search").dump());
+    }
+}
+
+// 搜索游戏操作 - 线性搜索
+crow::response handleSearchLinear(const crow::request& req, Database& db) {
+    AnimationParams params = extractAnimationParams(req);
+    
+    try {
+        // 解析JSON请求体
+        json requestBody = json::parse(req.body);
+        
+        if (!requestBody.contains("array") || !requestBody["array"].is_array()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "请求必须包含一个数组字段", "search").dump());
+        }
+        
+        if (!requestBody.contains("target") || !requestBody["target"].is_number()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "请求必须包含一个目标值字段", "search").dump());
+        }
+        
+        std::vector<int> array = requestBody["array"].get<std::vector<int>>();
+        int target = requestBody["target"].get<int>();
+        
+        // 执行线性搜索
+        if (params.animate) {
+            AnimationManager* animManager = AnimationManager::getInstance();
+            std::string sessionId = animManager->createSession("search", "linear");
+            AnimationSession& session = animManager->getSession(sessionId);
+            
+            // 初始帧
+            json initialFrame = {
+                {"array", array},
+                {"target", target},
+                {"currentIndex", -1},
+                {"found", false},
+                {"completed", false}
+            };
+            session.addFrame(initialFrame, "开始线性搜索，目标值: " + std::to_string(target));
+            
+            // 执行搜索步骤
+            bool found = false;
+            int foundIndex = -1;
+            
+            for (int i = 0; i < array.size(); i++) {
+                // 当前检查的元素
+                json stepFrame = {
+                    {"array", array},
+                    {"target", target},
+                    {"currentIndex", i},
+                    {"found", false},
+                    {"completed", false}
+                };
+                session.addFrame(stepFrame, "检查索引 " + std::to_string(i) + " 处的值 " + std::to_string(array[i]));
+                
+                // 如果找到目标
+                if (array[i] == target) {
+                    found = true;
+                    foundIndex = i;
+                    
+                    json foundFrame = {
+                        {"array", array},
+                        {"target", target},
+                        {"currentIndex", i},
+                        {"found", true},
+                        {"foundIndex", i},
+                        {"completed", false}
+                    };
+                    session.addFrame(foundFrame, "在索引 " + std::to_string(i) + " 处找到目标值 " + std::to_string(target));
+                    break;
+                }
+            }
+            
+            // 最终帧
+            json finalFrame = {
+                {"array", array},
+                {"target", target},
+                {"currentIndex", found ? foundIndex : array.size()},
+                {"found", found},
+                {"foundIndex", foundIndex},
+                {"completed", true}
+            };
+            
+            if (found) {
+                session.addFrame(finalFrame, "搜索完成，在索引 " + std::to_string(foundIndex) + " 处找到目标值");
+            } else {
+                session.addFrame(finalFrame, "搜索完成，未找到目标值");
+            }
+            
+            // 更新游戏状态
+            json newState = {
+                {"array", array},
+                {"target", target},
+                {"algorithm", "linear"},
+                {"found", found},
+                {"foundIndex", foundIndex}
+            };
+            db.updateGameState("search", newState);
+            session.updateGameState(newState);
+            
+            // 返回响应
+            json frames = animManager->getAllFrames(sessionId);
+            return crow::response(200, ResponseBuilder::createAnimationResponse(newState, frames, session.getFrameCount(), params.speed, "search").dump());
+        } else {
+            // 不使用动画时的直接搜索
+            bool found = false;
+            int foundIndex = -1;
+            
+            for (int i = 0; i < array.size(); i++) {
+                if (array[i] == target) {
+                    found = true;
+                    foundIndex = i;
+                    break;
+                }
+            }
+            
+            // 更新游戏状态
+            json newState = {
+                {"array", array},
+                {"target", target},
+                {"algorithm", "linear"},
+                {"found", found},
+                {"foundIndex", foundIndex}
+            };
+            db.updateGameState("search", newState);
+            
+            return crow::response(200, ResponseBuilder::createSuccessResponse(newState, "search").dump());
+        }
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("线性搜索错误: ") + e.what(), "search").dump());
+    }
+}
+
+// 搜索游戏操作 - 二分搜索
+crow::response handleSearchBinary(const crow::request& req, Database& db) {
+    AnimationParams params = extractAnimationParams(req);
+    
+    try {
+        // 解析JSON请求体
+        json requestBody = json::parse(req.body);
+        
+        if (!requestBody.contains("array") || !requestBody["array"].is_array()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "请求必须包含一个数组字段", "search").dump());
+        }
+        
+        if (!requestBody.contains("target") || !requestBody["target"].is_number()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "请求必须包含一个目标值字段", "search").dump());
+        }
+        
+        std::vector<int> array = requestBody["array"].get<std::vector<int>>();
+        int target = requestBody["target"].get<int>();
+        
+        // 排序数组，二分搜索要求
+        std::sort(array.begin(), array.end());
+        
+        // 执行二分搜索
+        if (params.animate) {
+            AnimationManager* animManager = AnimationManager::getInstance();
+            std::string sessionId = animManager->createSession("search", "binary");
+            AnimationSession& session = animManager->getSession(sessionId);
+            
+            // 初始帧
+            json initialFrame = {
+                {"array", array},
+                {"target", target},
+                {"left", 0},
+                {"right", static_cast<int>(array.size() - 1)},
+                {"mid", -1},
+                {"found", false},
+                {"completed", false}
+            };
+            session.addFrame(initialFrame, "开始二分搜索，目标值: " + std::to_string(target));
+            
+            // 执行搜索步骤
+            int left = 0;
+            int right = array.size() - 1;
+            bool found = false;
+            int foundIndex = -1;
+            
+            while (left <= right) {
+                int mid = left + (right - left) / 2;
+                
+                // 当前检查的元素
+                json stepFrame = {
+                    {"array", array},
+                    {"target", target},
+                    {"left", left},
+                    {"right", right},
+                    {"mid", mid},
+                    {"found", false},
+                    {"completed", false}
+                };
+                session.addFrame(stepFrame, "检查中间索引 " + std::to_string(mid) + " 处的值 " + std::to_string(array[mid]));
+                
+                // 如果找到目标
+                if (array[mid] == target) {
+                    found = true;
+                    foundIndex = mid;
+                    
+                    json foundFrame = {
+                        {"array", array},
+                        {"target", target},
+                        {"left", left},
+                        {"right", right},
+                        {"mid", mid},
+                        {"found", true},
+                        {"foundIndex", mid},
+                        {"completed", false}
+                    };
+                    session.addFrame(foundFrame, "在索引 " + std::to_string(mid) + " 处找到目标值 " + std::to_string(target));
+                    break;
+                }
+                
+                // 调整搜索范围
+                if (array[mid] < target) {
+                    left = mid + 1;
+                    json rangeFrame = {
+                        {"array", array},
+                        {"target", target},
+                        {"left", left},
+                        {"right", right},
+                        {"mid", mid},
+                        {"direction", "right"},
+                        {"found", false},
+                        {"completed", false}
+                    };
+                    session.addFrame(rangeFrame, "目标值大于中间值，搜索右半部分");
+                } else {
+                    right = mid - 1;
+                    json rangeFrame = {
+                        {"array", array},
+                        {"target", target},
+                        {"left", left},
+                        {"right", right},
+                        {"mid", mid},
+                        {"direction", "left"},
+                        {"found", false},
+                        {"completed", false}
+                    };
+                    session.addFrame(rangeFrame, "目标值小于中间值，搜索左半部分");
+                }
+            }
+            
+            // 最终帧
+            json finalFrame = {
+                {"array", array},
+                {"target", target},
+                {"left", left},
+                {"right", right},
+                {"mid", found ? foundIndex : -1},
+                {"found", found},
+                {"foundIndex", foundIndex},
+                {"completed", true}
+            };
+            
+            if (found) {
+                session.addFrame(finalFrame, "搜索完成，在索引 " + std::to_string(foundIndex) + " 处找到目标值");
+            } else {
+                session.addFrame(finalFrame, "搜索完成，未找到目标值");
+            }
+            
+            // 更新游戏状态
+            json newState = {
+                {"array", array},
+                {"target", target},
+                {"algorithm", "binary"},
+                {"found", found},
+                {"foundIndex", foundIndex}
+            };
+            db.updateGameState("search", newState);
+            session.updateGameState(newState);
+            
+            // 返回响应
+            json frames = animManager->getAllFrames(sessionId);
+            return crow::response(200, ResponseBuilder::createAnimationResponse(newState, frames, session.getFrameCount(), params.speed, "search").dump());
+        } else {
+            // 不使用动画时的直接搜索
+            int left = 0;
+            int right = array.size() - 1;
+            bool found = false;
+            int foundIndex = -1;
+            
+            while (left <= right) {
+                int mid = left + (right - left) / 2;
+                
+                if (array[mid] == target) {
+                    found = true;
+                    foundIndex = mid;
+                    break;
+                }
+                
+                if (array[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            
+            // 更新游戏状态
+            json newState = {
+                {"array", array},
+                {"target", target},
+                {"algorithm", "binary"},
+                {"found", found},
+                {"foundIndex", foundIndex}
+            };
+            db.updateGameState("search", newState);
+            
+            return crow::response(200, ResponseBuilder::createSuccessResponse(newState, "search").dump());
+        }
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("二分搜索错误: ") + e.what(), "search").dump());
     }
 }

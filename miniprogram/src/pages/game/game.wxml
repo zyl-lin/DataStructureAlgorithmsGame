@@ -32,13 +32,10 @@
     </block>
     <block wx:elif="{{gameType === 'sorting'}}">
       <sorting-game 
-        array="{{array}}"
-        currentLevel="{{currentLevel}}"
-        isApiMode="{{true}}"
-        bind:sort="onSort"
-        bind:algorithm="onAlgorithmSelect"
+        class="sorting-game-container full-width-component"
+        array="{{array}}" 
         bind:complete="onLevelComplete"
-      />
+      ></sorting-game>
     </block>
     <block wx:elif="{{gameType === 'binaryTree'}}">
       <binary-tree-game 
@@ -51,6 +48,7 @@
     </block>
     <block wx:elif="{{gameType === 'queue'}}">
       <queue-game 
+        class="full-width-component"
         queue="{{queue}}"
         currentLevel="{{currentLevel}}"
         bind:enqueue="onEnqueue"
@@ -60,13 +58,38 @@
     </block>
     <block wx:elif="{{gameType === 'graph'}}">
       <graph-game 
-        graph="{{graph}}"
-        currentLevel="{{currentLevel}}"
-        isApiMode="{{true}}"
-        bind:nodeSelect="onNodeSelect"
-        bind:algorithmSelect="onAlgorithmSelect"
+        class="full-width-component"
+        graphData="{{graph}}" 
+        traversalMode="{{traversalMode || 'dfs'}}" 
+        startNodeIndex="{{startNodeIndex || 0}}"
+        task="{{currentTask}}"
+        correctSequence="{{correctSequence}}"
+        isApiMode="{{false}}"
+        bind:traversalComplete="onLevelComplete"
+      ></graph-game>
+    </block>
+    <block wx:elif="{{gameType === 'search'}}">
+      <search-game 
+        class="full-width-component"
+        dataArray="{{array}}"
+        isSorted="{{currentLevel > 1}}"
+        initialSearchType="{{currentLevel === 1 ? 'linear' : 'binary'}}"
+        bind:searchComplete="onLevelComplete"
+      ></search-game>
+    </block>
+    <block wx:elif="{{gameType === 'dp'}}">
+      <dp-game 
+        class="full-width-component"
+        level="{{currentLevel}}"
         bind:complete="onLevelComplete"
-      />
+      ></dp-game>
+    </block>
+    <block wx:elif="{{gameType === 'greedy'}}">
+      <greedy-game 
+        class="full-width-component"
+        level="{{currentLevel}}"
+        bind:complete="onLevelComplete"
+      ></greedy-game>
     </block>
     
     <!-- 添加提示按钮 -->

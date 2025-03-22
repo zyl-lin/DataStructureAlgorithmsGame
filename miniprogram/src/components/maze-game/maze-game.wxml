@@ -1,10 +1,46 @@
 <!-- 迷宫游戏组件 -->
-<view class="game-component">
+<view class="maze-game-container">
   <view class="game-title">{{title}}</view>
   <view class="game-description">{{description}}</view>
   
+  <!-- API模式切换 -->
+  <view class="mode-selector">
+    <view class="mode-option {{isApiMode ? 'active' : ''}} {{isApiLoading ? 'disabled' : ''}}"
+          bindtap="{{isApiLoading ? '' : 'toggleApiMode'}}"
+          data-mode="api">
+      API模式
+    </view>
+    <view class="mode-option {{!isApiMode ? 'active' : ''}} {{isApiLoading ? 'disabled' : ''}}"
+          bindtap="{{isApiLoading ? '' : 'toggleApiMode'}}"
+          data-mode="local">
+      本地模式
+    </view>
+  </view>
+  
+  <!-- 动画速度控制 -->
+  <view class="speed-control {{showSpeedControl ? 'show' : ''}}" wx:if="{{isApiMode}}">
+    <view class="speed-title" bindtap="toggleSpeedControl">
+      动画速度 <text class="toggle-icon">{{showSpeedControl ? '▼' : '▶'}}</text>
+    </view>
+    <view class="speed-slider" wx:if="{{showSpeedControl}}">
+      <slider min="1" max="10" value="{{animationSpeed}}" bindchange="setAnimationSpeed" 
+              disabled="{{isApiLoading}}" show-value/>
+    </view>
+  </view>
+  
+  <!-- API错误提示 -->
+  <view class="api-error" wx:if="{{apiError}}">
+    {{apiError}}
+  </view>
+  
+  <!-- 加载状态指示器 -->
+  <view class="loading-indicator" wx:if="{{isApiLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在处理请求...</text>
+  </view>
+  
   <!-- 迷宫展示区域 -->
-  <view class="maze-container" wx:if="{{maze.length > 0}}">
+  <view class="maze-grid" style="grid-template-columns: repeat({{level === 2 ? 7 : 5}}, 1fr);">
     <block wx:for="{{maze}}" wx:key="index">
       <view class="maze-cell {{item.type}}">{{item.value}}</view>
     </block>

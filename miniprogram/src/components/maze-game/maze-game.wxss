@@ -7,26 +7,26 @@
 }
 
 .game-title {
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 10rpx;
   color: #333;
+  margin-bottom: 20rpx;
+  text-align: center;
 }
 
 .game-description {
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 20rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+  line-height: 1.5;
 }
 
 .maze-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4rpx;
-  margin: 30rpx 0;
-  background-color: #f9f9f9;
-  padding: 20rpx;
-  border-radius: 12rpx;
+  margin: 20rpx 0;
+  border: 2rpx solid #eee;
+  border-radius: 8rpx;
+  overflow: hidden;
 }
 
 .maze-cell {
@@ -147,4 +147,137 @@
   border-radius: 10rpx;
   font-size: 24rpx;
   text-align: center;
+}
+
+/* API模式切换 */
+.mode-selector {
+  display: flex;
+  justify-content: center;
+  margin: 20rpx 0;
+  padding: 10rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
+.mode-option {
+  padding: 12rpx 25rpx;
+  margin: 0 10rpx;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  color: #666;
+  background: #fff;
+  transition: all 0.3s;
+}
+
+.mode-option.active {
+  background: #4caf50;
+  color: #fff;
+}
+
+.mode-option.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 速度控制 */
+.speed-control {
+  margin: 20rpx 0;
+  padding: 15rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  overflow: hidden;
+  transition: all 0.3s;
+  max-height: 0;
+}
+
+.speed-control.show {
+  max-height: 200rpx;
+}
+
+.speed-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  cursor: pointer;
+}
+
+.toggle-icon {
+  font-size: 24rpx;
+  color: #666;
+  transition: transform 0.3s;
+}
+
+.speed-slider {
+  padding: 0 10rpx;
+}
+
+/* API错误提示 */
+.api-error {
+  margin: 20rpx 0;
+  padding: 20rpx;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #f5222d;
+  font-size: 26rpx;
+  border-radius: 6rpx;
+  text-align: center;
+}
+
+/* 加载状态指示器 */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8rpx;
+  margin: 10rpx 0;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10rpx;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 算法控制区域 */
+.algorithm-controls {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
+/* 迷宫游戏容器 */
+.maze-game-container {
+  padding: 20rpx;
+  background: #fff;
+}
+
+/* 迷宫网格 */
+.maze-grid {
+  display: grid;
+  gap: 4rpx;
+  margin: 30rpx 0;
+  background-color: #f9f9f9;
+  padding: 20rpx;
+  border-radius: 12rpx;
 } 

@@ -197,7 +197,7 @@ Component({
       // 重置状态
       this.resetVisualization();
       
-      if (this.data.useApi) {
+      if (this.data.isApiMode) {
         this.startApiVisualization();
       } else {
         // 原有的本地可视化逻辑
@@ -332,12 +332,13 @@ Component({
     resetApi() {
       if (!this.data.isApiMode) return;
       
-      const api = require('../../services/api');
-      this.setData({ isLoading: true });
+      const api = require('../../services/api').dp;
+      this.setData({ isLoading: true, apiError: '' });
       
-      api.dp.reset()
+      api.reset()
         .then(() => {
           console.log('动态规划状态重置成功');
+          this.resetVisualization();
         })
         .catch(error => {
           console.error('重置动态规划状态失败:', error);
@@ -1041,81 +1042,110 @@ Component({
 
     // 切换API模式
     toggleApiMode: function(e) {
-      if (this.data.isLoading) return;
+      if (this.data.isVisualizing || this.data.isLoading) return;
       
-      const useApi = e.currentTarget.dataset.mode === 'api';
+      const mode = e.currentTarget.dataset.mode;
+      const isApiMode = mode === 'api';
+      
       this.setData({ 
-        useApi,
-        isApiMode: useApi
+        isApiMode,
+        apiError: '',
+        showSpeedControl: isApiMode
       });
+      
+      // 切换到API模式时重置状态
+      if (isApiMode) {
+        this.resetApi();
+      }
       
       wx.showToast({
-        title: useApi ? '已切换到API模式' : '已切换到本地模式',
-        icon: 'none',
-        duration: 1500
+        title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
+        icon: 'none'
       });
-      
-      this.resetVisualization();
     },
 
-    // 调整动画速度
+    // 设置动画速度
     setAnimationSpeed: function(e) {
       this.setData({
         animationSpeed: e.detail.value
       });
     },
 
-    // 切换显示速度控制器
+    // 切换速度控制显示状态
     toggleSpeedControl: function() {
       this.setData({
         showSpeedControl: !this.data.showSpeedControl
       });
     },
 
-    // 使用API进行可视化
-    startApiVisualization() {
-      const { dpType, fibN, knapsackCapacity, knapsackItems, lcsStr1, lcsStr2, animationSpeed } = this.data;
+    // 重置API状态
+    resetApi: function() {
+      if (!this.data.isApiMode) return;
       
-      this.setData({
-        isLoading: true,
-        apiError: ''
-      });
+      const api = require('../../services/api').dp;
+      this.setData({ isLoading: true, apiError: '' });
+      
+      api.reset()
+        .then(() => {
+          console.log('动态规划状态重置成功');
+          this.resetVisualization();
+        })
+        .catch(error => {
+          console.error('重置动态规划状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isLoading: false });
+        });
+    },
 
-      // 准备API请求数据
+    // 修改开始可视化方法
+    startApiVisualization: function() {
+      const api = require('../../services/api').dp;
+      const { dpType, animationSpeed } = this.data;
+      
+      this.setData({ isLoading: true, apiError: '' });
+      
+      let apiMethod;
       let requestData = {};
-      let apiMethod = '';
       
-      if (dpType === 'fibonacci') {
-        requestData = { n: fibN };
-        apiMethod = 'fibonacci';
-      } else if (dpType === 'knapsack') {
-        requestData = { 
-          capacity: knapsackCapacity,
-          items: knapsackItems
-        };
-        apiMethod = 'knapsack';
-      } else if (dpType === 'lcs') {
-        requestData = { 
-          str1: lcsStr1,
-          str2: lcsStr2
-        };
-        apiMethod = 'lcs';
+      switch (dpType) {
+        case 'fibonacci':
+          apiMethod = api.fibonacci;
+          requestData = { n: this.data.fibN };
+          break;
+        case 'knapsack':
+          apiMethod = api.knapsack;
+          requestData = {
+            capacity: this.data.knapsackCapacity,
+            items: this.data.knapsackItems
+          };
+          break;
+        case 'lcs':
+          apiMethod = api.lcs;
+          requestData = {
+            str1: this.data.lcsStr1,
+            str2: this.data.lcsStr2
+          };
+          break;
+        default:
+          this.setData({
+            apiError: '不支持的算法类型',
+            isLoading: false
+          });
+          return;
       }
-
-      // 调用对应的API
-      api.dp[apiMethod](requestData, true, animationSpeed)
+      
+      apiMethod(requestData, true, animationSpeed)
         .then(response => {
           if (response.success) {
             this.handleApiResponse(response.data);
           } else {
             this.setData({
-              apiError: '操作失败',
+              apiError: '算法执行失败',
               isLoading: false
-            });
-            
-            wx.showToast({
-              title: '操作失败',
-              icon: 'none'
             });
           }
         })
@@ -1125,54 +1155,58 @@ Component({
             apiError: error.message || '网络请求失败',
             isLoading: false
           });
-          
-          wx.showToast({
-            title: '网络请求失败',
-            icon: 'none'
-          });
         });
     },
 
-    // 处理API返回的数据
-    handleApiResponse(data) {
+    // 修改API响应处理方法
+    handleApiResponse: function(data) {
       if (data.animation && data.animation.frames) {
-        // 将API返回的动画帧转换为可视化步骤
-        const visualizationSteps = this.convertApiFramesToSteps(data.animation.frames);
-        
+        const steps = this.convertApiFramesToSteps(data.animation.frames);
         this.setData({
-          visualizationSteps,
-          isLoading: false,
+          visualizationSteps: steps,
           isVisualizing: true,
-          currentStepIndex: -1
+          currentStepIndex: -1,
+          isLoading: false
         });
-        
-        // 开始执行步骤
         this.nextStep();
       } else {
-        // 直接显示结果
+        // 如果没有动画帧，直接显示结果
+        this.updateVisualizationState(data.state);
         this.setData({
-          isLoading: false,
-          isVisualizing: true,
-          isCompleted: true
+          isVisualizing: false,
+          isCompleted: true,
+          isLoading: false
         });
-        
-        if (this.data.dpType === 'fibonacci') {
+      }
+    },
+
+    // 更新可视化状态
+    updateVisualizationState: function(state) {
+      if (!state) return;
+      
+      switch (this.data.dpType) {
+        case 'fibonacci':
           this.setData({
-            fibResult: data.result,
-            currentStepDescription: `计算完成! F(${this.data.fibN}) = ${data.result}`
+            fibonacciNodes: state.nodes || [],
+            fibonacciMemo: state.memo || [],
+            fibResult: state.result
           });
-        } else if (this.data.dpType === 'knapsack') {
+          break;
+        case 'knapsack':
           this.setData({
-            knapsackResult: data.result,
-            selectedKnapsackItems: data.selectedItems || [],
-            currentStepDescription: `计算完成! 最大价值: ${data.result}`
+            knapsackDpTable: state.dpTable || [],
+            selectedKnapsackItems: state.selectedItems || [],
+            knapsackResult: state.result
           });
-        } else if (this.data.dpType === 'lcs') {
+          break;
+        case 'lcs':
           this.setData({
-            lcsResult: data.result,
-            currentStepDescription: `计算完成! 最长公共子序列: ${data.result}`
+            lcsDpTable: state.dpTable || [],
+            lcsHighlight1: state.highlight1 || [],
+            lcsHighlight2: state.highlight2 || [],
+            lcsResult: state.result || ''
           });
-        }
+          break;
       }
     },
 

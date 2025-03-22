@@ -26,7 +26,8 @@ Component({
     sortingSteps: [],
     currentStep: 0,
     apiError: '',
-    isLoading: false
+    isLoading: false,
+    showSpeedControl: false
   },
 
   lifetimes: {
@@ -105,12 +106,161 @@ Component({
         // 重置显示数组，恢复原始颜色
         displayArray: this.data.displayArray.map(item => ({ ...item, color: '#4CAF50' }))
       });
+
+      // 如果是API模式，则调用API
+      if (this.properties.isApiMode) {
+        this.startSortingApi();
+        return;
+      }
       
-      // 根据选择的算法生成排序步骤
+      // 本地模式下，生成排序步骤
       this.generateSortingSteps();
       
       // 开始可视化排序过程
       this.startVisualization();
+    },
+    
+    // 使用API开始排序
+    startSortingApi() {
+      const algorithm = this.data.selectedAlgorithm;
+      const api = require('../../services/api');
+      const speed = this.data.sortingSpeed;
+      
+      this.setData({ isLoading: true, apiError: '' });
+      
+      let apiMethod;
+      switch (algorithm) {
+        case 'bubble':
+          apiMethod = api.sorting.bubbleSort;
+          break;
+        case 'insertion':
+          apiMethod = api.sorting.insertionSort;
+          break;
+        case 'quick':
+          apiMethod = api.sorting.quickSort;
+          break;
+        default:
+          apiMethod = api.sorting.bubbleSort;
+      }
+      
+      // 构建请求数据
+      const data = { array: this.data.originalArray };
+      
+      // 调用API
+      apiMethod(data, true, speed)
+        .then(res => {
+          if (res.success) {
+            // 如果有动画帧，播放动画
+            if (res.data.animation && res.data.animation.frames) {
+              this.playApiAnimation(res.data.animation.frames);
+            } else {
+              // 否则直接更新排序后的数组
+              const sortedArray = res.data.state.array || this.data.originalArray;
+              const displayArray = sortedArray.map(value => ({
+                value,
+                height: (value / 100) * 280 + 20,
+                color: '#8BC34A' // 排序完成的颜色
+              }));
+              
+              this.setData({
+                displayArray,
+                sortingStatus: '排序完成',
+                isSorting: false,
+                comparisons: res.data.comparisons || 0,
+                swaps: res.data.swaps || 0
+              });
+            }
+          } else {
+            this.setData({
+              apiError: res.message || '排序失败',
+              isSorting: false,
+              sortingStatus: '排序失败'
+            });
+          }
+        })
+        .catch(err => {
+          console.error('排序API调用失败:', err);
+          this.setData({
+            apiError: '服务调用失败，请重试',
+            isSorting: false,
+            sortingStatus: '调用失败'
+          });
+        })
+        .finally(() => {
+          this.setData({ isLoading: false });
+        });
+    },
+    
+    // 播放API返回的动画
+    playApiAnimation(frames) {
+      if (!frames || frames.length === 0) {
+        this.setData({ isSorting: false });
+        return;
+      }
+      
+      let frameIndex = 0;
+      const speed = 1100 - this.data.sortingSpeed * 100; // 转换速度值：1-10 -> 1000-100ms
+      
+      const interval = setInterval(() => {
+        if (frameIndex >= frames.length) {
+          clearInterval(interval);
+          this.setData({
+            isSorting: false,
+            sortingStatus: '排序完成'
+          });
+          return;
+        }
+        
+        const frame = frames[frameIndex];
+        
+        // 更新显示数组
+        if (frame.array) {
+          const displayArray = frame.array.map(value => ({
+            value,
+            height: (value / 100) * 280 + 20,
+            color: '#4CAF50'
+          }));
+          
+          // 标记比较元素
+          if (frame.comparing) {
+            frame.comparing.forEach(index => {
+              if (displayArray[index]) {
+                displayArray[index].color = '#2196F3';
+              }
+            });
+          }
+          
+          // 标记交换元素
+          if (frame.swapping) {
+            frame.swapping.forEach(index => {
+              if (displayArray[index]) {
+                displayArray[index].color = '#FF9800';
+              }
+            });
+          }
+          
+          // 标记已排序元素
+          if (frame.sorted) {
+            frame.sorted.forEach(index => {
+              if (displayArray[index]) {
+                displayArray[index].color = '#8BC34A';
+              }
+            });
+          }
+          
+          this.setData({
+            displayArray,
+            comparisons: frame.comparisons || this.data.comparisons,
+            swaps: frame.swaps || this.data.swaps
+          });
+        }
+        
+        frameIndex++;
+      }, speed);
+      
+      this.setData({
+        sortingInterval: interval
+      });
     },
     
     // 停止排序
@@ -571,40 +721,55 @@ Component({
       });
     },
     
-    // 重置排序状态
-    resetSort() {
-      if (this.data.isSorting) {
-        this.stopSorting();
-      }
-
-      if (this.data.isApiMode) {
-        this.resetSortApi();
-      }
+    // 切换API模式
+    toggleApiMode(e) {
+      if (this.data.isSorting || this.data.isLoading) return;
       
-      // 重置本地状态
-      this.setData({
-        displayArray: this.data.displayArray.map(item => ({ ...item, color: '#4CAF50' })),
-        comparisons: 0,
-        swaps: 0,
-        sortingStatus: '已重置',
-        currentStep: 0,
-        sortingSteps: [],
+      const mode = e.currentTarget.dataset.mode;
+      const isApiMode = mode === 'api';
+      
+      this.setData({ 
+        isApiMode,
         apiError: '',
-        isLoading: false
+        showSpeedControl: isApiMode
       });
       
-      // 触发重置事件
-      this.triggerEvent('reset');
+      // 切换到API模式时重置状态
+      if (isApiMode) {
+        this.resetSortingApi();
+      }
+      
+      wx.showToast({
+        title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
+        icon: 'none'
+      });
     },
     
-    // 重置API状态
-    resetSortApi() {
-      const api = require('../../services/api');
+    // 设置动画速度
+    setAnimationSpeed(e) {
+      this.setData({
+        sortingSpeed: e.detail.value
+      });
+    },
+    
+    // 切换速度控制显示状态
+    toggleSpeedControl() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
+    },
+    
+    // 重置排序API状态
+    resetSortingApi() {
+      if (!this.data.isApiMode) return;
+      
+      const api = require('../../services/api').sorting;
       this.setData({ isLoading: true });
       
-      api.sorting.reset()
+      api.reset()
         .then(() => {
           console.log('排序状态重置成功');
+          this.generateNewArray();
         })
         .catch(error => {
           console.error('重置排序状态失败:', error);
@@ -615,6 +780,23 @@ Component({
         .finally(() => {
           this.setData({ isLoading: false });
         });
+    },
+    
+    // 重置排序
+    resetSorting() {
+      // 如果正在排序，先停止
+      if (this.data.sortingInterval) {
+        clearInterval(this.data.sortingInterval);
+      }
+      
+      // 如果在API模式下，调用API重置
+      if (this.data.isApiMode) {
+        this.resetSortingApi();
+        return;
+      }
+      
+      // 本地重置
+      this.generateNewArray();
     }
   }
 }) 

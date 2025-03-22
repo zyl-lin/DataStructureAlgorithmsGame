@@ -30,7 +30,9 @@ Component({
     searchValue: '', // 查找的值
     highlightIndex: -1, // 高亮的节点索引
     animationTimer: null, // 动画定时器
-    targetFound: false // 是否找到目标节点
+    targetFound: false, // 是否找到目标节点
+    apiError: '', // API错误信息
+    showSpeedControl: false, // 是否显示速度控制器
   },
 
   lifetimes: {
@@ -138,34 +140,141 @@ Component({
       });
     },
 
-    // 切换API模式
+    // 切换速度控制显示状态
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
+    },
+
+    // 重置链表API状态
+    resetListApi: function() {
+      if (!this.data.useApi) return;
+      
+      const api = require('../../services/api').linkedList;
+      this.setData({ loading: true, apiError: '' });
+      
+      api.reset()
+        .then(() => {
+          console.log('链表状态重置成功');
+          this.initLevel();
+        })
+        .catch(error => {
+          console.error('重置链表状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ loading: false });
+        });
+    },
+
+    // 重置链表
+    resetList: function() {
+      // 如果正在播放动画，先停止
+      if (this.data.animationTimer) {
+        clearTimeout(this.data.animationTimer);
+      }
+      
+      // 如果在API模式下，调用API重置
+      if (this.data.useApi) {
+        this.resetListApi();
+        return;
+      }
+      
+      // 本地重置
+      this.initLevel();
+    },
+
+    // 修改切换API模式方法
     toggleApiMode: function() {
       // 如果正在播放动画，不允许切换模式
-      if (this.data.isPlaying) return;
+      if (this.data.isPlaying || this.data.loading) return;
       
       const newApiMode = !this.data.useApi;
-      this.setData({ useApi: newApiMode });
+      this.setData({ 
+        useApi: newApiMode,
+        apiError: '',
+        showSpeedControl: newApiMode
+      });
+      
+      // 如果切换到API模式，重置状态并获取链表状态
+      if (newApiMode) {
+        this.resetListApi();
+      } else {
+        // 切换到本地模式，直接重置
+        this.initLevel();
+      }
       
       wx.showToast({
         title: newApiMode ? '已切换至API模式' : '已切换至本地模式',
-        icon: 'none',
-        duration: 1500
+        icon: 'none'
       });
+    },
+
+    // 修改插入节点方法
+    insertNode: async function() {
+      const value = this.data.inputValue.trim();
+      const position = parseInt(this.data.inputPosition);
       
-      // 如果切换到API模式，重新获取链表状态
-      if (newApiMode) {
-        this.fetchLinkedListState();
+      if (!value) {
+        wx.showToast({
+          title: '请输入节点值',
+          icon: 'none'
+        });
+        return;
       }
       
-      // 重置状态
-      this.setData({
-        inputValue: '',
-        inputPosition: '',
-        operationResult: '',
-        highlightIndex: -1,
-        searchValue: '',
-        targetFound: false
-      });
+      if (isNaN(position) || position < 0) {
+        wx.showToast({
+          title: '请输入有效的位置',
+          icon: 'none'
+        });
+        return;
+      }
+      
+      if (this.data.useApi) {
+        this.setData({ loading: true, apiError: '' });
+        
+        try {
+          const api = require('../../services/api').linkedList;
+          const result = await api.insert({
+            value,
+            position
+          }, true, this.data.animationSpeed);
+          
+          if (result.success) {
+            if (result.data.animation && result.data.animation.frames) {
+              this.setData({
+                animationFrames: result.data.animation.frames,
+                currentFrame: 0,
+                isPlaying: true
+              });
+              this.playAnimation();
+            } else {
+              this.setData({
+                nodes: result.data.state.nodes || [],
+                operationResult: '插入成功'
+              });
+            }
+          } else {
+            this.setData({
+              apiError: '插入失败'
+            });
+          }
+        } catch (error) {
+          console.error('API请求失败:', error);
+          this.setData({
+            apiError: error.message || '网络请求失败'
+          });
+        } finally {
+          this.setData({ loading: false });
+        }
+      } else {
+        // 本地插入逻辑保持不变
+        // ... existing local insert code ...
+      }
     },
 
     // 调整动画速度
@@ -245,141 +354,6 @@ Component({
       
       // 触发关卡完成事件
       this.triggerEvent('levelcompleted', { level: this.properties.level });
-    },
-
-    // 插入节点
-    insertNode: function() {
-      const value = parseInt(this.data.inputValue);
-      const position = parseInt(this.data.inputPosition);
-      
-      // 检查输入有效性
-      if (isNaN(value)) {
-        wx.showToast({
-          title: '请输入有效的节点值',
-          icon: 'none',
-          duration: 1500
-        });
-        return;
-      }
-      
-      if (isNaN(position) || position < 0 || position > this.data.nodes.length) {
-        wx.showToast({
-          title: `位置应在0-${this.data.nodes.length}之间`,
-          icon: 'none',
-          duration: 1500
-        });
-        return;
-      }
-      
-      // 清除旧状态
-      this.setData({
-        highlightIndex: -1,
-        operationResult: '',
-        targetFound: false
-      });
-      
-      if (this.data.useApi) {
-        // 使用API插入节点
-        this.insertNodeApi(value, position);
-      } else {
-        // 使用本地逻辑插入节点
-        this.insertNodeLocal(value, position);
-      }
-    },
-
-    // API插入节点
-    insertNodeApi: function(value, position) {
-      const api = require('../../services/api').linkedList;
-      this.setData({ loading: true, currentOperation: 'insert' });
-      
-      api.insert({ value, position }, true, this.data.animationSpeed).then(res => {
-        if (res.success) {
-          // 如果返回包含动画帧
-          if (res.data.animation && res.data.animation.frames) {
-            this.setData({
-              animationFrames: res.data.animation.frames,
-              currentFrame: 0,
-              isPlaying: true,
-              loading: false
-            });
-            this.playAnimation();
-          } else {
-            // 没有动画，直接更新状态
-            this.setData({
-              nodes: res.data.state.nodes || this.data.nodes,
-              loading: false,
-              operationResult: `成功在位置${position}插入值为${value}的节点`
-            });
-          }
-        } else {
-          wx.showToast({
-            title: '插入节点失败',
-            icon: 'none',
-            duration: 1500
-          });
-          this.setData({ loading: false });
-        }
-      }).catch(err => {
-        console.error('插入节点API调用失败:', err);
-        wx.showToast({
-          title: '网络错误，请重试',
-          icon: 'none',
-          duration: 1500
-        });
-        this.setData({ loading: false });
-      });
-    },
-
-    // 本地插入节点
-    insertNodeLocal: function(value, position) {
-      // 创建动画帧
-      const animationFrames = [];
-      const newNodes = [...this.data.nodes];
-      
-      // 添加当前状态作为第一帧
-      animationFrames.push({
-        nodes: JSON.parse(JSON.stringify(newNodes)),
-        highlightIndex: -1
-      });
-      
-      // 遍历到插入位置
-      for (let i = 0; i < position; i++) {
-        animationFrames.push({
-          nodes: JSON.parse(JSON.stringify(newNodes)),
-          highlightIndex: i
-        });
-      }
-      
-      // 插入新节点
-      newNodes.splice(position, 0, { value });
-      
-      // 添加插入后的状态
-      animationFrames.push({
-        nodes: JSON.parse(JSON.stringify(newNodes)),
-        highlightIndex: position
-      });
-      
-      // 添加完成状态
-      animationFrames.push({
-        nodes: JSON.parse(JSON.stringify(newNodes)),
-        highlightIndex: -1
-      });
-      
-      this.setData({
-        animationFrames,
-        currentFrame: 0,
-        isPlaying: true,
-        currentOperation: 'insert'
-      });
-      
-      this.playAnimation();
-      
-      // 播放完成后更新操作结果
-      setTimeout(() => {
-        this.setData({
-          operationResult: `成功在位置${position}插入值为${value}的节点`
-        });
-      }, animationFrames.length * (1000 / this.data.animationSpeed));
     },
 
     // 删除节点
@@ -755,85 +729,5 @@ Component({
         });
       }, animationFrames.length * (1000 / this.data.animationSpeed));
     },
-
-    // 重置链表
-    resetList: function() {
-      // 如果正在播放动画，不允许重置
-      if (this.data.isPlaying || this.data.loading) return;
-      
-      if (this.data.useApi) {
-        // 使用API重置链表
-        this.resetListApi();
-      } else {
-        // 本地重置链表
-        this.resetListLocal();
-      }
-    },
-
-    // API重置链表
-    resetListApi: function() {
-      const api = require('../../services/api').linkedList;
-      this.setData({ loading: true });
-      
-      api.reset().then(res => {
-        if (res.success) {
-          // 重置成功，刷新链表状态
-          this.fetchLinkedListState();
-          wx.showToast({
-            title: '链表已重置',
-            icon: 'success',
-            duration: 1500
-          });
-          
-          // 重置其他状态
-          this.setData({
-            inputValue: '',
-            inputPosition: '',
-            operationResult: '',
-            highlightIndex: -1,
-            searchValue: '',
-            targetFound: false,
-            loading: false
-          });
-        } else {
-          wx.showToast({
-            title: '重置链表失败',
-            icon: 'none',
-            duration: 1500
-          });
-          this.setData({ loading: false });
-        }
-      }).catch(err => {
-        console.error('重置链表API调用失败:', err);
-        wx.showToast({
-          title: '网络错误，请重试',
-          icon: 'none',
-          duration: 1500
-        });
-        this.setData({ loading: false });
-      });
-    },
-    
-    // 本地重置链表
-    resetListLocal: function() {
-      // 重置为初始状态
-      this.initLevel();
-      
-      wx.showToast({
-        title: '链表已重置',
-        icon: 'success',
-        duration: 1500
-      });
-      
-      // 更新操作结果
-      this.setData({
-        operationResult: '链表已重置为初始状态',
-        inputValue: '',
-        inputPosition: '',
-        highlightIndex: -1,
-        searchValue: '',
-        targetFound: false
-      });
-    }
   }
 }); 

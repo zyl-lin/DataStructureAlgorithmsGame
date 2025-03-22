@@ -5,7 +5,7 @@
 
 # 检查是否提供了主机参数
 param (
-    [string]$HostUrl = "http://localhost:3000"
+    [string]$HostUrl = "http://192.168.56.128:3000"
 )
 
 # 颜色函数

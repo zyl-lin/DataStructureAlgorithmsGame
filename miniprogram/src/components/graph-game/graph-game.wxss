@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 20rpx;
+  padding: 10rpx;
   box-sizing: border-box;
   background-color: #fff;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
 }
 
 /* 图形渲染区域 */
@@ -15,9 +16,9 @@
   width: 100%;
   height: 500rpx;
   background-color: #f9f9f9;
-  border-radius: 12rpx;
+  border-radius: 10rpx;
   overflow: hidden;
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
 }
 
 .graph-canvas {
@@ -45,7 +46,7 @@
 /* 用户序列显示区域 */
 .sequence-area {
   width: 100%;
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
 }
 
 .sequence-label {
@@ -57,9 +58,9 @@
 .sequence-display {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
+  gap: 12rpx;
   min-height: 60rpx;
-  padding: 16rpx;
+  padding: 12rpx;
   border-radius: 8rpx;
   background-color: #f5f5f5;
 }
@@ -94,7 +95,7 @@
 
 /* 遍历模式选择器 */
 .mode-selector {
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
 }
 
 .mode-label {
@@ -105,12 +106,13 @@
 
 .mode-options {
   display: flex;
-  gap: 20rpx;
+  flex-wrap: wrap;
+  gap: 15rpx;
 }
 
 .mode-option {
-  padding: 12rpx 24rpx;
-  border-radius: 40rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
   background-color: #f0f0f0;
   color: #333;
   font-size: 26rpx;
@@ -185,18 +187,20 @@
 /* 操作按钮 */
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 30rpx;
+  gap: 20rpx;
   margin-top: 10rpx;
+  width: 100%;
 }
 
 .action-btn {
-  min-width: 180rpx;
-  padding: 0 30rpx;
+  min-width: 160rpx;
+  padding: 0 20rpx;
   height: 70rpx;
   line-height: 70rpx;
-  border-radius: 40rpx;
-  font-size: 28rpx;
+  border-radius: 35rpx;
+  font-size: 26rpx;
   text-align: center;
   background-color: #f5f5f5;
   color: #333;
@@ -245,4 +249,45 @@
 .action-btn[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* API模式选择器 */
+.api-mode-selector {
+  margin-bottom: 15rpx;
+}
+
+/* 动画速度控制 */
+.speed-control {
+  width: 100%;
+  margin-bottom: 20rpx;
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+  box-sizing: border-box;
+}
+
+.speed-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.speed-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+/* 开始遍历按钮 */
+.start-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* 速度设置按钮 */
+.speed-btn {
+  background-color: #ff9800;
+  color: white;
 } 

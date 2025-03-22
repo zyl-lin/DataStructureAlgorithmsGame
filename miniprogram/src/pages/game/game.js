@@ -128,6 +128,15 @@ Page({
       case 6: // 图遍历
         this.initGraphGame()
         break
+      case 7: // 搜索算法
+        this.initSearchGame()
+        break
+      case 8: // 动态规划
+        this.initDPGame()
+        break
+      case 9: // 贪心算法
+        this.initGreedyGame()
+        break
     }
   },
 
@@ -364,59 +373,39 @@ Page({
     
     if (level === 1) {
       graph = {
-        nodes: [
-          { id: 'A', x: 100, y: 100 },
-          { id: 'B', x: 200, y: 50 },
-          { id: 'C', x: 300, y: 100 },
-          { id: 'D', x: 200, y: 200 }
-        ],
+        nodes: ['A', 'B', 'C', 'D'],
         edges: [
-          { source: 'A', target: 'B' },
-          { source: 'A', target: 'C' },
-          { source: 'A', target: 'D' },
-          { source: 'B', target: 'C' },
-          { source: 'D', target: 'C' }
+          [1, 2], // A连接到B和C
+          [0, 2], // B连接到A和C
+          [0, 1, 3], // C连接到A、B和D
+          [2]  // D连接到C
         ]
       }
       task = '从节点A开始执行深度优先搜索'
       hint = '选择DFS算法，然后选择起始节点A，观察遍历顺序'
     } else if (level === 2) {
       graph = {
-        nodes: [
-          { id: '1', x: 100, y: 100 },
-          { id: '2', x: 200, y: 50 },
-          { id: '3', x: 300, y: 100 },
-          { id: '4', x: 200, y: 200 },
-          { id: '5', x: 350, y: 200 }
-        ],
+        nodes: ['1', '2', '3', '4', '5'],
         edges: [
-          { source: '1', target: '2' },
-          { source: '1', target: '4' },
-          { source: '2', target: '3' },
-          { source: '3', target: '5' },
-          { source: '4', target: '3' },
-          { source: '4', target: '5' }
+          [1, 3], // 1连接到2和4
+          [0, 2], // 2连接到1和3
+          [1, 4], // 3连接到2和5
+          [0, 2, 4], // 4连接到1、3和5
+          [2, 3]  // 5连接到3和4
         ]
       }
       task = '从节点1开始执行广度优先搜索'
       hint = '选择BFS算法，然后选择起始节点1，观察遍历顺序'
     } else if (level === 3) {
       graph = {
-        nodes: [
-          { id: 'S', x: 50, y: 150 },
-          { id: 'A', x: 150, y: 50 },
-          { id: 'B', x: 150, y: 250 },
-          { id: 'C', x: 250, y: 50 },
-          { id: 'D', x: 250, y: 250 },
-          { id: 'E', x: 350, y: 150 }
-        ],
+        nodes: ['S', 'A', 'B', 'C', 'D', 'E'],
         edges: [
-          { source: 'S', target: 'A', weight: 1 },
-          { source: 'S', target: 'B', weight: 2 },
-          { source: 'A', target: 'C', weight: 3 },
-          { source: 'B', target: 'D', weight: 1 },
-          { source: 'C', target: 'E', weight: 2 },
-          { source: 'D', target: 'E', weight: 1 }
+          [1, 2], // S连接到A和B
+          [0, 3], // A连接到S和C
+          [0, 4], // B连接到S和D
+          [1, 5], // C连接到A和E
+          [2, 5], // D连接到B和E
+          [3, 4]  // E连接到C和D
         ]
       }
       task = '找出从S到E的最短路径'
@@ -426,6 +415,8 @@ Page({
     this.setData({
       gameType: 'graph',
       graph: graph,
+      traversalMode: 'dfs',
+      startNodeIndex: 0,
       currentTask: task,
       currentHint: hint,
       operations: [
@@ -436,79 +427,204 @@ Page({
     })
   },
 
+  // 搜索算法游戏初始化
+  initSearchGame() {
+    const level = this.data.currentLevel
+    let array
+    let task = ''
+    let hint = ''
+    
+    if (level === 1) {
+      array = [15, 23, 8, 42, 4, 16, 55]
+      task = '使用线性搜索找出值为16的元素'
+      hint = '选择线性搜索算法，然后设置目标值为16，观察搜索过程'
+    } else if (level === 2) {
+      array = [4, 8, 15, 16, 23, 42, 55]
+      task = '使用二分搜索找出值为23的元素'
+      hint = '选择二分搜索算法，然后设置目标值为23，观察搜索过程'
+    } else if (level === 3) {
+      array = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+      task = '比较线性搜索和二分搜索的效率差异'
+      hint = '分别使用线性搜索和二分搜索查找同一个元素，比较所需的步骤数'
+    }
+    
+    this.setData({
+      gameType: 'search',
+      array: array,
+      currentTask: task,
+      currentHint: hint,
+      operations: [
+        { id: 1, name: '线性搜索' },
+        { id: 2, name: '二分搜索' }
+      ]
+    })
+  },
+  
+  // 动态规划游戏初始化
+  initDPGame() {
+    const level = this.data.currentLevel
+    let task = ''
+    let hint = ''
+    
+    if (level === 1) {
+      task = '计算斐波那契数列第10项'
+      hint = '选择斐波那契算法，设置n=10，观察动态规划如何优化计算'
+    } else if (level === 2) {
+      task = '解决背包问题'
+      hint = '添加物品并设置背包容量，观察动态规划如何求解最优解'
+    } else if (level === 3) {
+      task = '求解最长公共子序列问题'
+      hint = '输入两个字符串，使用动态规划计算它们的最长公共子序列'
+    }
+    
+    this.setData({
+      gameType: 'dp',
+      currentTask: task,
+      currentHint: hint,
+      operations: [
+        { id: 1, name: '斐波那契数列' },
+        { id: 2, name: '背包问题' },
+        { id: 3, name: '最长公共子序列' }
+      ]
+    })
+  },
+  
+  // 贪心算法游戏初始化
+  initGreedyGame() {
+    const level = this.data.currentLevel
+    let task = ''
+    let hint = ''
+    
+    if (level === 1) {
+      task = '使用贪心算法解决零钱兑换问题'
+      hint = '设置需要兑换的金额和可用的硬币面值，观察贪心策略'
+    } else if (level === 2) {
+      task = '使用贪心算法解决活动安排问题'
+      hint = '安排一系列活动，使尽可能多的活动能够进行'
+    } else if (level === 3) {
+      task = '使用贪心算法生成哈夫曼编码'
+      hint = '输入字符及其频率，观察哈夫曼编码的构建过程'
+    }
+    
+    this.setData({
+      gameType: 'greedy',
+      currentTask: task,
+      currentHint: hint,
+      operations: [
+        { id: 1, name: '零钱兑换' },
+        { id: 2, name: '活动安排' },
+        { id: 3, name: '哈夫曼编码' }
+      ]
+    })
+  },
+
+  // 对不同游戏组件的事件回调统一处理
   onNodeTap(e) {
-    const { node } = e.detail
-    // 处理节点点击事件
-    console.log('Node tapped:', node)
+    console.log('Node tap:', e.detail)
   },
-
+  
   onOperation(e) {
-    const { operation, data } = e.detail
-    // 处理操作事件
-    console.log('Operation:', operation, 'Data:', data)
+    console.log('Operation:', e.detail)
   },
-
+  
   onMove(e) {
-    const { direction } = e.detail
-    // 处理移动事件
-    console.log('Move direction:', direction)
+    console.log('Move:', e.detail)
   },
-
+  
   onAlgorithmSelect(e) {
-    const { algorithm } = e.detail
-    // 处理算法选择事件
-    console.log('Algorithm selected:', algorithm)
+    console.log('Algorithm selected:', e.detail)
   },
-
+  
   onSort(e) {
-    const { algorithm } = e.detail
-    // 处理排序事件
-    console.log('Sort algorithm:', algorithm)
+    console.log('Sort event:', e.detail)
   },
   
   onNodeSelect(e) {
-    const { nodeId } = e.detail
-    // 处理节点选择事件
-    console.log('Node selected:', nodeId)
+    console.log('Node selected:', e.detail)
   },
   
   onTraversal(e) {
-    const { type, path } = e.detail
-    // 处理遍历事件
-    console.log('Traversal type:', type, 'Path:', path)
+    console.log('Traversal:', e.detail)
   },
   
   onEnqueue(e) {
-    const { value } = e.detail
-    // 处理入队事件
-    console.log('Enqueued value:', value)
+    console.log('Enqueue:', e.detail)
   },
   
   onDequeue(e) {
-    // 处理出队事件
-    console.log('Dequeued')
-  },
-
-  onOperationTap(e) {
-    const { operation } = e.currentTarget.dataset
-    // 处理操作按钮点击事件
-    console.log('Operation button tapped:', operation)
+    console.log('Dequeue:', e.detail)
   },
   
+  onOperationTap(e) {
+    console.log('Operation tap:', e.detail)
+  },
+  
+  // 搜索相关事件
+  onSearchTypeChange(e) {
+    console.log('Search type changed:', e.detail)
+  },
+  
+  onTargetValueChange(e) {
+    console.log('Target value changed:', e.detail)
+  },
+  
+  // 动态规划相关事件
+  onDPTypeChange(e) {
+    console.log('DP type changed:', e.detail)
+  },
+  
+  // 贪心算法相关事件
+  onGreedyTypeChange(e) {
+    console.log('Greedy type changed:', e.detail)
+  },
+  
+  // 关卡完成处理
   onLevelComplete(e) {
-    // 标记关卡完成
-    this.setData({
-      levelCompleted: true
-    })
+    console.log('Level completed:', e.detail)
     
-    // 保存游戏进度
-    this.saveGameProgress()
+    // 各游戏类型可能有不同的完成条件，这里统一处理
+    let isCompleted = false
     
-    // 提示用户已完成关卡
-    wx.showToast({
-      title: '关卡完成！',
-      icon: 'success'
-    })
+    switch (this.data.gameType) {
+      case 'linkedList':
+      case 'maze':
+      case 'queue':
+      case 'binaryTree':
+        isCompleted = e.detail.success === true
+        break
+      case 'sorting':
+        isCompleted = e.detail.sorted === true
+        break
+      case 'graph':
+        isCompleted = e.detail.completed === true
+        break
+      case 'search':
+        isCompleted = e.detail.found !== undefined // 无论是否找到元素，只要搜索完成即算完成
+        break
+      case 'dp':
+      case 'greedy':
+        isCompleted = e.detail.completed === true
+        break
+      default:
+        isCompleted = false
+    }
+    
+    if (isCompleted) {
+      // 显示完成提示
+      wx.showToast({
+        title: '关卡完成！',
+        icon: 'success',
+        duration: 2000
+      })
+      
+      // 更新关卡完成状态
+      this.setData({
+        levelCompleted: true
+      })
+      
+      // 保存游戏进度
+      this.saveGameProgress()
+    }
   },
 
   prevLevel() {
@@ -558,10 +674,18 @@ Page({
     
     // 如果当前是图遍历游戏，重置服务端的图遍历状态
     if (this.data.gameType === 'graph') {
-      const api = require('../../services/api')
-      api.graph.reset().catch(error => {
-        console.error('重置图遍历状态失败:', error)
-      })
+      try {
+        const api = require('../../services/api');
+        api.graph.reset()
+          .then(() => {
+            console.log('重置图API状态成功');
+          })
+          .catch(err => {
+            console.error('重置图API状态失败', err);
+          });
+      } catch (error) {
+        console.error('图API重置出错:', error);
+      }
     }
     
     // 如果当前是排序游戏，重置服务端的排序状态

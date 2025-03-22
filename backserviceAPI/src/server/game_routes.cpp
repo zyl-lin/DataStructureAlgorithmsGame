@@ -54,11 +54,11 @@ void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
         }
         
         auto payload = verifyJWT(token);
-        if (payload.empty()) {
+        if (!payload["valid"]) {
             return crow::response(401, "{\"error\":\"未授权或令牌已过期\"}");
         }
         
-        int userId = payload["user_id"];
+        int userId = std::stoi(payload["user_id"].get<std::string>());
         
         // 开始关卡
         bool success = db.startLevel(userId, gameId, levelId);
@@ -79,11 +79,11 @@ void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
         }
         
         auto payload = verifyJWT(token);
-        if (payload.empty()) {
+        if (!payload["valid"]) {
             return crow::response(401, "{\"error\":\"未授权或令牌已过期\"}");
         }
         
-        int userId = payload["user_id"];
+        int userId = std::stoi(payload["user_id"].get<std::string>());
         
         // 解析请求体
         auto body = json::parse(req.body);
@@ -120,7 +120,7 @@ void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
         }
         
         auto payload = verifyJWT(token);
-        if (payload.empty()) {
+        if (!payload["valid"]) {
             return crow::response(401, "{\"error\":\"未授权或令牌已过期\"}");
         }
         
@@ -138,7 +138,7 @@ void registerGameRoutes(crow::App<crow::CORSHandler>& app, Database& db) {
         }
         
         auto payload = verifyJWT(token);
-        if (payload.empty()) {
+        if (!payload["valid"]) {
             return crow::response(401, "{\"error\":\"未授权或令牌已过期\"}");
         }
         

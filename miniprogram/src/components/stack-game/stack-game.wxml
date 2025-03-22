@@ -1,4 +1,4 @@
-<view class="queue-game-container">
+<view class="stack-game-container">
   <!-- 任务区域 -->
   <view class="task-panel" wx:if="{{task}}">
     <view class="task-title">当前任务</view>
@@ -35,49 +35,47 @@
     {{apiError}}
   </view>
 
-  <!-- 队列可视化区域 -->
-  <view class="queue-visualization">
-    <view class="queue-labels">
-      <view class="queue-label">队首</view>
-      <view class="queue-label">队尾</view>
-    </view>
-    <view class="queue-container">
-      <block wx:if="{{queue.length === 0}}">
-        <view class="empty-queue">队列为空</view>
+  <!-- 栈可视化区域 -->
+  <view class="stack-visualization">
+    <view class="stack-label">栈顶</view>
+    <view class="stack-container">
+      <block wx:if="{{stack.length === 0}}">
+        <view class="empty-stack">栈为空</view>
       </block>
       <block wx:else>
-        <view class="queue-items">
-          <view class="queue-item" wx:for="{{queue}}" wx:key="index">
+        <view class="stack-items">
+          <view class="stack-item" wx:for="{{stack}}" wx:key="index">
             {{item}}
           </view>
         </view>
       </block>
     </view>
+    <view class="stack-label">栈底</view>
   </view>
 
   <!-- 操作区域 -->
-  <view class="queue-operations">
+  <view class="stack-operations">
     <view class="input-group">
-      <input class="queue-input" type="text" placeholder="输入元素值" bindinput="onValueInput" value="{{currentValue}}" disabled="{{isLoading}}" />
+      <input class="stack-input" type="text" placeholder="输入元素值" bindinput="onValueInput" value="{{currentValue}}" disabled="{{isLoading}}" />
     </view>
-    <view class="queue-buttons">
-      <button class="operation-btn enqueue-btn" bindtap="onEnqueue" disabled="{{isQueueFull || isLoading}}">入队 (Enqueue)</button>
-      <button class="operation-btn dequeue-btn" bindtap="onDequeue" disabled="{{isQueueEmpty || isLoading}}">出队 (Dequeue)</button>
-      <button class="operation-btn peek-btn" bindtap="onPeek" disabled="{{isQueueEmpty || isLoading}}">查看队首 (Peek)</button>
-      <button class="operation-btn reset-btn" bindtap="resetQueue" disabled="{{isLoading}}">重置队列</button>
+    <view class="stack-buttons">
+      <button class="operation-btn push-btn" bindtap="onPush" disabled="{{isStackFull || isLoading}}">入栈 (Push)</button>
+      <button class="operation-btn pop-btn" bindtap="onPop" disabled="{{isStackEmpty || isLoading}}">出栈 (Pop)</button>
+      <button class="operation-btn peek-btn" bindtap="onPeek" disabled="{{isStackEmpty || isLoading}}">查看栈顶 (Peek)</button>
+      <button class="operation-btn reset-btn" bindtap="resetStack" disabled="{{isLoading}}">重置栈</button>
     </view>
   </view>
 
-  <!-- 队列信息 -->
-  <view class="queue-info">
+  <!-- 栈信息 -->
+  <view class="stack-info">
     <view class="info-item">
-      <text class="info-label">队列大小:</text>
-      <text class="info-value">{{queue.length}}/{{maxSize}}</text>
+      <text class="info-label">栈大小:</text>
+      <text class="info-value">{{stack.length}}/{{maxSize}}</text>
     </view>
     <view class="info-item">
       <text class="info-label">状态:</text>
-      <text class="info-value" wx:if="{{isQueueEmpty}}">空</text>
-      <text class="info-value" wx:elif="{{isQueueFull}}">满</text>
+      <text class="info-value" wx:if="{{isStackEmpty}}">空</text>
+      <text class="info-value" wx:elif="{{isStackFull}}">满</text>
       <text class="info-value" wx:else>可操作</text>
     </view>
   </view>

@@ -1532,3 +1532,327 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 4. 新增 api-compatibility-check.ps1 - PowerShell版API兼容性测试脚本
 5. 更新 README.md - 添加本次更新的会话总结
 
+## 2024-03-22 02:48 会话总结
+
+### 会话主要目的
+实现数据结构与算法游戏的后端API，包括搜索、迷宫、动态规划和贪心算法相关功能。
+
+### 完成的主要任务
+1. 实现了搜索游戏的线性搜索和二分搜索功能
+2. 实现了迷宫游戏的生成、DFS、BFS和A*算法求解功能
+3. 实现了动态规划游戏的斐波那契数列、背包问题和最长公共子序列功能
+4. 实现了贪心算法游戏的零钱兑换、活动安排和哈夫曼编码功能
+
+### 关键决策和解决方案
+1. 搜索算法：
+   - 线性搜索：实现了简单直观的遍历搜索
+   - 二分搜索：要求输入数组必须有序，自动对输入数组进行排序
+
+2. 迷宫算法：
+   - 生成：使用深度优先搜索随机生成迷宫
+   - 求解：实现了三种不同的寻路算法（DFS、BFS、A*）
+   - A*算法：使用曼哈顿距离作为启发式函数
+
+3. 动态规划：
+   - 斐波那契：限制输入范围避免整数溢出
+   - 背包问题：记录选择过程，支持回溯找出选择的物品
+   - LCS：使用方向数组辅助重建最优解
+
+4. 贪心算法：
+   - 零钱兑换：按面值降序处理，记录每种硬币的使用数量
+   - 活动安排：按结束时间排序，确保最优选择
+   - 哈夫曼编码：使用优先队列构建最优编码树
+
+### 使用的技术栈
+- C++17
+- Crow框架（HTTP服务器）
+- nlohmann/json（JSON处理）
+- STL容器和算法
+- 面向对象和函数式编程范式
+
+### 修改的文件
+1. src/server/game_animation_routes.cpp
+2. src/server/maze_routes.cpp
+3. src/server/dp_routes.cpp
+4. src/server/greedy_routes.cpp
+5. README.md
+
+## 2024-03-22 03:30 会话总结
+
+### 会话主要目的
+修复搜索游戏相关API的编译错误，统一使用ResponseBuilder类处理API响应。
+
+### 完成的主要任务
+1. 修复了搜索相关函数中使用未定义辅助函数的问题
+2. 更新了错误响应的创建方式，使用ResponseBuilder类
+3. 确保所有API响应都包含正确的模块标识符
+
+### 关键决策和解决方案
+1. 将直接使用的createErrorResponse等函数替换为ResponseBuilder类的对应方法
+2. 为所有响应添加了"search"模块标识符
+3. 统一了响应格式，确保与其他API保持一致
+4. 保持了原有的业务逻辑不变，只修改了响应处理部分
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- ResponseBuilder响应处理类
+- JSON数据处理
+
+### 修改的文件
+1. src/server/game_animation_routes.cpp
+   - 更新了handleSearchLinear和handleSearchBinary函数中的响应处理
+2. README.md
+   - 添加了本次修改的会话总结
+
+## 2023-06-19 修复游戏搜索API中的编译错误
+
+### 会话主要目的
+修复game_animation_routes.cpp文件中的编译错误，特别是与响应处理相关的未定义引用错误。
+
+### 完成的主要任务
+- 删除了不再使用的旧响应处理函数：`createErrorResponse`、`createSuccessResponse`和`createAnimationResponse`
+- 确保所有响应都使用`ResponseBuilder`类中的对应方法
+
+### 关键决策和解决方案
+- 使用`ResponseBuilder`类的静态方法处理所有API响应，保持一致的响应格式
+- 确保响应中包含正确的模块标识符（如"linkedlist"、"queue"、"stack"等）
+
+### 使用的技术栈
+- C++
+- Crow HTTP框架
+- JSON处理
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+
+
+## 2023-06-19 修复游戏搜索API中的编译错误（2）
+
+### 会话主要目的
+修复未定义引用错误，特别是与迷宫、贪心算法和动态规划相关的处理函数。
+
+### 完成的主要任务
+- 创建了迷宫、贪心算法和动态规划的头文件
+- 添加了必要的包含指令，解决了未定义引用问题
+- 修复了编译错误，使游戏搜索API能够正常工作
+
+### 关键决策和解决方案
+- 为迷宫、贪心和动态规划模块分别创建单独的头文件，以正确声明相关函数
+- 在每个实现文件中添加对应的头文件引用
+- 在game_animation_routes.cpp中添加所有必要的模块头文件引用
+
+### 使用的技术栈
+- C++
+- Crow HTTP框架
+- CMake构建系统
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+- src/server/maze_routes.cpp
+- src/server/greedy_routes.cpp
+- src/server/dp_routes.cpp
+- src/server/graph_routes.cpp
+- 新增: src/server/maze_routes.h
+- 新增: src/server/greedy_routes.h
+- 新增: src/server/dp_routes.h
+- 新增: src/server/graph_routes.h
+
+### 注意事项
+- 在构建项目时需要安装ASIO库依赖，可以通过包管理器安装或手动添加到项目中
+- 如果CMake报错`Could NOT find asio (missing: ASIO_INCLUDE_DIR)`，请确保安装了ASIO库或正确设置了包含路径
+
+## 2024-07-26 20:30:00
+
+### 会话主要目的
+解决游戏动画API的编译链接错误，主要是未定义引用问题
+
+### 完成的主要任务
+- 分析了编译错误日志，确定迷宫、动态规划和贪心算法API的链接错误
+- 发现CMakeLists.txt中animation_manager.cpp文件路径错误
+- 更新了CMake配置，正确引用了动画管理器源文件
+- 添加了必要的包含目录，确保头文件能被正确找到
+
+### 关键决策和解决方案
+- 将错误的`src/server/animation_manager.cpp`路径修正为`src/server/animation/animation_manager.cpp`
+- 在CMakeLists.txt中的include目录中添加了`${CMAKE_CURRENT_SOURCE_DIR}/src/server/animation`
+- 检查确认所有功能API文件(maze_routes.cpp、dp_routes.cpp和greedy_routes.cpp)已经存在并正确实现
+
+### 使用的技术栈
+- C++
+- CMake构建系统
+- Crow Web框架
+- SQLite3数据库
+
+### 修改的文件
+- CMakeLists.txt
+
+## 2024-07-27 12:30:00
+
+### 会话主要目的
+修复迷宫、动态规划和贪心算法模块的编译错误问题
+
+### 完成的主要任务
+- 分析和修复了src/server/maze_routes.cpp中的多个编译错误
+- 修复了src/server/dp_routes.cpp中的JSON初始化列表问题
+- 修复了src/server/greedy_routes.cpp中的JSON和队列相关问题
+- 添加了必要的头文件包含
+
+### 关键决策和解决方案
+- 添加了<queue>、<climits>等必要的头文件
+- 将std::vector<bool>::reference转换为bool类型再传递给json::push_back()
+- 使用std::make_pair替代{}大括号初始化列表
+- 使用json::object()方法创建JSON对象而非使用初始化列表
+- 修复了A*算法和哈夫曼编码中的优先队列相关问题
+
+### 使用的技术栈
+- C++
+- nlohmann/json库
+- STL容器和算法
+- Crow Web框架
+
+### 修改的文件
+- src/server/maze_routes.cpp
+- src/server/dp_routes.cpp
+- src/server/greedy_routes.cpp
+
+## 2024-07-28 12:00:00
+
+### 会话主要目的
+修复迷宫、动态规划和贪心算法模块的编译错误问题
+
+### 完成的主要任务
+- 修复了src/server/maze_routes.cpp中的parent变量未声明和path变量未声明问题
+- 修复了src/server/dp_routes.cpp中的std::vector<bool>::reference无法直接转换为JSON对象的问题
+- 修复了src/server/greedy_routes.cpp中的优先队列比较函数问题
+- 添加了必要的头文件包含
+
+### 关键决策和解决方案
+- 添加了<algorithm>、<queue>、<climits>、<cmath>等必要的头文件
+- 在maze_routes.cpp中添加了对parent和path变量的声明和初始化
+- 在dp_routes.cpp中使用static_cast<bool>显式转换std::vector<bool>::reference
+- 替换了JSON初始化列表的写法，改用json::object()和单独赋值的方式
+- 修复了A*算法和哈夫曼编码中的优先队列比较函数问题
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- STL容器和算法
+- Crow Web框架
+
+### 修改的文件
+- src/server/maze_routes.cpp
+- src/server/dp_routes.cpp
+- src/server/greedy_routes.cpp
+
+## 2024-07-28 15:30:00
+
+### 会话的主要目的
+实现JWT（JSON Web Token）相关功能，解决用户认证相关的链接错误。
+
+### 完成的主要任务
+1. 创建了JWT工具模块，包括头文件和实现文件
+2. 实现了JWT令牌的生成和验证功能
+3. 添加了jwt-cpp库的依赖配置
+4. 修复了用户认证相关的链接错误
+
+### 关键决策和解决方案
+1. 使用jwt-cpp库实现JWT功能，避免手动实现加密和解密
+2. 设置24小时的令牌过期时间
+3. 添加了完整的错误处理机制
+4. 保持了与现有代码的兼容性
+
+### 使用的技术栈
+- C++17
+- jwt-cpp库
+- OpenSSL
+- CMake构建系统
+
+### 修改了哪些文件
+1. src/server/jwt_utils.h（新建）- JWT工具头文件
+2. src/server/jwt_utils.cpp（新建）- JWT工具实现文件
+3. CMakeLists.txt - 添加jwt-cpp依赖
+
+## 2024-07-28 20:00:00
+
+### 会话的主要目的
+修复JWT验证函数返回类型不匹配导致的编译错误问题。
+
+### 完成的主要任务
+1. 修改了verifyJWT函数的实现，使其返回JSON对象而非布尔值
+2. 更新了所有调用verifyJWT函数的地方，使用新的返回值结构
+3. 添加了详细的错误信息处理
+
+### 关键决策和解决方案
+1. 将verifyJWT函数修改为返回包含验证结果和用户信息的JSON对象
+2. 在验证失败时返回带有错误信息的JSON对象
+3. 修改了所有使用verifyJWT的代码，检查"valid"字段而非空对象
+4. 使用std::stoi转换字符串形式的用户ID
+
+### 使用的技术栈
+- C++17
+- jwt-cpp库
+- nlohmann/json库
+- Crow Web框架
+
+### 修改的文件
+1. src/server/jwt_utils.cpp - 修改了验证函数的实现
+2. src/server/user_routes.cpp - 更新了验证结果的处理方式
+3. src/server/game_routes.cpp - 更新了验证结果的处理方式
+4. src/server/achievement_routes.cpp - 更新了验证结果的处理方式
+
+## 2024-07-28 21:30:00
+
+### 会话的主要目的
+解决JWT库链接错误及Base64相关依赖问题
+
+### 完成的主要任务
+1. 修复了编译时"cannot find -ljwt-cpp"链接错误问题
+2. 简化了JWT工具实现，移除了手动Base64编解码函数
+3. 修改了CMakeLists.txt，更正了jwt-cpp库的使用方式
+
+### 关键决策和解决方案
+1. 识别出jwt-cpp是一个仅头文件的库，不需要通过-l链接
+2. 修改CMakeLists.txt，将jwt-cpp从链接库列表中移除
+3. 在包含目录中添加jwt-cpp的头文件路径
+4. 清理代码，移除了未使用的Base64手动实现，使用jwt-cpp库内置功能
+
+### 使用的技术栈
+- C++17
+- jwt-cpp库
+- OpenSSL
+- CMake构建系统
+
+### 修改了哪些文件
+1. CMakeLists.txt - 修正了jwt-cpp的使用方式
+2. src/server/jwt_utils.cpp - 简化了代码，移除了手动实现的Base64函数
+
+## 2024-03-22 09:30:00
+
+### 会话的主要目的
+实现游戏界面的后端API接口，支持通过点击触发游戏动画变化
+
+### 完成的主要任务
+1. 设计并实现了游戏元素交互API，包括点击、拖拽、放置和悬停事件
+2. 添加了针对不同游戏类型（链表、栈、队列、二叉树、图等）的交互处理逻辑
+3. 实现了动画帧生成和状态变化机制
+4. 更新了API设计文档，添加了新的游戏元素交互API说明
+
+### 关键决策和解决方案
+1. 采用统一的交互处理架构，通过gameType参数区分不同游戏类型
+2. 为每种交互类型（点击、拖拽等）提供专用API和通用API
+3. 实现了元素状态变化（normal、hover、clicked、dragging）的可视化支持
+4. 将交互事件转换为动画帧，实现流畅的动画效果
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 自定义动画管理器
+
+### 修改了哪些文件
+1. src/server/animation/game_interaction_handler.h - 新增游戏交互处理头文件
+2. src/server/animation/game_interaction_handler.cpp - 新增游戏交互处理实现
+3. src/server/animation/animation_routes.h - 更新动画路由声明
+4. src/server/animation/animation_routes.cpp - 实现动画路由注册和处理函数
+5. API设计.txt - 添加新的游戏元素交互API说明

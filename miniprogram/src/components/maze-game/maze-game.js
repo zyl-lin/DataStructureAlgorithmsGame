@@ -26,7 +26,9 @@ Component({
     startPoint: null,
     endPoint: null,
     isApiLoading: false,
-    apiError: ''
+    apiError: '',
+    animationSpeed: 5,
+    showSpeedControl: false
   },
 
   lifetimes: {
@@ -205,6 +207,12 @@ Component({
       
       this.setData({ isSolving: true });
       
+      // 如果在API模式下，调用API进行寻路
+      if (this.data.isApiMode) {
+        this.solveWithApi();
+        return;
+      }
+      
       // 重置迷宫路径
       this.resetPath();
       
@@ -222,29 +230,139 @@ Component({
       }
     },
     
+    // 使用API解决迷宫
+    solveWithApi: function() {
+      const api = require('../../services/api').maze;
+      const { algorithm, animationSpeed } = this.data;
+      
+      this.setData({ isApiLoading: true, apiError: '' });
+      
+      let apiMethod;
+      switch (algorithm) {
+        case 'dfs':
+          apiMethod = api.solveDFS;
+          break;
+        case 'bfs':
+          apiMethod = api.solveBFS;
+          break;
+        case 'astar':
+          apiMethod = api.solveAStar;
+          break;
+      }
+      
+      if (!apiMethod) {
+        this.setData({
+          apiError: '不支持的算法类型',
+          isApiLoading: false
+        });
+        return;
+      }
+      
+      const requestData = {
+        maze: this.data.maze,
+        start: this.data.startPoint,
+        end: this.data.endPoint
+      };
+      
+      apiMethod(requestData, true, animationSpeed)
+        .then(response => {
+          if (response.success) {
+            this.handleApiResponse(response.data);
+          } else {
+            this.setData({
+              apiError: '寻路失败',
+              isApiLoading: false
+            });
+          }
+        })
+        .catch(error => {
+          console.error('API请求失败:', error);
+          this.setData({
+            apiError: error.message || '网络请求失败',
+            isApiLoading: false
+          });
+        });
+    },
+    
+    // 处理API返回的数据
+    handleApiResponse: function(data) {
+      if (data.animation && data.animation.frames) {
+        this.playAnimationFrames(data.animation.frames);
+      } else {
+        // 如果没有动画帧，直接显示结果
+        this.updateMazeState(data.state);
+      }
+    },
+    
+    // 播放动画帧
+    playAnimationFrames: function(frames) {
+      let currentFrame = 0;
+      
+      const playFrame = () => {
+        if (currentFrame >= frames.length) {
+          this.setData({
+            isApiLoading: false,
+            isSolving: false,
+            isCompleted: true
+          });
+          return;
+        }
+        
+        this.updateMazeState(frames[currentFrame]);
+        currentFrame++;
+        
+        setTimeout(playFrame, 1000 / this.data.animationSpeed);
+      };
+      
+      playFrame();
+    },
+    
+    // 更新迷宫状态
+    updateMazeState: function(state) {
+      if (!state || !state.maze) return;
+      
+      this.setData({
+        maze: state.maze,
+        isCompleted: state.completed || false
+      });
+    },
+    
     // 重置迷宫
     onReset: function() {
       // 如果是API模式，调用API重置
-      if (this.properties.isApiMode) {
+      if (this.data.isApiMode) {
         this.resetMazeApi();
       }
       
-      this.initMaze();
+      this.resetMaze();
       
       // 触发迷宫重置事件
       this.triggerEvent('resetmaze');
     },
     
+    // 重置迷宫状态
+    resetMaze: function() {
+      // 如果在API模式下，调用API重置
+      if (this.data.isApiMode) {
+        this.resetMazeApi();
+        return;
+      }
+      
+      // 本地重置
+      this.initMaze();
+    },
+    
     // 重置API状态
     resetMazeApi: function() {
-      if (!this.properties.isApiMode) return;
+      if (!this.data.isApiMode) return;
       
-      const api = require('../../services/api');
+      const api = require('../../services/api').maze;
       this.setData({ isApiLoading: true });
       
-      api.maze.reset()
+      api.reset()
         .then(() => {
           console.log('迷宫状态重置成功');
+          this.initMaze();
         })
         .catch(error => {
           console.error('重置迷宫状态失败:', error);
@@ -569,6 +687,44 @@ Component({
         this.setData({ maze });
         index++;
       }, 200);
+    },
+
+    // 切换API模式
+    toggleApiMode: function(e) {
+      if (this.data.isSolving || this.data.isApiLoading) return;
+      
+      const mode = e.currentTarget.dataset.mode;
+      const isApiMode = mode === 'api';
+      
+      this.setData({ 
+        isApiMode,
+        apiError: '',
+        showSpeedControl: isApiMode
+      });
+      
+      // 切换到API模式时重置状态
+      if (isApiMode) {
+        this.resetMazeApi();
+      }
+      
+      wx.showToast({
+        title: `已切换至${isApiMode ? 'API' : '本地'}模式`,
+        icon: 'none'
+      });
+    },
+
+    // 设置动画速度
+    setAnimationSpeed: function(e) {
+      this.setData({
+        animationSpeed: e.detail.value
+      });
+    },
+
+    // 切换速度控制显示状态
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
+      });
     }
   }
 }); 

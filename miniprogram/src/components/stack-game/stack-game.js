@@ -1,6 +1,6 @@
 Component({
   properties: {
-    queue: {
+    stack: {
       type: Array,
       value: []
     },
@@ -19,8 +19,8 @@ Component({
   },
   
   data: {
-    isQueueFull: false,
-    isQueueEmpty: true,
+    isStackFull: false,
+    isStackEmpty: true,
     operationHistory: [],
     currentValue: '',
     isLoading: false,
@@ -30,16 +30,16 @@ Component({
   },
   
   observers: {
-    'queue': function(queue) {
+    'stack': function(stack) {
       this.setData({
-        isQueueFull: queue.length >= this.data.maxSize,
-        isQueueEmpty: queue.length === 0
+        isStackFull: stack.length >= this.data.maxSize,
+        isStackEmpty: stack.length === 0
       });
     }
   },
   
   methods: {
-    onEnqueue: async function() {
+    onPush: async function() {
       const value = this.data.currentValue.trim();
       if (!value) {
         wx.showToast({
@@ -49,9 +49,9 @@ Component({
         return;
       }
       
-      if (this.data.isQueueFull) {
+      if (this.data.isStackFull) {
         wx.showToast({
-          title: '队列已满',
+          title: '栈已满',
           icon: 'none'
         });
         return;
@@ -60,8 +60,8 @@ Component({
       if (this.data.isApiMode) {
         try {
           this.setData({ isLoading: true, apiError: '' });
-          const api = require('../../services/api').queue;
-          const result = await api.enqueue(
+          const api = require('../../services/api').stack;
+          const result = await api.push(
             { value },
             true,
             this.data.animationSpeed
@@ -69,37 +69,37 @@ Component({
           
           if (result.success) {
             this.setData({ currentValue: '' });
-            this.addHistory(`入队: ${value}`);
+            this.addHistory(`入栈: ${value}`);
           }
         } catch (error) {
           this.setData({
-            apiError: '入队失败: ' + (error.message || '未知错误')
+            apiError: '入栈失败: ' + (error.message || '未知错误')
           });
         } finally {
           this.setData({ isLoading: false });
         }
       } else {
-        const newQueue = [...this.data.queue];
-        newQueue.push(value);
+        const newStack = [...this.data.stack];
+        newStack.push(value);
         
         this.setData({
           currentValue: ''
         });
         
-        this.addHistory(`入队: ${value}`);
+        this.addHistory(`入栈: ${value}`);
         
         this.triggerEvent('operation', {
-          type: 'enqueue',
+          type: 'push',
           value: value,
-          queue: newQueue
+          stack: newStack
         });
       }
     },
     
-    onDequeue: async function() {
-      if (this.data.isQueueEmpty) {
+    onPop: async function() {
+      if (this.data.isStackEmpty) {
         wx.showToast({
-          title: '队列为空',
+          title: '栈为空',
           icon: 'none'
         });
         return;
@@ -108,40 +108,40 @@ Component({
       if (this.data.isApiMode) {
         try {
           this.setData({ isLoading: true, apiError: '' });
-          const api = require('../../services/api').queue;
-          const result = await api.dequeue(
+          const api = require('../../services/api').stack;
+          const result = await api.pop(
             true,
             this.data.animationSpeed
           );
           
           if (result.success) {
-            this.addHistory(`出队: ${result.data.value}`);
+            this.addHistory(`出栈: ${result.data.value}`);
           }
         } catch (error) {
           this.setData({
-            apiError: '出队失败: ' + (error.message || '未知错误')
+            apiError: '出栈失败: ' + (error.message || '未知错误')
           });
         } finally {
           this.setData({ isLoading: false });
         }
       } else {
-        const newQueue = [...this.data.queue];
-        const removed = newQueue.shift();
+        const newStack = [...this.data.stack];
+        const removed = newStack.pop();
         
-        this.addHistory(`出队: ${removed}`);
+        this.addHistory(`出栈: ${removed}`);
         
         this.triggerEvent('operation', {
-          type: 'dequeue',
+          type: 'pop',
           value: removed,
-          queue: newQueue
+          stack: newStack
         });
       }
     },
     
     onPeek: async function() {
-      if (this.data.isQueueEmpty) {
+      if (this.data.isStackEmpty) {
         wx.showToast({
-          title: '队列为空',
+          title: '栈为空',
           icon: 'none'
         });
         return;
@@ -150,43 +150,43 @@ Component({
       if (this.data.isApiMode) {
         try {
           this.setData({ isLoading: true, apiError: '' });
-          const api = require('../../services/api').queue;
+          const api = require('../../services/api').stack;
           const result = await api.peek();
           
           if (result.success) {
             wx.showToast({
-              title: `队首元素: ${result.data.value}`,
+              title: `栈顶元素: ${result.data.value}`,
               icon: 'none'
             });
           }
         } catch (error) {
           this.setData({
-            apiError: '查看队首失败: ' + (error.message || '未知错误')
+            apiError: '查看栈顶失败: ' + (error.message || '未知错误')
           });
         } finally {
           this.setData({ isLoading: false });
         }
       } else {
-        const frontElement = this.data.queue[0];
+        const topElement = this.data.stack[this.data.stack.length - 1];
         wx.showToast({
-          title: `队首元素: ${frontElement}`,
+          title: `栈顶元素: ${topElement}`,
           icon: 'none'
         });
       }
     },
     
-    // 重置队列方法
-    resetQueue: async function() {
+    // 重置栈方法
+    resetStack: async function() {
       if (this.data.isApiMode) {
         try {
           this.setData({ isLoading: true, apiError: '' });
-          const api = require('../../services/api').queue;
+          const api = require('../../services/api').stack;
           const result = await api.reset();
           
           if (result.success) {
             this.triggerEvent('operation', {
               type: 'reset',
-              queue: []
+              stack: []
             });
             
             this.setData({
@@ -195,15 +195,15 @@ Component({
             });
             
             wx.showToast({
-              title: '队列已重置',
+              title: '栈已重置',
               icon: 'success',
               duration: 1500
             });
           }
         } catch (error) {
-          console.error('重置队列API调用失败:', error);
+          console.error('重置栈API调用失败:', error);
           this.setData({
-            apiError: '重置队列失败: ' + (error.message || '未知错误')
+            apiError: '重置栈失败: ' + (error.message || '未知错误')
           });
         } finally {
           this.setData({ isLoading: false });
@@ -211,7 +211,7 @@ Component({
       } else {
         this.triggerEvent('operation', {
           type: 'reset',
-          queue: []
+          stack: []
         });
         
         this.setData({
@@ -252,7 +252,7 @@ Component({
       
       // 切换到API模式时重置状态
       if (isApiMode) {
-        this.resetQueue();
+        this.resetStack();
       }
       
       wx.showToast({

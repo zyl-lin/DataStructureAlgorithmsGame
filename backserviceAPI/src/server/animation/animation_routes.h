@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <nlohmann/json.hpp>
+#include "game_interaction_handler.h"
 
 using json = nlohmann::json;
 
@@ -21,10 +22,7 @@ crow::response handleAnimationStop(const crow::request& req);
 crow::response handleAnimationStatus(const crow::request& req);
 
 // 游戏元素交互处理函数
-crow::response handleGameInteract(const crow::request& req);
-crow::response handleGameClick(const crow::request& req);
-crow::response handleGameDrag(const crow::request& req);
-crow::response handleGameDrop(const crow::request& req);
+// 已移至game_interaction_handler.h
 
 // 动画帧控制处理函数
 crow::response handleNextFrame(const crow::request& req);

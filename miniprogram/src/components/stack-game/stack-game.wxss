@@ -1,13 +1,9 @@
-.queue-game-container {
+.stack-game-container {
   display: flex;
   flex-direction: column;
-  width: 94%;
+  width: 100%;
   padding: 20rpx;
   position: relative;
-  margin: 0 auto;
-  background-color: #f8f8f8;
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
 /* API模式切换 */
@@ -16,28 +12,23 @@
   justify-content: center;
   margin: 20rpx 0;
   padding: 10rpx;
-  background: #f1f1f1;
+  background: #f8f9fa;
   border-radius: 8rpx;
 }
 
 .mode-option {
-  flex: 1;
-  max-width: 200rpx;
-  padding: 12rpx 20rpx;
-  text-align: center;
+  padding: 12rpx 25rpx;
   margin: 0 10rpx;
   border-radius: 6rpx;
   font-size: 28rpx;
   color: #666;
   background: #fff;
   transition: all 0.3s;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 }
 
 .mode-option.active {
   background: #4caf50;
   color: #fff;
-  font-weight: 500;
 }
 
 .mode-option.disabled {
@@ -140,40 +131,27 @@
   color: #666;
 }
 
-/* 队列可视化区域样式 */
-.queue-visualization {
-  margin: 30rpx 0;
-  background-color: white;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+/* 栈可视化区域样式 */
+.stack-visualization {
+  margin: 20rpx 0;
 }
 
-.queue-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10rpx;
-  padding: 0 15rpx;
+.stack-label {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+  margin: 10rpx 0;
 }
 
-.queue-label {
-  font-size: 26rpx;
-  color: #555;
-  font-weight: 500;
-}
-
-.queue-container {
-  border: 2rpx solid #e0e0e0;
+.stack-container {
+  border: 2rpx solid #ccc;
   border-radius: 10rpx;
-  padding: 20rpx;
-  min-height: 120rpx;
+  padding: 10rpx;
+  min-height: 100rpx;
   background-color: #f9f9f9;
-  display: flex;
-  align-items: center;
 }
 
-.empty-queue {
-  width: 100%;
+.empty-stack {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -182,68 +160,57 @@
   height: 80rpx;
 }
 
-.queue-items {
+.stack-items {
   display: flex;
-  overflow-x: auto;
-  width: 100%;
-  min-height: 80rpx;
-  padding: 10rpx 0;
+  flex-direction: column-reverse;
 }
 
-.queue-item {
-  min-width: 80rpx;
-  height: 80rpx;
+.stack-item {
+  min-height: 80rpx;
   background-color: #4caf50;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 15rpx;
-  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+  border-radius: 6rpx;
   font-weight: bold;
   font-size: 30rpx;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.15);
 }
 
 /* 操作区域样式 */
-.queue-operations {
+.stack-operations {
   margin: 20rpx 0;
-  background-color: white;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
 }
 
 .input-group {
   margin-bottom: 20rpx;
 }
 
-.queue-input {
+.stack-input {
   width: 100%;
   height: 80rpx;
-  border: 2rpx solid #e0e0e0;
+  border: 2rpx solid #ccc;
   border-radius: 10rpx;
   padding: 0 20rpx;
   font-size: 28rpx;
   background-color: white;
-  box-sizing: border-box;
 }
 
-.queue-input[disabled] {
+.stack-input[disabled] {
   background-color: #f5f5f5;
   color: #999;
 }
 
-.queue-buttons {
+.stack-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 20rpx;
-  justify-content: center;
 }
 
 .operation-btn {
   flex: 1;
-  min-width: 160rpx;
+  min-width: 180rpx;
   height: 80rpx;
   line-height: 80rpx;
   font-size: 28rpx;
@@ -251,7 +218,6 @@
   margin: 0;
   text-align: center;
   border-radius: 10rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
 .operation-btn[disabled] {
@@ -260,12 +226,12 @@
   color: #666 !important;
 }
 
-.enqueue-btn {
+.push-btn {
   background-color: #4caf50;
   color: white;
 }
 
-.dequeue-btn {
+.pop-btn {
   background-color: #f44336;
   color: white;
 }
@@ -280,21 +246,15 @@
   color: white;
 }
 
-/* 队列信息样式 */
-.queue-info {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+/* 栈信息样式 */
+.stack-info {
   margin: 20rpx 0;
   padding: 20rpx;
-  background-color: white;
-  border-radius: 12rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  background-color: #f8f8f8;
+  border-radius: 10rpx;
 }
 
 .info-item {
-  flex: 1;
-  min-width: 45%;
   display: flex;
   align-items: center;
   margin-bottom: 10rpx;
@@ -309,36 +269,22 @@
 .info-value {
   font-size: 26rpx;
   color: #333;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 /* 操作历史样式 */
 .operation-history {
-  margin: 20rpx 0;
+  margin-top: 20rpx;
   padding: 20rpx;
-  background-color: white;
-  border-radius: 12rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  background-color: #f8f8f8;
+  border-radius: 10rpx;
 }
 
 .history-title {
   font-size: 28rpx;
-  font-weight: 500;
+  font-weight: bold;
   color: #333;
-  margin-bottom: 15rpx;
-  position: relative;
-  padding-left: 20rpx;
-}
-
-.history-title::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6rpx;
-  width: 6rpx;
-  height: 24rpx;
-  background-color: #4caf50;
-  border-radius: 3rpx;
+  margin-bottom: 10rpx;
 }
 
 .history-list {

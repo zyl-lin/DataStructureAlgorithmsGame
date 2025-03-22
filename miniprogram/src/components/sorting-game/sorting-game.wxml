@@ -8,6 +8,20 @@
   </view>
 
   <view class="controls-panel">
+    <!-- API模式切换 -->
+    <view class="mode-selector">
+      <view class="mode-option {{isApiMode ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}"
+            bindtap="{{isLoading || isSorting ? '' : 'toggleApiMode'}}"
+            data-mode="api">
+        API模式
+      </view>
+      <view class="mode-option {{!isApiMode ? 'active' : ''}} {{isLoading ? 'disabled' : ''}}"
+            bindtap="{{isLoading || isSorting ? '' : 'toggleApiMode'}}"
+            data-mode="local">
+        本地模式
+      </view>
+    </view>
+
     <view class="algorithm-selector">
       <view class="section-title">选择排序算法</view>
       <view class="algorithm-buttons">
@@ -71,7 +85,7 @@
     </view>
 
     <view class="action-buttons">
-      <button class="action-btn generate" bindtap="generateNewArray" disabled="{{isLoading}}">生成新数组</button>
+      <button class="action-btn generate" bindtap="generateNewArray" disabled="{{isLoading || isSorting}}">生成新数组</button>
       <button class="action-btn sort" bindtap="startSorting" disabled="{{isSorting || isLoading}}">开始排序</button>
       <button class="action-btn stop" bindtap="stopSorting" disabled="{{!isSorting || isLoading}}">停止</button>
       <button class="action-btn reset" bindtap="resetSort" disabled="{{isLoading}}">重置</button>
