@@ -305,6 +305,11 @@ Component({
       // 清理定时器
       this.clearAutoPlayTimer();
       
+      // 如果是API模式，调用API重置
+      if (this.data.isApiMode) {
+        this.resetApi();
+      }
+      
       // 重置状态
       this.setData({
         isVisualizing: false,
@@ -329,8 +334,34 @@ Component({
           originalLength: 0,
           compressedLength: 0,
           compressionRatio: 0
-        }
+        },
+        
+        // 添加API相关状态重置
+        isLoading: false,
+        apiError: ''
       });
+    },
+
+    // 重置API状态
+    resetApi() {
+      if (!this.data.isApiMode) return;
+      
+      const api = require('../../services/api');
+      this.setData({ isLoading: true });
+      
+      api.greedy.reset()
+        .then(() => {
+          console.log('贪心算法状态重置成功');
+        })
+        .catch(error => {
+          console.error('重置贪心算法状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isLoading: false });
+        });
     },
 
     // ======================= 算法实现 =======================

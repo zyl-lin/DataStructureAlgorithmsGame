@@ -30,18 +30,21 @@ crow::response handleLinkedListDelete(const crow::request& req, Database& db);
 crow::response handleLinkedListFind(const crow::request& req, Database& db);
 crow::response handleLinkedListReverse(const crow::request& req, Database& db);
 crow::response handleLinkedListState(const crow::request& req, Database& db);
+crow::response handleLinkedListReset(const crow::request& req, Database& db);
 
 // 队列游戏操作API处理函数
 crow::response handleQueueEnqueue(const crow::request& req, Database& db);
 crow::response handleQueueDequeue(const crow::request& req, Database& db);
 crow::response handleQueuePeek(const crow::request& req, Database& db);
 crow::response handleQueueState(const crow::request& req, Database& db);
+crow::response handleQueueReset(const crow::request& req, Database& db);
 
 // 栈游戏操作API处理函数
 crow::response handleStackPush(const crow::request& req, Database& db);
 crow::response handleStackPop(const crow::request& req, Database& db);
 crow::response handleStackPeek(const crow::request& req, Database& db);
 crow::response handleStackState(const crow::request& req, Database& db);
+crow::response handleStackReset(const crow::request& req, Database& db);
 
 // 二叉树游戏操作API处理函数
 crow::response handleBinaryTreeInsert(const crow::request& req, Database& db);
@@ -56,6 +59,7 @@ crow::response handleGraphTraverseDFS(const crow::request& req, Database& db);
 crow::response handleGraphTraverseBFS(const crow::request& req, Database& db);
 crow::response handleGraphFindPath(const crow::request& req, Database& db);
 crow::response handleGraphState(const crow::request& req, Database& db);
+crow::response handleGraphReset(const crow::request& req, Database& db);
 
 // 排序游戏操作API处理函数
 crow::response handleSortingBubbleSort(const crow::request& req, Database& db);
@@ -69,6 +73,7 @@ crow::response handleSortingReset(const crow::request& req, Database& db);
 crow::response handleSearchLinear(const crow::request& req, Database& db);
 crow::response handleSearchBinary(const crow::request& req, Database& db);
 crow::response handleSearchState(const crow::request& req, Database& db);
+crow::response handleSearchReset(const crow::request& req, Database& db);
 
 // 迷宫游戏操作API处理函数
 crow::response handleMazeGenerate(const crow::request& req, Database& db);
@@ -76,17 +81,20 @@ crow::response handleMazeSolveDFS(const crow::request& req, Database& db);
 crow::response handleMazeSolveBFS(const crow::request& req, Database& db);
 crow::response handleMazeSolveAStar(const crow::request& req, Database& db);
 crow::response handleMazeState(const crow::request& req, Database& db);
+crow::response handleMazeReset(const crow::request& req, Database& db);
 
 // 动态规划游戏操作API处理函数
 crow::response handleDPFibonacci(const crow::request& req, Database& db);
 crow::response handleDPKnapsack(const crow::request& req, Database& db);
 crow::response handleDPLCS(const crow::request& req, Database& db);
 crow::response handleDPState(const crow::request& req, Database& db);
+crow::response handleDPReset(const crow::request& req, Database& db);
 
 // 贪心算法游戏操作API处理函数
 crow::response handleGreedyCoinChange(const crow::request& req, Database& db);
 crow::response handleGreedyActivitySelection(const crow::request& req, Database& db);
 crow::response handleGreedyHuffman(const crow::request& req, Database& db);
 crow::response handleGreedyState(const crow::request& req, Database& db);
+crow::response handleGreedyReset(const crow::request& req, Database& db);
 
 #endif // GAME_ANIMATION_ROUTES_H 

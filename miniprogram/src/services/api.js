@@ -95,6 +95,11 @@ const queueApi = {
   // 查看队首元素
   peek: () => {
     return get('/api/games/queue/peek');
+  },
+
+  // 重置队列状态
+  reset: () => {
+    return post('/api/games/queue/reset');
   }
 };
 
@@ -128,6 +133,11 @@ const stackApi = {
   // 查看栈顶元素
   peek: () => {
     return get('/api/games/stack/peek');
+  },
+
+  // 重置栈状态
+  reset: () => {
+    return post('/api/games/stack/reset');
   }
 };
 
@@ -165,6 +175,11 @@ const graphApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url, data);
+  },
+
+  // 重置图遍历状态
+  reset: () => {
+    return post('/api/games/graph/reset');
   }
 };
 
@@ -270,6 +285,11 @@ const mazeApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url, data);
+  },
+  
+  // 重置迷宫状态
+  reset: () => {
+    return post('/api/games/maze/reset');
   }
 };
 
@@ -316,6 +336,11 @@ const linkedListApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url);
+  },
+
+  // 重置链表状态
+  reset: () => {
+    return post('/api/games/linkedlist/reset');
   }
 };
 
@@ -344,6 +369,11 @@ const searchApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url, data);
+  },
+  
+  // 重置搜索状态
+  reset: () => {
+    return post('/api/games/search/reset');
   }
 };
 
@@ -381,6 +411,11 @@ const dpApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url, data);
+  },
+  
+  // 重置DP状态
+  reset: () => {
+    return post('/api/games/dp/reset');
   }
 };
 
@@ -418,6 +453,11 @@ const greedyApi = {
       url += `?animate=true&speed=${speed}`;
     }
     return post(url, data);
+  },
+  
+  // 重置贪心算法状态
+  reset: () => {
+    return post('/api/games/greedy/reset');
   }
 };
 

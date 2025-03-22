@@ -3,6 +3,10 @@ Component({
     array: {
       type: Array,
       value: []
+    },
+    isApiMode: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -20,7 +24,9 @@ Component({
     algorithmInfo: '冒泡排序是一种简单的排序算法，它重复地遍历要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。',
     sortingInterval: null,
     sortingSteps: [],
-    currentStep: 0
+    currentStep: 0,
+    apiError: '',
+    isLoading: false
   },
 
   lifetimes: {
@@ -563,6 +569,52 @@ Component({
       this.setData({
         showValues: e.detail.value
       });
+    },
+    
+    // 重置排序状态
+    resetSort() {
+      if (this.data.isSorting) {
+        this.stopSorting();
+      }
+
+      if (this.data.isApiMode) {
+        this.resetSortApi();
+      }
+      
+      // 重置本地状态
+      this.setData({
+        displayArray: this.data.displayArray.map(item => ({ ...item, color: '#4CAF50' })),
+        comparisons: 0,
+        swaps: 0,
+        sortingStatus: '已重置',
+        currentStep: 0,
+        sortingSteps: [],
+        apiError: '',
+        isLoading: false
+      });
+      
+      // 触发重置事件
+      this.triggerEvent('reset');
+    },
+    
+    // 重置API状态
+    resetSortApi() {
+      const api = require('../../services/api');
+      this.setData({ isLoading: true });
+      
+      api.sorting.reset()
+        .then(() => {
+          console.log('排序状态重置成功');
+        })
+        .catch(error => {
+          console.error('重置排序状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isLoading: false });
+        });
     }
   }
 }) 

@@ -127,6 +127,47 @@ Component({
       this.setData({
         currentValue: e.detail.value
       });
+    },
+    
+    // 重置队列方法
+    resetQueue: function() {
+      const api = require('../../services/api').queue;
+      
+      // 使用API重置队列状态
+      api.reset().then(res => {
+        if (res.success) {
+          // 重置成功，触发队列重置事件
+          this.triggerEvent('operation', {
+            type: 'reset',
+            queue: []
+          });
+          
+          // 清空历史记录
+          this.setData({
+            operationHistory: [],
+            currentValue: ''
+          });
+          
+          wx.showToast({
+            title: '队列已重置',
+            icon: 'success',
+            duration: 1500
+          });
+        } else {
+          wx.showToast({
+            title: '重置队列失败',
+            icon: 'none',
+            duration: 1500
+          });
+        }
+      }).catch(err => {
+        console.error('重置队列API调用失败:', err);
+        wx.showToast({
+          title: '网络错误，请重试',
+          icon: 'none',
+          duration: 1500
+        });
+      });
     }
   }
 }) 

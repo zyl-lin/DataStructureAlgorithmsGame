@@ -555,5 +555,53 @@ Page({
         console.error('重置二叉树状态失败:', error)
       })
     }
+    
+    // 如果当前是图遍历游戏，重置服务端的图遍历状态
+    if (this.data.gameType === 'graph') {
+      const api = require('../../services/api')
+      api.graph.reset().catch(error => {
+        console.error('重置图遍历状态失败:', error)
+      })
+    }
+    
+    // 如果当前是排序游戏，重置服务端的排序状态
+    if (this.data.gameType === 'sorting') {
+      const api = require('../../services/api')
+      api.sorting.reset().catch(error => {
+        console.error('重置排序状态失败:', error)
+      })
+    }
+    
+    // 如果当前是动态规划游戏，重置服务端的动态规划状态
+    if (this.data.gameType === 'dp') {
+      const api = require('../../services/api')
+      api.dp.reset().catch(error => {
+        console.error('重置动态规划状态失败:', error)
+      })
+    }
+    
+    // 如果当前是贪心算法游戏，重置服务端的贪心算法状态
+    if (this.data.gameType === 'greedy') {
+      const api = require('../../services/api')
+      api.greedy.reset().catch(error => {
+        console.error('重置贪心算法状态失败:', error)
+      })
+    }
+    
+    // 如果当前是搜索游戏，重置服务端的搜索状态
+    if (this.data.gameType === 'search') {
+      const api = require('../../services/api')
+      api.search.reset().catch(error => {
+        console.error('重置搜索状态失败:', error)
+      })
+    }
+    
+    // 如果当前是迷宫游戏，重置服务端的迷宫状态
+    if (this.data.gameType === 'maze') {
+      const api = require('../../services/api')
+      api.maze.reset().catch(error => {
+        console.error('重置迷宫状态失败:', error)
+      })
+    }
   }
 }) 

@@ -2067,3 +2067,205 @@
 
 - **修改了哪些文件**：
   1. `src/components/binary-tree-game/binary-tree-game.js`（调整了单位转换因子的值）
+
+## 2024-05-25 14:25:00
+
+### 会话总结
+- **会话的主要目的**：为链表游戏页面和其他缺少reset接口的页面添加重置功能
+
+- **完成的主要任务**：
+  1. 为链表游戏组件添加重置功能和重置按钮
+  2. 为队列游戏组件添加重置功能和重置按钮
+  3. 为栈游戏页面添加重置功能和重置按钮
+  4. 在API设计文档中添加链表、队列和栈的reset接口定义
+  5. 在API服务模块中添加相应的reset方法
+
+- **关键决策和解决方案**：
+  1. 参照二叉树游戏的reset接口实现，为其他数据结构游戏添加类似的重置功能
+  2. 为链表游戏组件添加resetList方法，处理本地和API两种重置模式
+  3. 为队列和栈游戏添加resetQueue和resetStack方法，支持通过API重置
+  4. 在重置成功后刷新状态并显示提示信息
+  5. 统一添加重置按钮到各个组件的界面中
+
+- **使用的技术栈**：
+  1. 微信小程序
+  2. JavaScript
+  3. RESTful API
+  4. 组件开发
+
+- **修改了哪些文件**：
+  1. `src/services/api.js`（添加链表、队列和栈的reset方法）
+  2. `src/components/linked-list-game/linked-list-game.js`（添加resetList方法）
+  3. `src/components/linked-list-game/linked-list-game.wxml`（添加重置链表按钮）
+  4. `src/components/queue-game/queue-game.js`（添加resetQueue方法）
+  5. `src/components/queue-game/queue-game.wxml`（添加重置队列按钮）
+  6. `src/pages/stack/stack.js`（添加resetStack方法）
+  7. `src/pages/stack/stack.wxml`（添加重置栈按钮）
+  8. `src/pages/stack/stack.wxss`（添加按钮样式）
+  9. `API设计.txt`（添加链表、队列和栈的reset接口定义）
+
+## 2024-03-21 图遍历游戏Reset功能增强
+
+### 会话主要目的
+- 为图遍历游戏添加与二叉树页面相同的reset接口功能
+- 确保在API模式下能正确重置游戏状态
+
+### 完成的主要任务
+1. 在API服务模块中添加了图遍历的reset方法
+2. 在图遍历游戏组件中实现了API模式的重置功能
+3. 更新了游戏页面中的图遍历组件配置
+4. 添加了页面卸载时的状态重置
+5. 增强了用户界面，添加了加载状态和错误提示
+
+### 关键决策和解决方案
+- 采用与二叉树游戏相同的reset接口设计
+- 添加isApiMode属性来控制是否使用API模式
+- 实现了本地状态和API状态的双重重置
+- 增加了加载状态和错误提示以提升用户体验
+
+### 使用的技术栈
+- 微信小程序原生框架
+- RESTful API
+- 组件化开发
+
+### 修改的文件
+- src/services/api.js：添加图遍历reset方法
+- src/components/graph-game/graph-game.js：实现重置功能
+- src/components/graph-game/graph-game.wxml：更新UI
+- src/components/graph-game/graph-game.wxss：添加加载状态样式
+- src/pages/game/game.js：添加页面卸载时的重置
+- src/pages/game/game.wxml：更新组件配置
+
+## 2024-03-22 排序游戏Reset功能增强
+
+### 会话主要目的
+- 为排序游戏添加与其他页面相同的reset接口功能
+- 确保在API模式下能正确重置排序算法的状态
+
+### 完成的主要任务
+1. 在排序游戏组件中实现API模式的重置功能
+2. 添加重置按钮到排序游戏界面
+3. 更新游戏页面中的排序游戏组件配置
+4. 添加页面卸载时的状态重置
+5. 增强了用户界面，添加了加载状态和错误提示
+
+### 关键决策和解决方案
+- 采用与其他游戏组件相同的reset接口设计
+- 添加isApiMode属性来控制是否使用API模式
+- 在重置时同时停止正在进行的排序过程
+- 增加了加载状态和错误提示以提升用户体验
+
+### 使用的技术栈
+- 微信小程序原生框架
+- RESTful API
+- 组件化开发
+
+### 修改的文件
+- src/components/sorting-game/sorting-game.js：实现重置功能
+- src/components/sorting-game/sorting-game.wxml：添加重置按钮
+- src/components/sorting-game/sorting-game.wxss：添加样式
+- src/pages/game/game.js：添加页面卸载时的重置
+- src/pages/game/game.wxml：更新组件配置
+
+## 2024-03-23 动态规划和贪心算法游戏Reset功能增强
+
+### 会话主要目的
+- 为动态规划和贪心算法游戏添加与其他页面相同的reset接口功能
+- 确保在API模式下能正确重置算法状态
+
+### 完成的主要任务
+1. 在API服务模块中添加了动态规划和贪心算法的reset方法
+2. 在动态规划游戏组件中实现了API模式的重置功能
+3. 在贪心算法游戏组件中实现了API模式的重置功能
+4. 添加了页面卸载时的状态重置
+5. 在API设计文档中添加了相关API接口定义
+
+### 关键决策和解决方案
+- 采用与其他游戏组件相同的reset接口设计
+- 在重置时考虑API模式的状态，只有在API模式下才调用API重置
+- 增加了错误处理和加载状态提示
+- 确保卸载页面时自动重置服务端状态
+
+### 使用的技术栈
+- 微信小程序原生框架
+- RESTful API
+- 组件化开发
+
+### 修改的文件
+- src/services/api.js：添加动态规划和贪心算法的reset方法
+- src/components/dp-game/dp-game.js：实现动态规划重置功能
+- src/components/greedy-game/greedy-game.js：实现贪心算法重置功能
+- src/pages/game/game.js：添加页面卸载时的重置
+- API设计.txt：添加相关API接口定义
+
+## 2024-05-30 13:00:00
+
+### 会话总结
+- **会话的主要目的**：为搜索游戏和迷宫游戏添加API模式的reset功能
+- **完成的主要任务**：
+  1. 在API服务模块中添加了搜索游戏和迷宫游戏的reset方法
+  2. 为搜索游戏组件添加了isApiMode属性和resetSearchApi方法
+  3. 为迷宫游戏组件添加了isApiMode属性和resetMazeApi方法
+  4. 在API设计文档中添加了搜索游戏和迷宫游戏的reset接口定义
+  5. 在game.js页面中添加了页面卸载时的搜索和迷宫状态重置逻辑
+
+- **关键决策和解决方案**：
+  1. 采用与其他游戏组件相同的reset接口设计，保持API一致性
+  2. 在搜索和迷宫游戏组件中添加isApiMode属性，用于判断是否调用API重置
+  3. 实现了完整的错误处理和加载状态提示，提高用户体验
+  4. 确保页面卸载时自动重置服务端状态，避免状态残留
+  5. 维持了与已有组件相同的API重置模式，保持代码风格一致
+
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript
+  3. RESTful API
+  4. 组件化开发
+  5. 状态管理
+
+- **修改了哪些文件**：
+  1. `src/services/api.js`：添加了搜索和迷宫游戏的reset方法
+  2. `src/components/search-game/search-game.js`：添加了API重置功能
+  3. `src/components/maze-game/maze-game.js`：添加了API重置功能
+  4. `API设计.txt`：更新了API接口文档，添加reset接口定义
+  5. `src/pages/game/game.js`：添加了页面卸载时的重置逻辑
+
+## 2024-05-30 13:30:00
+
+### 会话总结
+- **会话的主要目的**：检查和总结所有游戏组件的API重置功能实现情况
+
+### 完成的主要任务
+1. 检查了所有游戏组件的重置功能实现
+2. 确认了每个组件的API重置方法和错误处理机制
+3. 验证了页面卸载时的状态重置功能
+4. 总结了各组件的重置功能特点
+
+### 关键决策和解决方案
+- 确认所有游戏组件都实现了API重置功能
+- 验证了重置功能的完整性，包括：
+  - API调用
+  - 本地状态重置
+  - 错误处理
+  - 加载状态
+  - UI交互
+- 发现搜索游戏和迷宫游戏需要在组件中完善重置功能
+
+### 使用的技术栈
+- 微信小程序原生框架
+- RESTful API
+- 组件化开发
+- JavaScript
+
+### 修改的文件
+- 检查了以下文件的重置功能实现：
+  1. `src/services/api.js`
+  2. `src/components/linked-list-game/linked-list-game.js`
+  3. `src/components/queue-game/queue-game.js`
+  4. `src/pages/stack/stack.js`
+  5. `src/components/graph-game/graph-game.js`
+  6. `src/components/sorting-game/sorting-game.js`
+  7. `src/components/dp-game/dp-game.js`
+  8. `src/components/greedy-game/greedy-game.js`
+  9. `src/components/binary-tree-game/binary-tree-game.js`
+  10. `src/pages/game/game.js`

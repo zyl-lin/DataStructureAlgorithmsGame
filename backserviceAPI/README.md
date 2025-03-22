@@ -1297,3 +1297,238 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 ### 修改了哪些文件
 - src/server/game_animation_routes.cpp - 修改了前序遍历函数中的JSON数据构建方式
 
+## 2023年3月21日更新 - 添加数据结构重置接口
+
+### 会话的主要目的
+为链表、队列和栈数据结构增加reset接口，使它们与二叉树游戏页面保持一致。
+
+### 完成的主要任务
+- 为链表数据结构添加了reset处理函数和路由
+- 为队列数据结构添加了reset处理函数和路由
+- 为栈数据结构添加了reset处理函数和路由
+- 确保所有数据结构都具有一致的重置功能
+
+### 关键决策和解决方案
+- 参照已有的二叉树reset接口实现方式
+- 为每种数据结构实现了独立的处理函数
+- 确保了reset接口返回空的初始状态
+- 在路由注册部分添加了相应的API路由
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/game_animation_routes.cpp - 添加了链表、队列和栈的reset处理函数和路由注册
+
+## 2023年3月21日更新 - 添加图数据结构重置接口
+
+### 会话的主要目的
+为图数据结构增加reset接口，使其与链表、队列、栈和二叉树保持一致，并规范API设计文档中的接口顺序。
+
+### 完成的主要任务
+- 为图数据结构添加了reset处理函数和路由
+- 规范化了API设计文档中的链表游戏操作部分的接口顺序
+- 在API设计文档中添加了图的reset接口
+
+### 关键决策和解决方案
+- 参照已有的reset接口实现方式
+- 为图游戏实现了reset处理函数，返回默认的图初始状态
+- 确保所有数据结构都具有一致的API接口和文档格式
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/graph_routes.cpp - 添加了图的reset处理函数
+- src/server/game_animation_routes.h - 添加了reset函数声明
+- src/server/game_animation_routes.cpp - 添加了图的reset路由注册
+- API设计.txt - 更新了链表和图的API文档
+
+## 2023年3月22日更新 - 添加搜索算法重置接口
+
+### 会话的主要目的
+为搜索算法游戏页面增加reset接口，完善整个系统的API接口一致性。
+
+### 完成的主要任务
+- 为搜索算法添加了reset处理函数和路由
+- 实现了搜索算法的状态获取函数
+- 添加了搜索算法的路由注册代码
+
+### 关键决策和解决方案
+- 参照已有的reset接口实现方式
+- 为搜索算法实现了reset处理函数，返回初始的搜索数组
+- 确保搜索算法具有与其他数据结构一致的API接口
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/game_animation_routes.h - 添加了搜索算法reset函数声明
+- src/server/game_animation_routes.cpp - 添加了搜索算法的reset和state处理函数实现，添加路由注册
+- API设计.txt - 更新了搜索算法的API文档
+
+## 2023年3月22日更新 - 添加迷宫、动态规划和贪心算法的重置接口
+
+### 会话的主要目的
+为迷宫、动态规划和贪心算法游戏页面增加reset接口，完善整个系统的API接口一致性。
+
+### 完成的主要任务
+- 为迷宫算法添加了reset处理函数和路由
+- 为动态规划算法添加了reset处理函数和路由
+- 为贪心算法添加了reset处理函数和路由
+- 创建了新的源文件以组织不同算法的处理函数
+
+### 关键决策和解决方案
+- 参照已有的reset接口实现方式
+- 为每种算法实现了独立的处理函数
+- 创建了独立的源文件以提高代码组织性
+- 确保所有算法具有一致的API接口
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/game_animation_routes.h - 添加了迷宫、动态规划和贪心算法的reset函数声明
+- src/server/game_animation_routes.cpp - 添加了新的路由注册
+- src/server/maze_routes.cpp - 新建文件，实现迷宫算法的reset处理函数
+- src/server/dp_routes.cpp - 新建文件，实现动态规划算法的reset处理函数
+- src/server/greedy_routes.cpp - 新建文件，实现贪心算法的reset处理函数
+- CMakeLists.txt - 添加了新的源文件
+- API设计.txt - 更新了迷宫、动态规划和贪心算法的API文档
+
+## 2023年3月23日更新 - 完善算法状态获取函数
+
+### 会话的主要目的
+为迷宫、动态规划和贪心算法游戏页面补充完善状态获取函数，确保所有API的完整性和一致性。
+
+### 完成的主要任务
+- 为迷宫算法添加了状态获取函数
+- 为动态规划算法添加了状态获取函数
+- 为贪心算法添加了状态获取函数
+
+### 关键决策和解决方案
+- 参照已有的状态获取函数实现方式
+- 确保当状态为空时初始化默认状态
+- 保持所有算法的状态格式一致性
+- 统一错误处理机制
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/maze_routes.cpp - 添加了迷宫算法的状态获取函数
+- src/server/dp_routes.cpp - 添加了动态规划算法的状态获取函数
+- src/server/greedy_routes.cpp - 添加了贪心算法的状态获取函数
+
+## 2023年3月24日更新 - 完成所有算法和数据结构的reset接口并添加测试脚本
+
+### 会话的主要目的
+对系统中所有数据结构和算法添加reset接口，确保系统具有一致的API设计和用户体验。
+
+### 完成的主要任务
+- 为链表、队列、栈、二叉树、图添加了reset接口
+- 为搜索、排序、迷宫、动态规划和贪心算法添加了reset接口
+- 为所有数据结构和算法添加了state获取函数
+- 创建了测试脚本用于验证所有reset接口的功能
+
+### 关键决策和解决方案
+- 采用一致的API设计模式，所有数据结构和算法都有统一的reset接口
+- 每个reset函数都返回一个合适的初始状态，使各种算法可以随时重新开始
+- 创建了独立的源文件组织不同算法的实现，提高代码的可维护性
+- 提供了PowerShell和Bash两种测试脚本，满足不同操作系统的需求
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- PowerShell脚本
+- Bash脚本
+- RESTful API设计
+
+### 修改了哪些文件
+- src/server/game_animation_routes.h - 添加了各算法的reset函数声明
+- src/server/game_animation_routes.cpp - 添加了各算法的reset路由注册
+- src/server/graph_routes.cpp - 添加了图的reset处理函数
+- src/server/maze_routes.cpp - 创建了迷宫算法的处理函数文件
+- src/server/dp_routes.cpp - 创建了动态规划算法的处理函数文件
+- src/server/greedy_routes.cpp - 创建了贪心算法的处理函数文件
+- CMakeLists.txt - 添加了新的源文件
+- API设计.txt - 更新了所有算法的API文档
+- test_reset_apis.ps1 - 创建了PowerShell测试脚本
+- test_reset_apis.sh - 创建了Bash测试脚本
+
+## 2023年3月25日更新 - 创建API测试指南文档
+
+### 会话的主要目的
+创建一个全面的API测试指南文档，帮助开发人员和用户理解并测试所有数据结构和算法的API接口。
+
+### 完成的主要任务
+- 创建了详细的API测试指南文档(api-testing-guide.md)
+- 提供了所有数据结构和算法API的测试示例
+- 提供了Windows(PowerShell)和Linux/macOS(Bash)两种环境的测试命令
+- 详细说明了API参数和响应格式
+
+### 关键决策和解决方案
+- 为每种数据结构和算法提供了独立的章节
+- 包含了所有API操作的详细示例
+- 提供了常见问题的故障排除指南
+- 说明了动画和单步执行等特殊参数的使用方法
+
+### 使用的技术栈
+- RESTful API
+- JSON数据格式
+- curl (Linux/macOS)
+- PowerShell Invoke-WebRequest (Windows)
+- Markdown文档格式
+
+### 修改了哪些文件
+- 新增 api-testing-guide.md - 全面的API测试指南文档
+- README.md - 添加本次更新的会话总结
+
+## 2024-08-07 API文档与测试工具完善
+
+### 会话主要目的
+完善数据结构与算法游戏API系统的文档和测试工具，提高API使用体验和稳定性。
+
+### 完成的主要任务
+1. 创建了清晰直观的API结构总览图表(api-structure.md)
+2. 提供了详细的API使用示例文档(api-examples.md)
+3. 开发了API兼容性测试脚本(Bash和PowerShell两个版本)
+4. 确保所有API文档描述与实际实现一致
+
+### 关键决策和解决方案
+1. 采用表格形式组织API结构，使其清晰直观
+2. 提供完整的请求和响应示例，便于开发者理解
+3. 增加通用参数和错误处理说明，确保API使用指南全面
+4. 开发自动化测试工具，支持快速验证API可用性
+5. 支持Windows和Linux/Mac两种环境的测试
+
+### 使用的技术栈
+1. Markdown文档格式
+2. Bash脚本
+3. PowerShell脚本
+4. RESTful API设计
+5. JSON数据格式
+
+### 新增和修改的文件
+1. 新增 api-structure.md - 提供API结构总览
+2. 新增 api-examples.md - 提供详细API使用示例
+3. 新增 api-compatibility-check.sh - Bash版API兼容性测试脚本
+4. 新增 api-compatibility-check.ps1 - PowerShell版API兼容性测试脚本
+5. 更新 README.md - 添加本次更新的会话总结
+

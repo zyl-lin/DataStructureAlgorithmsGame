@@ -630,6 +630,24 @@ crow::response handleLinkedListState(const crow::request& req, Database& db) {
     }
 }
 
+// 链表游戏操作 - 重置状态
+crow::response handleLinkedListReset(const crow::request& req, Database& db) {
+    try {
+        // 创建一个空的链表状态
+        json emptyState = {
+            {"list", json::array()}
+        };
+        
+        // 更新数据库中的状态
+        db.updateGameState("linkedlist", emptyState);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "linkedlist").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("重置链表状态失败: ") + e.what(), "linkedlist").dump());
+    }
+}
+
 // 队列游戏操作 - 入队
 crow::response handleQueueEnqueue(const crow::request& req, Database& db) {
     AnimationParams params = extractAnimationParams(req);
@@ -864,6 +882,24 @@ crow::response handleQueueState(const crow::request& req, Database& db) {
     }
 }
 
+// 队列游戏操作 - 重置状态
+crow::response handleQueueReset(const crow::request& req, Database& db) {
+    try {
+        // 创建一个空的队列状态
+        json emptyState = {
+            {"queue", json::array()}
+        };
+        
+        // 更新数据库中的状态
+        db.updateGameState("queue", emptyState);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "queue").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("重置队列状态失败: ") + e.what(), "queue").dump());
+    }
+}
+
 // 栈游戏操作 - 入栈
 crow::response handleStackPush(const crow::request& req, Database& db) {
     AnimationParams params = extractAnimationParams(req);
@@ -1085,6 +1121,24 @@ crow::response handleStackState(const crow::request& req, Database& db) {
         return crow::response(200, ResponseBuilder::createSuccessResponse(state, "stack").dump());
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("服务器错误: ") + e.what(), "stack").dump());
+    }
+}
+
+// 栈游戏操作 - 重置状态
+crow::response handleStackReset(const crow::request& req, Database& db) {
+    try {
+        // 创建一个空的栈状态
+        json emptyState = {
+            {"stack", json::array()}
+        };
+        
+        // 更新数据库中的状态
+        db.updateGameState("stack", emptyState);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "stack").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("重置栈状态失败: ") + e.what(), "stack").dump());
     }
 }
 
@@ -2401,6 +2455,12 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
         return handleLinkedListState(req, db);
     });
     
+    // 添加重置链表状态路由
+    CROW_ROUTE(app, "/api/games/linkedlist/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleLinkedListReset(req, db);
+    });
+    
     // 队列游戏操作
     CROW_ROUTE(app, "/api/games/queue/enqueue").methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
@@ -2422,6 +2482,12 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
         return handleQueueState(req, db);
     });
     
+    // 添加重置队列状态路由
+    CROW_ROUTE(app, "/api/games/queue/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleQueueReset(req, db);
+    });
+    
     // 栈游戏操作
     CROW_ROUTE(app, "/api/games/stack/push").methods(crow::HTTPMethod::POST)
     ([&db](const crow::request& req) {
@@ -2441,6 +2507,12 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
     CROW_ROUTE(app, "/api/games/stack/state").methods(crow::HTTPMethod::GET)
     ([&db](const crow::request& req) {
         return handleStackState(req, db);
+    });
+    
+    // 添加重置栈状态路由
+    CROW_ROUTE(app, "/api/games/stack/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleStackReset(req, db);
     });
     
     // 二叉树游戏操作
@@ -2494,6 +2566,117 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
     CROW_ROUTE(app, "/api/games/graph/state").methods(crow::HTTPMethod::GET)
     ([&db](const crow::request& req) {
         return handleGraphState(req, db);
+    });
+    
+    // 添加重置图状态路由
+    CROW_ROUTE(app, "/api/games/graph/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGraphReset(req, db);
+    });
+    
+    // 搜索游戏操作
+    CROW_ROUTE(app, "/api/games/search/linear").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSearchLinear(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/search/binary").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSearchBinary(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/search/state").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleSearchState(req, db);
+    });
+    
+    // 添加重置搜索状态路由
+    CROW_ROUTE(app, "/api/games/search/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSearchReset(req, db);
+    });
+    
+    // 迷宫游戏操作
+    CROW_ROUTE(app, "/api/games/maze/generate").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleMazeGenerate(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/maze/solveDFS").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleMazeSolveDFS(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/maze/solveBFS").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleMazeSolveBFS(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/maze/solveAStar").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleMazeSolveAStar(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/maze/state").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleMazeState(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/maze/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleMazeReset(req, db);
+    });
+    
+    // 动态规划游戏操作
+    CROW_ROUTE(app, "/api/games/dp/fibonacci").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleDPFibonacci(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/dp/knapsack").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleDPKnapsack(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/dp/lcs").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleDPLCS(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/dp/state").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleDPState(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/dp/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleDPReset(req, db);
+    });
+    
+    // 贪心算法游戏操作
+    CROW_ROUTE(app, "/api/games/greedy/coinChange").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGreedyCoinChange(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/greedy/activitySelection").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGreedyActivitySelection(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/greedy/huffman").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGreedyHuffman(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/greedy/state").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleGreedyState(req, db);
+    });
+    
+    CROW_ROUTE(app, "/api/games/greedy/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGreedyReset(req, db);
     });
     
     // TODO: 添加其他算法的路由注册
@@ -2659,3 +2842,46 @@ void recalculateTreeLayout(std::vector<json>& nodes, const std::vector<json>& ed
     int layoutWidth = 800 * (maxLevel + 1);
     assignNodePositions(rootId, 0, baseX - layoutWidth/2, baseX + layoutWidth/2);
 } 
+
+// 搜索游戏操作 - 重置状态
+crow::response handleSearchReset(const crow::request& req, Database& db) {
+    try {
+        // 创建一个初始的搜索状态
+        json initialState = {
+            {"array", json::array({10, 20, 30, 40, 50, 60, 70, 80, 90, 100})},
+            {"target", nullptr},
+            {"result", nullptr},
+            {"algorithm", "binary"}
+        };
+        
+        // 更新数据库中的状态
+        db.updateGameState("search", initialState);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(initialState, "search").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("重置搜索状态失败: ") + e.what(), "search").dump());
+    }
+}
+
+// 搜索游戏操作 - 获取当前状态
+crow::response handleSearchState(const crow::request& req, Database& db) {
+    try {
+        json state = db.getGameState("search");
+        
+        // 如果状态为空，初始化一个搜索状态
+        if (state.empty()) {
+            state = {
+                {"array", json::array({10, 20, 30, 40, 50, 60, 70, 80, 90, 100})},
+                {"target", nullptr},
+                {"result", nullptr},
+                {"algorithm", "binary"}
+            };
+            db.updateGameState("search", state);
+        }
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(state, "search").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("服务器错误: ") + e.what(), "search").dump());
+    }
+}

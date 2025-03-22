@@ -39,7 +39,10 @@
       </view>
     </view>
     
-    <button class="operation-button" bindtap="executeOperation">执行操作</button>
+    <view class="button-group">
+      <button class="operation-button" bindtap="executeOperation">执行操作</button>
+      <button class="operation-button reset-button" bindtap="resetStack">重置栈</button>
+    </view>
   </view>
 
   <!-- 操作历史 -->

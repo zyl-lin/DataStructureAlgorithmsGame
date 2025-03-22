@@ -534,4 +534,36 @@ crow::response handleGraphState(const crow::request& req, Database& db) {
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("服务器错误: ") + e.what(), "graph").dump());
     }
+}
+
+// 图游戏操作 - 重置状态
+crow::response handleGraphReset(const crow::request& req, Database& db) {
+    try {
+        // 创建一个默认的图状态（小型示例图）
+        json initialState = {
+            {"nodes", json::array({
+                {{"id", 0}, {"label", "A"}, {"x", 100}, {"y", 100}},
+                {{"id", 1}, {"label", "B"}, {"x", 200}, {"y", 100}},
+                {{"id", 2}, {"label", "C"}, {"x", 150}, {"y", 200}},
+                {{"id", 3}, {"label", "D"}, {"x", 250}, {"y", 200}},
+                {{"id", 4}, {"label", "E"}, {"x", 300}, {"y", 100}}
+            })},
+            {"edges", json::array({
+                {{"source", 0}, {"target", 1}},
+                {{"source", 0}, {"target", 2}},
+                {{"source", 1}, {"target", 3}},
+                {{"source", 1}, {"target", 4}},
+                {{"source", 2}, {"target", 3}}
+            })},
+            {"directed", false}
+        };
+        
+        // 更新数据库中的状态
+        db.updateGameState("graph", initialState);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(initialState, "graph").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("重置图状态失败: ") + e.what(), "graph").dump());
+    }
 } 

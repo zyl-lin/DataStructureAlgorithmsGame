@@ -34,6 +34,7 @@
       <button class="operation-btn enqueue-btn" bindtap="onEnqueue" disabled="{{isQueueFull}}">入队 (Enqueue)</button>
       <button class="operation-btn dequeue-btn" bindtap="onDequeue" disabled="{{isQueueEmpty}}">出队 (Dequeue)</button>
       <button class="operation-btn peek-btn" bindtap="onPeek" disabled="{{isQueueEmpty}}">查看队首 (Peek)</button>
+      <button class="operation-btn reset-btn" bindtap="resetQueue">重置队列</button>
     </view>
   </view>
 

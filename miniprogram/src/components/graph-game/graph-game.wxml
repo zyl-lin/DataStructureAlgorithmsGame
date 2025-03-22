@@ -71,15 +71,20 @@
   </view>
   
   <!-- 反馈信息区域 -->
-  <view class="feedback-panel" wx:if="{{showFeedback}}">
+  <view class="feedback-panel" wx:if="{{showFeedback || apiError}}">
     <view class="feedback-message {{isCorrect ? 'feedback-correct' : 'feedback-incorrect'}}">
-      {{feedbackMessage}}
+      {{apiError || feedbackMessage}}
     </view>
   </view>
   
   <!-- 操作按钮 -->
   <view class="action-buttons">
-    <button class="action-btn restart-btn" bindtap="restart">重新开始</button>
-    <button class="action-btn show-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}">查看正确答案</button>
+    <button class="action-btn restart-btn" bindtap="restart" disabled="{{isLoading}}">重新开始</button>
+    <button class="action-btn show-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}" disabled="{{isLoading}}">查看正确答案</button>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
   </view>
 </view> 

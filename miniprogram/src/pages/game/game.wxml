@@ -34,6 +34,7 @@
       <sorting-game 
         array="{{array}}"
         currentLevel="{{currentLevel}}"
+        isApiMode="{{true}}"
         bind:sort="onSort"
         bind:algorithm="onAlgorithmSelect"
         bind:complete="onLevelComplete"
@@ -61,6 +62,7 @@
       <graph-game 
         graph="{{graph}}"
         currentLevel="{{currentLevel}}"
+        isApiMode="{{true}}"
         bind:nodeSelect="onNodeSelect"
         bind:algorithmSelect="onAlgorithmSelect"
         bind:complete="onLevelComplete"

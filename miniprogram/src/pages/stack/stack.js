@@ -147,5 +147,50 @@ Page({
       });
       this.setData({ taskCompleted: true });
     }
+  },
+  
+  // 重置栈
+  resetStack: function() {
+    const api = require('../../services/api').stack;
+    
+    // 显示加载提示
+    wx.showLoading({
+      title: '重置中...',
+    });
+    
+    // 使用API重置栈状态
+    api.reset().then(res => {
+      if (res.success) {
+        // 重置成功，重新初始化栈
+        this.initStack();
+        
+        // 重置任务进度
+        this.setData({
+          taskProgress: 0,
+          taskCompleted: false
+        });
+        
+        wx.showToast({
+          title: '栈已重置',
+          icon: 'success',
+          duration: 1500
+        });
+      } else {
+        wx.showToast({
+          title: '重置栈失败',
+          icon: 'none',
+          duration: 1500
+        });
+      }
+    }).catch(err => {
+      console.error('重置栈API调用失败:', err);
+      wx.showToast({
+        title: '网络错误，请重试',
+        icon: 'none',
+        duration: 1500
+      });
+    }).finally(() => {
+      wx.hideLoading();
+    });
   }
 }); 

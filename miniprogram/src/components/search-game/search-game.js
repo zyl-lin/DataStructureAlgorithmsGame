@@ -21,6 +21,10 @@ Component({
     useApi: {
       type: Boolean,
       value: true
+    },
+    isApiMode: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -351,6 +355,11 @@ Component({
         clearInterval(this.data.autoPlayInterval);
       }
       
+      // 如果是API模式，调用API重置
+      if (this.data.isApiMode) {
+        this.resetSearchApi();
+      }
+      
       // 重置可视化数组状态
       const visualArray = this.data.originalArray.map(value => ({
         value,
@@ -376,6 +385,28 @@ Component({
       
       // 触发重置事件
       this.triggerEvent('searchReset');
+    },
+    
+    // 重置API状态
+    resetSearchApi: function() {
+      if (!this.data.isApiMode) return;
+      
+      const api = require('../../services/api');
+      this.setData({ isApiLoading: true });
+      
+      api.search.reset()
+        .then(() => {
+          console.log('搜索状态重置成功');
+        })
+        .catch(error => {
+          console.error('重置搜索状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isApiLoading: false });
+        });
     },
     
     // 应用指定步骤的状态

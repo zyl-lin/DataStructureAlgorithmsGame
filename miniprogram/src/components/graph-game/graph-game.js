@@ -24,6 +24,10 @@ Component({
     correctSequence: {
       type: Array,
       value: []
+    },
+    isApiMode: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -48,7 +52,9 @@ Component({
     highlightNodeColor: '#f44336', // 高亮节点颜色
     edgeColor: '#999', // 默认边颜色
     highlightEdgeColor: '#4caf50', // 高亮边颜色
-    firstRender: true // 是否首次渲染
+    firstRender: true, // 是否首次渲染
+    apiError: '',
+    isLoading: false
   },
 
   lifetimes: {
@@ -238,6 +244,10 @@ Component({
     
     // 重置遍历状态
     resetTraversal: function() {
+      if (this.data.isApiMode) {
+        this.resetApi();
+      }
+      
       this.setData({
         userSequence: [],
         selectedNodes: [],
@@ -247,12 +257,34 @@ Component({
         showFeedback: false,
         feedbackMessage: '',
         isCorrect: false,
-        animationStep: 0
+        animationStep: 0,
+        apiError: '',
+        isLoading: false
       }, () => {
         if (this.data.canvasContext) {
           this.drawGraph();
         }
       });
+    },
+    
+    // 重置API状态
+    resetApi: function() {
+      const api = require('../../services/api');
+      this.setData({ isLoading: true });
+      
+      api.graph.reset()
+        .then(() => {
+          console.log('图遍历状态重置成功');
+        })
+        .catch(error => {
+          console.error('重置图遍历状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isLoading: false });
+        });
     },
     
     // 处理节点点击事件

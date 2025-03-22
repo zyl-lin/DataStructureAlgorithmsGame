@@ -754,6 +754,86 @@ Component({
           operationResult: '链表反转成功'
         });
       }, animationFrames.length * (1000 / this.data.animationSpeed));
+    },
+
+    // 重置链表
+    resetList: function() {
+      // 如果正在播放动画，不允许重置
+      if (this.data.isPlaying || this.data.loading) return;
+      
+      if (this.data.useApi) {
+        // 使用API重置链表
+        this.resetListApi();
+      } else {
+        // 本地重置链表
+        this.resetListLocal();
+      }
+    },
+
+    // API重置链表
+    resetListApi: function() {
+      const api = require('../../services/api').linkedList;
+      this.setData({ loading: true });
+      
+      api.reset().then(res => {
+        if (res.success) {
+          // 重置成功，刷新链表状态
+          this.fetchLinkedListState();
+          wx.showToast({
+            title: '链表已重置',
+            icon: 'success',
+            duration: 1500
+          });
+          
+          // 重置其他状态
+          this.setData({
+            inputValue: '',
+            inputPosition: '',
+            operationResult: '',
+            highlightIndex: -1,
+            searchValue: '',
+            targetFound: false,
+            loading: false
+          });
+        } else {
+          wx.showToast({
+            title: '重置链表失败',
+            icon: 'none',
+            duration: 1500
+          });
+          this.setData({ loading: false });
+        }
+      }).catch(err => {
+        console.error('重置链表API调用失败:', err);
+        wx.showToast({
+          title: '网络错误，请重试',
+          icon: 'none',
+          duration: 1500
+        });
+        this.setData({ loading: false });
+      });
+    },
+    
+    // 本地重置链表
+    resetListLocal: function() {
+      // 重置为初始状态
+      this.initLevel();
+      
+      wx.showToast({
+        title: '链表已重置',
+        icon: 'success',
+        duration: 1500
+      });
+      
+      // 更新操作结果
+      this.setData({
+        operationResult: '链表已重置为初始状态',
+        inputValue: '',
+        inputPosition: '',
+        highlightIndex: -1,
+        searchValue: '',
+        targetFound: false
+      });
     }
   }
 }); 

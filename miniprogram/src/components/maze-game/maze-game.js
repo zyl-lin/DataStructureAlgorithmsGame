@@ -11,6 +11,10 @@ Component({
     level: {
       type: Number,
       value: 1
+    },
+    isApiMode: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -20,7 +24,9 @@ Component({
     isSolving: false,
     isCompleted: false,
     startPoint: null,
-    endPoint: null
+    endPoint: null,
+    isApiLoading: false,
+    apiError: ''
   },
 
   lifetimes: {
@@ -218,10 +224,37 @@ Component({
     
     // 重置迷宫
     onReset: function() {
+      // 如果是API模式，调用API重置
+      if (this.properties.isApiMode) {
+        this.resetMazeApi();
+      }
+      
       this.initMaze();
       
       // 触发迷宫重置事件
       this.triggerEvent('resetmaze');
+    },
+    
+    // 重置API状态
+    resetMazeApi: function() {
+      if (!this.properties.isApiMode) return;
+      
+      const api = require('../../services/api');
+      this.setData({ isApiLoading: true });
+      
+      api.maze.reset()
+        .then(() => {
+          console.log('迷宫状态重置成功');
+        })
+        .catch(error => {
+          console.error('重置迷宫状态失败:', error);
+          this.setData({
+            apiError: '重置状态失败，请重试'
+          });
+        })
+        .finally(() => {
+          this.setData({ isApiLoading: false });
+        });
     },
     
     // 下一关

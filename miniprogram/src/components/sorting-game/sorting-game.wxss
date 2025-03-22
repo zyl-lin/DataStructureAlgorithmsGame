@@ -114,6 +114,11 @@
   background-color: #F44336;
 }
 
+.action-btn.reset {
+  background-color: #673AB7;
+  color: white;
+}
+
 .action-btn[disabled] {
   background-color: #e0e0e0;
   color: #999;
@@ -146,4 +151,37 @@
   gap: 10rpx;
   font-size: 24rpx;
   color: #333;
+}
+
+.error-message {
+  color: #F44336;
+  font-weight: bold;
+}
+
+/* 加载状态覆盖层 */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.loading-spinner {
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 } 

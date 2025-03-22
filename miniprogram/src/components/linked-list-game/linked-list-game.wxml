@@ -71,6 +71,12 @@
       <view class="operation-title">链表反转</view>
       <button class="operation-button full-width" bindtap="reverseList" disabled="{{isPlaying || loading}}">反转链表</button>
     </view>
+    
+    <!-- 重置链表 -->
+    <view class="operation-section">
+      <view class="operation-title">重置链表</view>
+      <button class="operation-button full-width" bindtap="resetList" disabled="{{isPlaying || loading}}">重置链表</button>
+    </view>
   </view>
   
   <!-- 加载状态 -->

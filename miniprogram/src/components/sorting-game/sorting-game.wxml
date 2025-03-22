@@ -71,9 +71,10 @@
     </view>
 
     <view class="action-buttons">
-      <button class="action-btn generate" bindtap="generateNewArray">生成新数组</button>
-      <button class="action-btn sort" bindtap="startSorting" disabled="{{isSorting}}">开始排序</button>
-      <button class="action-btn stop" bindtap="stopSorting" disabled="{{!isSorting}}">停止</button>
+      <button class="action-btn generate" bindtap="generateNewArray" disabled="{{isLoading}}">生成新数组</button>
+      <button class="action-btn sort" bindtap="startSorting" disabled="{{isSorting || isLoading}}">开始排序</button>
+      <button class="action-btn stop" bindtap="stopSorting" disabled="{{!isSorting || isLoading}}">停止</button>
+      <button class="action-btn reset" bindtap="resetSort" disabled="{{isLoading}}">重置</button>
     </view>
   </view>
 
@@ -84,6 +85,12 @@
       <text>比较次数: {{comparisons}}</text>
       <text>交换次数: {{swaps}}</text>
       <text>当前状态: {{sortingStatus}}</text>
+      <text wx:if="{{apiError}}" class="error-message">{{apiError}}</text>
     </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
   </view>
 </view> 
