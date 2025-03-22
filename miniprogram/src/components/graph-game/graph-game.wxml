@@ -122,7 +122,7 @@
   <view class="action-buttons">
     <button class="action-btn restart-btn" bindtap="restart" disabled="{{isLoading}}">重新开始</button>
     <button class="action-btn show-btn" bindtap="showCorrectTraversal" wx:if="{{isTraversalComplete && !isCorrect}}" disabled="{{isLoading}}">查看正确答案</button>
-    <button class="action-btn start-btn" bindtap="startTraversal" wx:if="{{isApiMode}}" disabled="{{isLoading || isTraversalComplete}}">开始遍历</button>
+    <button class="action-btn start-btn" bindtap="startTraversal" disabled="{{isLoading || isTraversalComplete}}">开始遍历</button>
     <button class="action-btn speed-btn" bindtap="toggleSpeedControl" wx:if="{{isApiMode}}">{{showSpeedControl ? '隐藏速度控制' : '速度设置'}}</button>
   </view>
   

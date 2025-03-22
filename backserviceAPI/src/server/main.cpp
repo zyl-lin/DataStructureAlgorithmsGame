@@ -5,6 +5,7 @@
 #include "game_routes.h"
 #include "achievement_routes.h"
 #include "game_animation_routes.h"
+#include "animation/animation_routes.h"
 #include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;
@@ -32,11 +33,18 @@ int main() {
     registerGameRoutes(app, db);
     registerAchievementRoutes(app, db);
     registerGameAnimationRoutes(app, db);
+    registerAnimationRoutes(app);  // 注册动画和游戏元素交互路由
     
     // 健康检查端点
-    CROW_ROUTE(app, "/api/health")
+    CROW_ROUTE(app, "/health")
     ([]() {
         return crow::response(200, "{\"status\":\"ok\"}");
+    });
+    
+    // 根路径端点
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return crow::response(200, "{\"message\":\"数据结构与算法游戏API服务\",\"version\":\"1.0\"}");
     });
     
     // 启动服务器

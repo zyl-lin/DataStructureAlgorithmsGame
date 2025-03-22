@@ -156,7 +156,11 @@ private:
         std::string path = parsePath(request);
 
         std::string response;
-        if (method == "GET" && path == "/api/hello") {
+        if (method == "GET" && path == "/") {
+            response = handleRoot();
+        } else if (method == "GET" && path == "/health") {
+            response = handleHealth();
+        } else if (method == "GET" && path == "/api/hello") {
             response = handleGet();
         } else if (method == "POST" && path == "/api/greet") {
             std::string body = parseBody(request);
@@ -196,6 +200,18 @@ private:
         return request.substr(body_start + 4);
     }
 
+    std::string handleRoot() {
+        std::string json = "{\"message\": \"Welcome to Data Structure and Algorithm Game API\", \"status\": \"ok\"}";
+        return "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: " +
+               std::to_string(json.size()) + "\r\n\r\n" + json;
+    }
+
+    std::string handleHealth() {
+        std::string json = "{\"status\": \"ok\"}";
+        return "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: " +
+               std::to_string(json.size()) + "\r\n\r\n" + json;
+    }
+
     std::string handleGet() {
         std::string json = "{\"message\": \"Hello from C++ server!\", \"status\": \"success\"}";
         return "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: " +
@@ -220,7 +236,7 @@ private:
 };
 
 int main() {
-    SimpleHttpServer server(8080);
+    SimpleHttpServer server(3000);  // 修改端口为3000
     server.start();
     return 0;
 } 

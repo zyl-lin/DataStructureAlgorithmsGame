@@ -1118,9 +1118,17 @@ Component({
           break;
         case 'knapsack':
           apiMethod = api.knapsack;
+          // 修改为后端期望的参数格式
+          const weights = [];
+          const values = [];
+          this.data.knapsackItems.forEach(item => {
+            weights.push(item.weight);
+            values.push(item.value);
+          });
           requestData = {
-            capacity: this.data.knapsackCapacity,
-            items: this.data.knapsackItems
+            weights: weights,
+            values: values,
+            capacity: this.data.knapsackCapacity
           };
           break;
         case 'lcs':

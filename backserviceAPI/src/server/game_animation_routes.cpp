@@ -13,6 +13,7 @@
 #include <queue>
 #include <map>
 #include <cmath>
+#include <set>
 #include <optional>
 
 // 提取动画相关的查询参数
@@ -1120,24 +1121,53 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
         // 获取当前状态
         json currentState = db.getGameState("binarytree");
         if (currentState.is_null()) {
-            currentState = {
+            currentState = json{
                 {"nodes", json::array()},
                 {"edges", json::array()},
                 {"traversal", nullptr},
-                {"root", nullptr}  // 添加root字段
+                {"root", nullptr}
             };
         }
 
         // 先检查请求体
         if (!req.body.empty()) {
             try {
+                // 尝试解析请求体为JSON
                 json requestBody = json::parse(req.body);
-                if (requestBody.contains("value") && !requestBody["value"].is_null()) {
-                    value = requestBody["value"].get<int>();
-                    valueProvided = true;
+                // 检查value字段是否存在且不为null
+                if (requestBody.contains("value")) {
+                    if (requestBody["value"].is_number()) {
+                        value = requestBody["value"].get<int>();
+                        valueProvided = true;
+                    } else if (requestBody["value"].is_string()) {
+                        // 如果value是字符串，尝试转换为整数
+                        try {
+                            value = std::stoi(requestBody["value"].get<std::string>());
+                            valueProvided = true;
+                        } catch (...) {
+                            return crow::response(400, ResponseBuilder::createErrorResponse(
+                                400, "value参数必须是有效的整数", "binarytree").dump());
+                        }
+                    }
                 }
-            } catch (...) {
-                // 请求体解析失败，继续检查URL参数
+            } catch (const json::parse_error& e) {
+                // JSON解析失败，检查是否是表单数据
+                std::string body = req.body;
+                if (body.find("value=") != std::string::npos) {
+                    size_t pos = body.find("value=") + 6;
+                    std::string valueStr = body.substr(pos);
+                    size_t endPos = valueStr.find('&');
+                    if (endPos != std::string::npos) {
+                        valueStr = valueStr.substr(0, endPos);
+                    }
+                    try {
+                        value = std::stoi(valueStr);
+                        valueProvided = true;
+                    } catch (...) {
+                        return crow::response(400, ResponseBuilder::createErrorResponse(
+                            400, "value参数必须是有效的整数", "binarytree").dump());
+                    }
+                }
             }
         }
         
@@ -1150,14 +1180,16 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
                     value = std::stoi(valueStr);
                     valueProvided = true;
                 } catch (...) {
-                    return crow::response(400, ResponseBuilder::createErrorResponse(400, "无效的value参数，必须是整数", "binarytree").dump());
+                    return crow::response(400, ResponseBuilder::createErrorResponse(
+                        400, "无效的value参数，必须是整数", "binarytree").dump());
                 }
             }
         }
         
         // 如果没有提供value参数，返回错误
         if (!valueProvided) {
-            return crow::response(400, ResponseBuilder::createErrorResponse(400, "缺少必要参数：value", "binarytree").dump());
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "缺少必要参数：value", "binarytree").dump());
         }
 
         // 获取动画参数
@@ -1182,7 +1214,7 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
         
         // 如果是第一个节点
         if (nodes.empty()) {
-            json newNode = {
+            json newNode = json{
                 {"id", newNodeId},
                 {"value", value},
                 {"x", 500},  // 根节点位置
@@ -1265,7 +1297,7 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
             }
 
             // 创建新节点
-            json newNode = {
+            json newNode = json{
                 {"id", newNodeId},
                 {"value", value},
                 {"x", x},
@@ -1274,7 +1306,7 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
             nodes.push_back(newNode);
             
             // 创建新边
-            json newEdge = {
+            json newEdge = json{
                 {"source", parentId},
                 {"target", newNodeId},
                 {"position", position}
@@ -1284,13 +1316,13 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
 
         // 优化树的布局，重新计算所有节点的坐标
         if (currentState.contains("root") && !currentState["root"].is_null()) {
-            recalculateTreeLayout(nodes, edges, currentState["root"].get<int>());
+            recalculateTreeLayout(nodes, edges, currentState["root"].get<int>(), 500, 50, 100);
         }
 
         // 更新状态
-        json updatedState = {
-                            {"nodes", nodes},
-                            {"edges", edges},
+        json updatedState = json{
+            {"nodes", nodes},
+            {"edges", edges},
             {"traversal", nullptr},
             {"root", currentState["root"]}  // 保持根节点ID
         };
@@ -1308,13 +1340,13 @@ crow::response handleBinaryTreeInsert(const crow::request& req, Database& db) {
 
         // 如果需要动画
         if (animate) {
-            json insertFrame = {
+            json insertFrame = json{
                 {"type", "insert"},
                 {"nodeId", newNodeId},
                 {"value", value}
             };
             
-            json animationData = {
+            json animationData = json{
                 {"frames", json::array({insertFrame})},
                 {"currentFrame", 0},
                 {"totalFrames", 1},
@@ -1349,10 +1381,16 @@ crow::response handleBinaryTreeTraversePreOrder(const crow::request& req, Databa
         // 获取当前二叉树状态
         json currentState = db.getGameState("binarytree");
         
-        // 检查树是否为空
+        // 确保树状态存在且有根节点
         if (currentState.is_null() || !currentState.contains("nodes") || !currentState.contains("edges") || 
-            currentState["nodes"].empty()) {
-            return crow::response(400, ResponseBuilder::createErrorResponse(400, "二叉树为空，请先使用 /api/games/binarytree/insert 接口插入节点", "binarytree").dump());
+            !currentState.contains("root") || currentState["nodes"].empty()) {
+            json emptyState = {
+                {"nodes", json::array()},
+                {"edges", json::array()},
+                {"traversal", {{"order", "preorder"}, {"sequence", json::array()}}},
+                {"root", nullptr}
+            };
+            return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "binarytree").dump());
         }
         
         std::vector<json> nodes = currentState["nodes"].get<std::vector<json>>();
@@ -1579,16 +1617,23 @@ crow::response handleBinaryTreeTraversePreOrder(const crow::request& req, Databa
 
 // 二叉树游戏操作 - 中序遍历
 crow::response handleBinaryTreeTraverseInOrder(const crow::request& req, Database& db) {
+    // 提取动画参数
     AnimationParams params = extractAnimationParams(req);
     
     try {
         // 获取当前二叉树状态
         json currentState = db.getGameState("binarytree");
         
-        // 检查树是否为空
-        if (!currentState.contains("nodes") || !currentState.contains("edges") || 
-            currentState["nodes"].empty()) {
-            return crow::response(400, ResponseBuilder::createErrorResponse(400, "二叉树为空，请先使用 /api/games/binarytree/insert 接口插入节点", "binarytree").dump());
+        // 确保树状态存在且有根节点
+        if (currentState.is_null() || !currentState.contains("nodes") || !currentState.contains("edges") || 
+            !currentState.contains("root") || currentState["nodes"].empty()) {
+            json emptyState = {
+                {"nodes", json::array()},
+                {"edges", json::array()},
+                {"traversal", {{"order", "inorder"}, {"sequence", json::array()}}},
+                {"root", nullptr}
+            };
+            return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "binarytree").dump());
         }
         
         // 获取节点和边的列表
@@ -1814,16 +1859,23 @@ crow::response handleBinaryTreeTraverseInOrder(const crow::request& req, Databas
 
 // 二叉树游戏操作 - 后序遍历
 crow::response handleBinaryTreeTraversePostOrder(const crow::request& req, Database& db) {
+    // 提取动画参数
     AnimationParams params = extractAnimationParams(req);
     
     try {
         // 获取当前二叉树状态
         json currentState = db.getGameState("binarytree");
         
-        // 检查树是否为空
-        if (!currentState.contains("nodes") || !currentState.contains("edges") || 
-            currentState["nodes"].empty()) {
-            return crow::response(400, ResponseBuilder::createErrorResponse(400, "二叉树为空，请先使用 /api/games/binarytree/insert 接口插入节点", "binarytree").dump());
+        // 确保树状态存在且有根节点
+        if (currentState.is_null() || !currentState.contains("nodes") || !currentState.contains("edges") || 
+            !currentState.contains("root") || currentState["nodes"].empty()) {
+            json emptyState = {
+                {"nodes", json::array()},
+                {"edges", json::array()},
+                {"traversal", {{"order", "postorder"}, {"sequence", json::array()}}},
+                {"root", nullptr}
+            };
+            return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "binarytree").dump());
         }
         
         // 获取节点和边的列表
@@ -2085,10 +2137,16 @@ crow::response handleBinaryTreeTraverseLevelOrder(const crow::request& req, Data
         // 获取当前二叉树状态
         json currentState = db.getGameState("binarytree");
         
-        // 检查树是否为空
-        if (!currentState.contains("nodes") || !currentState.contains("edges") || 
-            currentState["nodes"].empty()) {
-            return crow::response(400, ResponseBuilder::createErrorResponse(400, "二叉树为空，请先使用 /api/games/binarytree/insert 接口插入节点", "binarytree").dump());
+        // 确保树状态存在且有根节点
+        if (currentState.is_null() || !currentState.contains("nodes") || !currentState.contains("edges") || 
+            !currentState.contains("root") || currentState["nodes"].empty()) {
+            json emptyState = {
+                {"nodes", json::array()},
+                {"edges", json::array()},
+                {"traversal", {{"order", "levelorder"}, {"sequence", json::array()}}},
+                {"root", nullptr}
+            };
+            return crow::response(200, ResponseBuilder::createSuccessResponse(emptyState, "binarytree").dump());
         }
         
         // 获取节点和边的列表
@@ -2354,7 +2412,7 @@ crow::response handleBinaryTreeState(const crow::request& req, Database& db) {
             std::vector<json> edges = currentState["edges"].get<std::vector<json>>();
             
             // 重新计算布局
-            recalculateTreeLayout(nodes, edges, currentState["root"].get<int>());
+            recalculateTreeLayout(nodes, edges, currentState["root"].get<int>(), 500, 50, 100);
             
             // 更新节点和边
             currentState["nodes"] = nodes;
@@ -2531,6 +2589,11 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
         return handleGraphTraverseBFS(req, db);
     });
     
+    CROW_ROUTE(app, "/api/games/graph/findPath").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleGraphFindPath(req, db);
+    });
+    
     CROW_ROUTE(app, "/api/games/graph/state").methods(crow::HTTPMethod::GET)
     ([&db](const crow::request& req) {
         return handleGraphState(req, db);
@@ -2647,7 +2710,31 @@ void registerGameAnimationRoutes(crow::App<crow::CORSHandler>& app, Database& db
         return handleGreedyReset(req, db);
     });
     
-    // TODO: 添加其他算法的路由注册
+    // 获取排序状态
+    CROW_ROUTE(app, "/api/games/sorting/state").methods(crow::HTTPMethod::GET)
+    ([&db](const crow::request& req) {
+        return handleSortingState(req, db);
+    });
+    CROW_ROUTE(app, "/api/games/sorting/reset").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSortingReset(req, db);
+    });
+    CROW_ROUTE(app, "/api/games/sorting/bubbleSort").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSortingBubbleSort(req, db);
+    });
+    CROW_ROUTE(app, "/api/games/sorting/selectionSort").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSortingSelectionSort(req, db);
+    });
+    CROW_ROUTE(app, "/api/games/sorting/insertionSort").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSortingInsertionSort(req, db);
+    });
+    CROW_ROUTE(app, "/api/games/sorting/quickSort").methods(crow::HTTPMethod::POST)
+    ([&db](const crow::request& req) {
+        return handleSortingQuickSort(req, db);
+    });
 } 
 
 // 重新计算二叉树所有节点的x坐标，使布局更加平衡
@@ -3161,5 +3248,568 @@ crow::response handleSearchBinary(const crow::request& req, Database& db) {
         }
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("二分搜索错误: ") + e.what(), "search").dump());
+    }
+}
+
+// 获取排序状态
+crow::response handleSortingState(const crow::request& req, Database& db) {
+    try {
+        json state = {
+            {"array", {5, 3, 8, 4, 2}},  // 默认数组
+            {"sorted", false},
+            {"currentIndex", -1},
+            {"comparingIndex", -1}
+        };
+        return crow::response(200, ResponseBuilder::createSuccessResponse(state, "sorting").dump());
+    } catch (...) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, "获取排序状态时发生错误", "sorting").dump());
+    }
+}
+
+// 重置排序状态
+crow::response handleSortingReset(const crow::request& req, Database& db) {
+    try {
+        json state = {
+            {"array", {5, 3, 8, 4, 2}},  // 重置为默认数组
+            {"sorted", false},
+            {"currentIndex", -1},
+            {"comparingIndex", -1}
+        };
+        return crow::response(200, ResponseBuilder::createSuccessResponse(state, "sorting").dump());
+    } catch (...) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, "重置排序状态时发生错误", "sorting").dump());
+    }
+}
+
+// 冒泡排序
+crow::response handleSortingBubbleSort(const crow::request& req, Database& db) {
+    try {
+        auto reqJson = json::parse(req.body);
+        if (!reqJson.contains("array")) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "缺少array参数", "sorting").dump());
+        }
+
+        std::vector<int> array = reqJson["array"];
+        std::vector<json> frames;
+        
+        // 生成排序过程的动画帧
+        for (size_t i = 0; i < array.size() - 1; i++) {
+            for (size_t j = 0; j < array.size() - i - 1; j++) {
+                // 添加比较帧
+                frames.push_back({
+                    {"array", array},
+                    {"currentIndex", j},
+                    {"comparingIndex", j + 1},
+                    {"sorted", false}
+                });
+
+                if (array[j] > array[j + 1]) {
+                    std::swap(array[j], array[j + 1]);
+                    // 添加交换帧
+                    frames.push_back({
+                        {"array", array},
+                        {"currentIndex", j},
+                        {"comparingIndex", j + 1},
+                        {"sorted", false}
+                    });
+                }
+            }
+        }
+
+        // 添加最终排序完成帧
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", -1},
+            {"comparingIndex", -1},
+            {"sorted", true}
+        });
+
+        json response = {
+            {"state", {
+                {"array", array},
+                {"sorted", true},
+                {"currentIndex", -1},
+                {"comparingIndex", -1}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
+        };
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "sorting").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("冒泡排序执行错误: ") + e.what(), "sorting").dump());
+    }
+}
+
+// 选择排序
+crow::response handleSortingSelectionSort(const crow::request& req, Database& db) {
+    try {
+        auto reqJson = json::parse(req.body);
+        if (!reqJson.contains("array")) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "缺少array参数", "sorting").dump());
+        }
+
+        std::vector<int> array = reqJson["array"];
+        std::vector<json> frames;
+        
+        for (size_t i = 0; i < array.size() - 1; i++) {
+            size_t minIdx = i;
+            frames.push_back({
+                {"array", array},
+                {"currentIndex", i},
+                {"comparingIndex", minIdx},
+                {"sorted", false}
+            });
+
+            for (size_t j = i + 1; j < array.size(); j++) {
+                frames.push_back({
+                    {"array", array},
+                    {"currentIndex", i},
+                    {"comparingIndex", j},
+                    {"sorted", false}
+                });
+
+                if (array[j] < array[minIdx]) {
+                    minIdx = j;
+                }
+            }
+
+            if (minIdx != i) {
+                std::swap(array[i], array[minIdx]);
+                frames.push_back({
+                    {"array", array},
+                    {"currentIndex", i},
+                    {"comparingIndex", minIdx},
+                    {"sorted", false}
+                });
+            }
+        }
+
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", -1},
+            {"comparingIndex", -1},
+            {"sorted", true}
+        });
+
+        json response = {
+            {"state", {
+                {"array", array},
+                {"sorted", true},
+                {"currentIndex", -1},
+                {"comparingIndex", -1}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
+        };
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "sorting").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("选择排序执行错误: ") + e.what(), "sorting").dump());
+    }
+}
+
+// 插入排序
+crow::response handleSortingInsertionSort(const crow::request& req, Database& db) {
+    try {
+        auto reqJson = json::parse(req.body);
+        if (!reqJson.contains("array")) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "缺少array参数", "sorting").dump());
+        }
+
+        std::vector<int> array = reqJson["array"];
+        std::vector<json> frames;
+        
+        for (size_t i = 1; i < array.size(); i++) {
+            int key = array[i];
+            int j = i - 1;
+            
+            frames.push_back({
+                {"array", array},
+                {"currentIndex", i},
+                {"comparingIndex", j},
+                {"sorted", false}
+            });
+
+            while (j >= 0 && array[j] > key) {
+                array[j + 1] = array[j];
+                frames.push_back({
+                    {"array", array},
+                    {"currentIndex", j + 1},
+                    {"comparingIndex", j},
+                    {"sorted", false}
+                });
+                j--;
+            }
+            array[j + 1] = key;
+            frames.push_back({
+                {"array", array},
+                {"currentIndex", j + 1},
+                {"comparingIndex", -1},
+                {"sorted", false}
+            });
+        }
+
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", -1},
+            {"comparingIndex", -1},
+            {"sorted", true}
+        });
+
+        json response = {
+            {"state", {
+                {"array", array},
+                {"sorted", true},
+                {"currentIndex", -1},
+                {"comparingIndex", -1}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
+        };
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "sorting").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("插入排序执行错误: ") + e.what(), "sorting").dump());
+    }
+}
+
+// 快速排序辅助函数
+void quickSortHelper(std::vector<int>& array, int low, int high, std::vector<json>& frames) {
+    if (low < high) {
+        int pivot = array[high];
+        int i = low - 1;
+        
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", high},
+            {"comparingIndex", -1},
+            {"sorted", false},
+            {"pivot", pivot}
+        });
+
+        for (int j = low; j < high; j++) {
+            frames.push_back({
+                {"array", array},
+                {"currentIndex", j},
+                {"comparingIndex", high},
+                {"sorted", false},
+                {"pivot", pivot}
+            });
+
+            if (array[j] <= pivot) {
+                i++;
+                std::swap(array[i], array[j]);
+                frames.push_back({
+                    {"array", array},
+                    {"currentIndex", i},
+                    {"comparingIndex", j},
+                    {"sorted", false},
+                    {"pivot", pivot}
+                });
+            }
+        }
+        
+        std::swap(array[i + 1], array[high]);
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", i + 1},
+            {"comparingIndex", high},
+            {"sorted", false},
+            {"pivot", pivot}
+        });
+
+        quickSortHelper(array, low, i, frames);
+        quickSortHelper(array, i + 2, high, frames);
+    }
+}
+
+// 快速排序
+crow::response handleSortingQuickSort(const crow::request& req, Database& db) {
+    try {
+        auto reqJson = json::parse(req.body);
+        if (!reqJson.contains("array")) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(400, "缺少array参数", "sorting").dump());
+        }
+
+        std::vector<int> array = reqJson["array"];
+        std::vector<json> frames;
+        
+        quickSortHelper(array, 0, array.size() - 1, frames);
+
+        frames.push_back({
+            {"array", array},
+            {"currentIndex", -1},
+            {"comparingIndex", -1},
+            {"sorted", true}
+        });
+
+        json response = {
+            {"state", {
+                {"array", array},
+                {"sorted", true},
+                {"currentIndex", -1},
+                {"comparingIndex", -1}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
+        };
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "sorting").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(500, std::string("快速排序执行错误: ") + e.what(), "sorting").dump());
+    }
+}
+
+// 图游戏操作 - 查找路径
+crow::response handleGraphFindPath(const crow::request& req, Database& db) {
+    try {
+        // 检查请求体是否为空
+        if (req.body.empty()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "请求体不能为空", "graph").dump());
+        }
+        
+        json reqJson;
+        try {
+            reqJson = json::parse(req.body);
+        } catch (const json::parse_error& e) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, std::string("JSON解析错误: ") + e.what(), "graph").dump());
+        }
+        
+        // 检查必要参数
+        if (!reqJson.contains("source") || !reqJson.contains("target")) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "缺少source或target参数", "graph").dump());
+        }
+        
+        // 获取source和target参数，支持字符串或数字类型
+        std::string source;
+        std::string target;
+        if (reqJson["source"].is_string()) {
+            source = reqJson["source"].get<std::string>();
+        } else if (reqJson["source"].is_number()) {
+            source = std::to_string(reqJson["source"].get<int>());
+        } else {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "source参数必须是字符串或数字", "graph").dump());
+        }
+        
+        if (reqJson["target"].is_string()) {
+            target = reqJson["target"].get<std::string>();
+        } else if (reqJson["target"].is_number()) {
+            target = std::to_string(reqJson["target"].get<int>());
+        } else {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "target参数必须是字符串或数字", "graph").dump());
+        }
+        
+        // 获取当前图状态
+        json currentState = db.getGameState("graph");
+        if (currentState.is_null()) {
+            // 初始化一个空图状态
+            currentState = json{
+                {"nodes", json::array()},
+                {"edges", json::array()},
+                {"algorithm", nullptr}
+            };
+        }
+        
+        if (!currentState.contains("nodes") || !currentState.contains("edges")) {
+            currentState["nodes"] = json::array();
+            currentState["edges"] = json::array();
+        }
+        
+        auto nodes = currentState["nodes"];
+        auto edges = currentState["edges"];
+        
+        // 如果图是空的，返回适当的错误信息
+        if (nodes.empty()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "图中没有节点，请先添加节点", "graph").dump());
+        }
+        
+        // 检查source和target节点是否存在
+        bool sourceExists = false;
+        bool targetExists = false;
+        int sourceId = -1;
+        int targetId = -1;
+
+        // 尝试将source和target转换为整数
+        try {
+            sourceId = std::stoi(source);
+            targetId = std::stoi(target);
+        } catch (...) {
+            // 如果转换失败，可能是使用了字母标签，尝试通过label查找
+            for (const auto& node : nodes) {
+                if (node["label"] == source) {
+                    sourceId = node["id"].get<int>();
+                    sourceExists = true;
+                }
+                if (node["label"] == target) {
+                    targetId = node["id"].get<int>();
+                    targetExists = true;
+                }
+            }
+        }
+
+        // 如果没有通过label找到，再尝试直接用ID查找
+        if (!sourceExists || !targetExists) {
+            for (const auto& node : nodes) {
+                if (node["id"] == sourceId) {
+                    sourceExists = true;
+                }
+                if (node["id"] == targetId) {
+                    targetExists = true;
+                }
+            }
+        }
+        
+        if (!sourceExists || !targetExists) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "起点或终点节点不存在", "graph").dump());
+        }
+
+        // 将source和target转换为字符串形式的ID
+        source = std::to_string(sourceId);
+        target = std::to_string(targetId);
+        
+        // 构建邻接表
+        std::map<std::string, std::vector<std::string>> adjacencyList;
+        for (const auto& node : nodes) {
+            adjacencyList[node["id"].get<std::string>()] = std::vector<std::string>();
+        }
+        
+        for (const auto& edge : edges) {
+            std::string from = edge["source"];
+            std::string to = edge["target"];
+            adjacencyList[from].push_back(to);
+            // 如果是无向图，添加反向边
+            if (!edge.contains("directed") || !edge["directed"].get<bool>()) {
+                adjacencyList[to].push_back(from);
+            }
+        }
+        
+        // 使用BFS查找路径
+        std::map<std::string, std::string> parent;
+        std::queue<std::string> queue;
+        std::set<std::string> visited;
+        
+        queue.push(source);
+        visited.insert(source);
+        
+        bool found = false;
+        while (!queue.empty() && !found) {
+            std::string current = queue.front();
+            queue.pop();
+            
+            if (current == target) {
+                found = true;
+                break;
+            }
+            
+            for (const auto& neighbor : adjacencyList[current]) {
+                if (visited.find(neighbor) == visited.end()) {
+                    visited.insert(neighbor);
+                    parent[neighbor] = current;
+                    queue.push(neighbor);
+                }
+            }
+        }
+        
+        // 构建路径
+        std::vector<std::string> path;
+        if (found) {
+            std::string current = target;
+            while (current != source) {
+                path.push_back(current);
+                current = parent[current];
+            }
+            path.push_back(source);
+            std::reverse(path.begin(), path.end());
+        }
+        
+        // 提取动画参数
+        AnimationParams animParams = extractAnimationParams(req);
+        
+        // 生成动画帧
+        std::vector<json> frames;
+        
+        // 初始帧
+        frames.push_back(json{
+            {"nodes", nodes},
+            {"edges", edges},
+            {"visited", json::array()},
+            {"current", nullptr},
+            {"path", nullptr}
+        });
+        
+        // 仅当需要动画时添加动画帧
+        if (animParams.animate) {
+            // 遍历过程帧
+            for (const auto& vertex : visited) {
+                if (vertex != source && vertex != target) {
+                    frames.push_back(json{
+                        {"nodes", nodes},
+                        {"edges", edges},
+                        {"visited", json(visited)},
+                        {"current", vertex},
+                        {"path", nullptr}
+                    });
+                }
+            }
+        }
+        
+        // 结果帧
+        frames.push_back(json{
+            {"nodes", nodes},
+            {"edges", edges},
+            {"visited", json(visited)},
+            {"current", nullptr},
+            {"path", path}
+        });
+        
+        // 构建响应
+        json response = json{
+            {"state", json{
+                {"nodes", nodes},
+                {"edges", edges},
+                {"algorithm", "findPath"},
+                {"source", source},
+                {"target", target},
+                {"path", path},
+                {"found", found}
+            }}
+        };
+        
+        // 如果需要动画，添加动画数据
+        if (animParams.animate) {
+            response["animation"] = json{
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", animParams.speed}
+            };
+        }
+        
+        // 更新状态
+        db.updateGameState("graph", response["state"]);
+        
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "graph").dump());
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("路径查找失败: ") + e.what(), "graph").dump());
     }
 }

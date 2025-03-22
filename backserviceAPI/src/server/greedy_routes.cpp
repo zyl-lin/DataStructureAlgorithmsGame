@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include <crow.h>
 
 using json = nlohmann::json;
 
@@ -123,215 +124,304 @@ crow::response handleGreedyCoinChange(const crow::request& req, Database& db) {
     }
 }
 
-// 贪心算法游戏操作 - 活动安排
-crow::response handleGreedyActivitySelection(const crow::request& req, Database& db) {
-    AnimationParams params = extractAnimationParams(req);
-    
+// 活动安排
+crow::response handleActivitySelection(const crow::request& req) {
     try {
-        // 解析请求体
-        json requestBody = json::parse(req.body);
+        auto reqJson = json::parse(req.body);
         
-        if (!requestBody.contains("start") || !requestBody.contains("end")) {
+        // 检查必要参数
+        if (!reqJson.contains("start") || !reqJson.contains("finish")) {
             return crow::response(400, ResponseBuilder::createErrorResponse(
-                400, "缺少必要参数：start, end", "greedy").dump());
+                400, "缺少start或finish参数", "greedy").dump());
         }
         
-        std::vector<int> start = requestBody["start"].get<std::vector<int>>();
-        std::vector<int> end = requestBody["end"].get<std::vector<int>>();
+        std::vector<int> start = reqJson["start"];
+        std::vector<int> finish = reqJson["finish"];
         
-        if (start.size() != end.size()) {
+        // 验证输入
+        if (start.size() != finish.size()) {
             return crow::response(400, ResponseBuilder::createErrorResponse(
-                400, "开始时间和结束时间数组长度必须相同", "greedy").dump());
+                400, "start和finish数组长度必须相同", "greedy").dump());
         }
         
+        if (start.empty()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "输入数组不能为空", "greedy").dump());
+        }
+
         int n = start.size();
+        std::vector<std::pair<int, int>> activities(n);
+        for (int i = 0; i < n; i++) {
+            activities[i] = {finish[i], start[i]};  // 按结束时间排序
+        }
         
-        // 创建活动索引数组并按结束时间排序
-        std::vector<int> activities(n);
-        std::iota(activities.begin(), activities.end(), 0);
-        std::sort(activities.begin(), activities.end(),
-                 [&end](int i, int j) { return end[i] < end[j]; });
+        std::sort(activities.begin(), activities.end());
         
-        // 记录选择的活动和步骤
         std::vector<int> selected;
-        std::vector<json> steps;
+        std::vector<json> frames;
+        
+        // 记录初始状态
+        frames.push_back({
+            {"activities", activities},
+            {"selected", selected},
+            {"currentIndex", -1},
+            {"lastSelected", -1}
+        });
         
         // 选择第一个活动
-        if (!activities.empty()) {
-            int lastEnd = end[activities[0]];
-            selected.push_back(activities[0]);
+        selected.push_back(0);
+        int lastFinish = activities[0].first;
+        
+        frames.push_back({
+            {"activities", activities},
+            {"selected", selected},
+            {"currentIndex", 0},
+            {"lastSelected", 0},
+            {"lastFinish", lastFinish}
+        });
+        
+        // 贪心选择过程
+        for (int i = 1; i < n; i++) {
+            frames.push_back({
+                {"activities", activities},
+                {"selected", selected},
+                {"currentIndex", i},
+                {"lastSelected", selected.back()},
+                {"lastFinish", lastFinish},
+                {"checking", true}
+            });
             
-            json activitySelected = json::object();
-            activitySelected["activity"] = activities[0];
-            activitySelected["start"] = start[activities[0]];
-            activitySelected["end"] = end[activities[0]];
-            activitySelected["step"] = steps.size() + 1;
-            steps.push_back(activitySelected);
-            
-            // 贪心选择后续活动
-            for (int i = 1; i < n; i++) {
-                int current = activities[i];
+            if (activities[i].second >= lastFinish) {
+                selected.push_back(i);
+                lastFinish = activities[i].first;
                 
-                if (start[current] >= lastEnd) {
-                    selected.push_back(current);
-                    lastEnd = end[current];
-                    
-                    json activitySelected = json::object();
-                    activitySelected["activity"] = current;
-                    activitySelected["start"] = start[current];
-                    activitySelected["end"] = end[current];
-                    activitySelected["step"] = steps.size() + 1;
-                    steps.push_back(activitySelected);
-                } else {
-                    json activitySelected = json::object();
-                    activitySelected["activity"] = current;
-                    activitySelected["start"] = start[current];
-                    activitySelected["end"] = end[current];
-                    activitySelected["step"] = steps.size() + 1;
-                    steps.push_back(activitySelected);
-                }
+                frames.push_back({
+                    {"activities", activities},
+                    {"selected", selected},
+                    {"currentIndex", i},
+                    {"lastSelected", i},
+                    {"lastFinish", lastFinish},
+                    {"selected", true}
+                });
             }
         }
         
-        // 构建结果
-        json result = json::object();
-        result["algorithm"] = "activitySelection";
-        json input = json::object();
-        input["start"] = start;
-        input["end"] = end;
-        result["input"] = input;
-        result["selected"] = selected;
-        result["steps"] = steps;
-        
-        // 更新数据库中的状态
-        db.updateGameState("greedy", result);
-        
-        return crow::response(200, ResponseBuilder::createSuccessResponse(result, "greedy").dump());
+        // 最终状态
+        frames.push_back({
+            {"activities", activities},
+            {"selected", selected},
+            {"currentIndex", -1},
+            {"completed", true}
+        });
+
+        json response = {
+            {"state", {
+                {"activities", activities},
+                {"selected", selected},
+                {"completed", true}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
+        };
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "greedy").dump());
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(
-            500, std::string("活动安排失败: ") + e.what(), "greedy").dump());
+            500, std::string("活动安排计算错误: ") + e.what(), "greedy").dump());
     }
 }
 
-// 贪心算法游戏操作 - 哈夫曼编码
-crow::response handleGreedyHuffman(const crow::request& req, Database& db) {
-    AnimationParams params = extractAnimationParams(req);
+// 哈夫曼编码的节点结构
+struct HuffmanNode {
+    std::string symbol;
+    int frequency;
+    std::string code;
+    HuffmanNode* left;
+    HuffmanNode* right;
     
+    HuffmanNode(std::string s, int f) : 
+        symbol(s), frequency(f), code(""), left(nullptr), right(nullptr) {}
+};
+
+// 用于优先队列的比较函数
+struct CompareNodes {
+    bool operator()(HuffmanNode* a, HuffmanNode* b) {
+        return a->frequency > b->frequency;
+    }
+};
+
+// 递归生成编码
+void generateCodes(HuffmanNode* node, std::string code, std::vector<json>& frames) {
+    if (node == nullptr) return;
+    
+    node->code = code;
+    
+    if (node->left == nullptr && node->right == nullptr) {
+        frames.push_back({
+            {"symbol", node->symbol},
+            {"frequency", node->frequency},
+            {"code", node->code},
+            {"type", "leaf"}
+        });
+    } else {
+        frames.push_back({
+            {"symbol", node->symbol},
+            {"frequency", node->frequency},
+            {"code", node->code},
+            {"type", "internal"}
+        });
+        generateCodes(node->left, code + "0", frames);
+        generateCodes(node->right, code + "1", frames);
+    }
+}
+
+// 清理哈夫曼树
+void cleanupHuffmanTree(HuffmanNode* node) {
+    if (node == nullptr) return;
+    cleanupHuffmanTree(node->left);
+    cleanupHuffmanTree(node->right);
+    delete node;
+}
+
+// 哈夫曼编码
+crow::response handleHuffman(const crow::request& req) {
     try {
-        // 解析请求体
-        json requestBody = json::parse(req.body);
+        auto reqJson = json::parse(req.body);
         
-        if (!requestBody.contains("chars") || !requestBody.contains("frequencies")) {
+        // 检查必要参数
+        if (!reqJson.contains("chars") || !reqJson.contains("freqs")) {
             return crow::response(400, ResponseBuilder::createErrorResponse(
-                400, "缺少必要参数：chars, frequencies", "greedy").dump());
+                400, "缺少chars或freqs参数", "greedy").dump());
         }
         
-        std::vector<std::string> chars = requestBody["chars"].get<std::vector<std::string>>();
-        std::vector<int> frequencies = requestBody["frequencies"].get<std::vector<int>>();
+        std::vector<std::string> chars = reqJson["chars"];
+        std::vector<int> freqs = reqJson["freqs"];
         
-        if (chars.size() != frequencies.size()) {
+        // 验证输入
+        if (chars.size() != freqs.size()) {
             return crow::response(400, ResponseBuilder::createErrorResponse(
-                400, "字符和频率数组长度必须相同", "greedy").dump());
+                400, "chars和freqs数组长度必须相同", "greedy").dump());
         }
         
-        // 定义哈夫曼树节点
-        struct Node {
-            std::string chars;
-            int frequency;
-            Node* left;
-            Node* right;
-            
-            Node(std::string c, int f) : chars(c), frequency(f), left(nullptr), right(nullptr) {}
-        };
+        if (chars.empty()) {
+            return crow::response(400, ResponseBuilder::createErrorResponse(
+                400, "输入数组不能为空", "greedy").dump());
+        }
+
+        // 创建优先队列
+        std::priority_queue<HuffmanNode*, std::vector<HuffmanNode*>, CompareNodes> pq;
+        std::vector<json> frames;
         
-        // 定义优先队列的比较函数
-        auto compare = [](Node* a, Node* b) { return a->frequency > b->frequency; };
-        std::priority_queue<Node*, std::vector<Node*>, decltype(compare)> pq(compare);
-        
-        // 记录构建步骤
-        std::vector<json> steps;
-        
-        // 创建叶子节点并加入优先队列
+        // 初始化叶子节点
         for (size_t i = 0; i < chars.size(); i++) {
-            pq.push(new Node(chars[i], frequencies[i]));
-            json stepObj = json::object();
-            stepObj["type"] = "leaf";
-            stepObj["char"] = chars[i];
-            stepObj["frequency"] = frequencies[i];
-            steps.push_back(stepObj);
+            pq.push(new HuffmanNode(chars[i], freqs[i]));
+            frames.push_back({
+                {"action", "create_leaf"},
+                {"symbol", chars[i]},
+                {"frequency", freqs[i]}
+            });
         }
         
         // 构建哈夫曼树
         while (pq.size() > 1) {
-            Node* left = pq.top(); pq.pop();
-            Node* right = pq.top(); pq.pop();
+            HuffmanNode* left = pq.top(); pq.pop();
+            HuffmanNode* right = pq.top(); pq.pop();
             
-            Node* parent = new Node(left->chars + right->chars, 
-                                  left->frequency + right->frequency);
+            frames.push_back({
+                {"action", "merge"},
+                {"left", {{"symbol", left->symbol}, {"frequency", left->frequency}}},
+                {"right", {{"symbol", right->symbol}, {"frequency", right->frequency}}}
+            });
+            
+            HuffmanNode* parent = new HuffmanNode(left->symbol + right->symbol, 
+                                                left->frequency + right->frequency);
             parent->left = left;
             parent->right = right;
-            
             pq.push(parent);
-            
-            json mergeStep = json::object();
-            mergeStep["type"] = "merge";
-            mergeStep["left"] = left->chars;
-            mergeStep["right"] = right->chars;
-            mergeStep["merged"] = parent->chars;
-            mergeStep["frequency"] = parent->frequency;
-            steps.push_back(mergeStep);
         }
         
         // 生成编码
-        std::map<std::string, std::string> codes;
-        std::function<void(Node*, std::string)> generateCodes = [&](Node* node, std::string code) {
-            if (!node) return;
-            
-            if (!node->left && !node->right) {
-                codes[node->chars] = code;
-                json codeStep = json::object();
-                codeStep["type"] = "code";
-                codeStep["char"] = node->chars;
-                codeStep["code"] = code;
-                steps.push_back(codeStep);
-            }
-            
-            generateCodes(node->left, code + "0");
-            generateCodes(node->right, code + "1");
-        };
+        HuffmanNode* root = pq.top();
+        std::vector<json> codeFrames;
+        generateCodes(root, "", codeFrames);
         
-        if (!pq.empty()) {
-            generateCodes(pq.top(), "");
+        // 收集结果
+        std::vector<json> results;
+        for (const auto& frame : codeFrames) {
+            if (frame["type"] == "leaf") {
+                results.push_back({
+                    {"symbol", frame["symbol"]},
+                    {"frequency", frame["frequency"]},
+                    {"code", frame["code"]}
+                });
+            }
         }
         
-        // 构建结果
-        json result = json::object();
-        result["algorithm"] = "huffman";
-        json input = json::object();
-        input["chars"] = chars;
-        input["frequencies"] = frequencies;
-        result["input"] = input;
-        result["codes"] = codes;
-        result["steps"] = steps;
-        
-        // 更新数据库中的状态
-        db.updateGameState("greedy", result);
+        // 构建最终响应
+        json response = {
+            {"state", {
+                {"codes", results},
+                {"completed", true}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"codeFrames", codeFrames},
+                {"totalSteps", frames.size() + codeFrames.size()},
+                {"speed", 5}
+            }}
+        };
         
         // 清理内存
-        std::function<void(Node*)> cleanup = [&](Node* node) {
-            if (!node) return;
-            cleanup(node->left);
-            cleanup(node->right);
-            delete node;
-        };
+        cleanupHuffmanTree(root);
         
-        if (!pq.empty()) {
-            cleanup(pq.top());
-        }
-        
-        return crow::response(200, ResponseBuilder::createSuccessResponse(result, "greedy").dump());
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "greedy").dump());
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(
-            500, std::string("构建哈夫曼编码失败: ") + e.what(), "greedy").dump());
+            500, std::string("哈夫曼编码计算错误: ") + e.what(), "greedy").dump());
+    }
+}
+
+// 活动安排（包含Database参数的版本）
+crow::response handleGreedyActivitySelection(const crow::request& req, Database& db) {
+    try {
+        // 调用原来的活动安排实现
+        crow::response result = handleActivitySelection(req);
+        
+        // 如果计算成功，更新数据库中的状态
+        if (result.code == 200) {
+            json resultData = json::parse(result.body);
+            if (resultData.contains("state")) {
+                db.updateGameState("greedy", resultData["state"]);
+            }
+        }
+        
+        return result;
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("活动安排计算失败: ") + e.what(), "greedy").dump());
+    }
+}
+
+// 哈夫曼编码（包含Database参数的版本）
+crow::response handleGreedyHuffman(const crow::request& req, Database& db) {
+    try {
+        // 调用原来的哈夫曼编码实现
+        crow::response result = handleHuffman(req);
+        
+        // 如果计算成功，更新数据库中的状态
+        if (result.code == 200) {
+            json resultData = json::parse(result.body);
+            if (resultData.contains("state")) {
+                db.updateGameState("greedy", resultData["state"]);
+            }
+        }
+        
+        return result;
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("哈夫曼编码计算失败: ") + e.what(), "greedy").dump());
     }
 } 

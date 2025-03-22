@@ -78,7 +78,8 @@ Component({
     
     // 自动播放计时器
     autoPlayTimer: null,
-    autoPlaySpeed: 800 // 毫秒
+    autoPlaySpeed: 800, // 毫秒
+    _baseAutoPlaySpeed: 800 // 基础自动播放速度
   },
 
   /**
@@ -213,20 +214,22 @@ Component({
     
     // 开始可视化
     startVisualization() {
-      // 重置状态
-      this.resetVisualization();
-      
-      if (this.data.isApiMode) {
-        this.startApiVisualization();
-      } else {
-        // 使用原有的本地实现
-        this.prepareVisualizationSteps();
-        this.setData({
-          isVisualizing: true,
-          currentStepIndex: -1
-        });
-        this.nextStep();
-      }
+      // 重置状态，避免循环调用reset API
+      this.setData({ _skipApiReset: false }, () => {
+        this.resetVisualization();
+        
+        if (this.data.isApiMode) {
+          this.startApiVisualization();
+        } else {
+          // 使用原有的本地实现
+          this.prepareVisualizationSteps();
+          this.setData({
+            isVisualizing: true,
+            currentStepIndex: -1
+          });
+          this.nextStep();
+        }
+      });
     },
 
     // 下一步
@@ -305,9 +308,10 @@ Component({
       // 清理定时器
       this.clearAutoPlayTimer();
       
-      // 如果是API模式，调用API重置
-      if (this.data.isApiMode) {
+      // 如果是API模式，调用API重置，但避免循环调用
+      if (this.data.isApiMode && !this.data._skipApiReset) {
         this.resetApi();
+        return; // 提前返回，避免重复重置
       }
       
       // 重置状态
@@ -338,7 +342,8 @@ Component({
         
         // 添加API相关状态重置
         isLoading: false,
-        apiError: ''
+        apiError: '',
+        _skipApiReset: false // 重置标记
       });
     },
 
@@ -352,16 +357,17 @@ Component({
       api.reset()
         .then(() => {
           console.log('贪心算法状态重置成功');
-          this.resetVisualization();
+          // 设置标记以避免循环调用
+          this.setData({ _skipApiReset: true }, () => {
+            this.resetVisualization();
+          });
         })
         .catch(error => {
           console.error('重置贪心算法状态失败:', error);
           this.setData({
-            apiError: '重置状态失败，请重试'
+            apiError: '重置状态失败，请重试',
+            isLoading: false
           });
-        })
-        .finally(() => {
-          this.setData({ isLoading: false });
         });
     },
 
@@ -601,6 +607,16 @@ Component({
       const { huffmanText } = this.data;
       const steps = [];
       
+      // 验证输入
+      if (!huffmanText || huffmanText.trim() === '') {
+        console.error('哈夫曼编码输入为空');
+        this.setData({
+          apiError: '请输入有效的文本内容',
+          isLoading: false
+        });
+        return;
+      }
+      
       // 统计字符频率
       const frequencyMap = new Map();
       for (const char of huffmanText) {
@@ -615,6 +631,16 @@ Component({
         status: ''
       }));
       
+      // 验证字符频率
+      if (charFrequencies.length === 0) {
+        console.error('没有有效的字符频率数据');
+        this.setData({
+          apiError: '文本解析错误，请检查输入',
+          isLoading: false
+        });
+        return;
+      }
+      
       // 初始化步骤
       steps.push({
         type: 'huffman-init',
@@ -623,18 +649,45 @@ Component({
         nodes: []
       });
       
-      // 创建初始节点
-      let nodes = charFrequencies.map((info, index) => ({
-        id: index,
-        char: info.char,
-        frequency: info.frequency,
-        left: null,
-        right: null,
-        x: 120 + index * 80,
-        y: 50,
-        status: '',
-        parent: null
-      }));
+      // 布局参数计算 - 基于字符数量动态调整
+      const containerWidth = 300; // 容器宽度约为300px
+      const containerHeight = 400; // 容器高度约为400px
+      const nodeCount = charFrequencies.length;
+      
+      // 计算树的最大可能深度
+      const maxDepth = Math.ceil(Math.log2(nodeCount + 1));
+      // 垂直间距根据深度动态调整
+      const verticalSpacing = Math.min(80, containerHeight / (maxDepth + 1));
+      
+      // 创建初始节点（叶子节点）
+      let nodes = charFrequencies.map((info, index) => {
+        // 在顶部均匀分布节点
+        const x = 30 + (index * (containerWidth - 60) / Math.max(1, nodeCount - 1));
+        return {
+          id: index,
+          char: info.char,
+          frequency: info.frequency,
+          left: null,
+          right: null,
+          x: x,
+          y: 40, // 放在顶部
+          status: '',
+          parent: null,
+          depth: maxDepth, // 从最大深度开始，向上构建树
+          position: index,
+          type: 'leaf'
+        };
+      });
+      
+      // 验证初始节点
+      if (nodes.length === 0) {
+        console.error('无法创建初始哈夫曼树节点');
+        this.setData({
+          apiError: '无法生成哈夫曼树',
+          isLoading: false
+        });
+        return;
+      }
       
       steps.push({
         type: 'huffman-nodes',
@@ -643,8 +696,53 @@ Component({
         nodes: [...nodes]
       });
       
+      // 特殊情况处理
+      if (nodes.length < 2) {
+        // 如果只有一个字符，为其分配编码"0"
+        if (nodes.length === 1) {
+          const singleChar = nodes[0];
+          const updatedFrequencies = charFrequencies.map(info => ({
+            ...info,
+            code: "0",
+            status: 'current'
+          }));
+          
+          steps.push({
+            type: 'huffman-result',
+            description: `只有一个字符'${singleChar.char}'，分配编码为"0"`,
+            charFrequencies: updatedFrequencies,
+            nodes: nodes,
+            result: {
+              originalLength: huffmanText.length * 8,
+              compressedLength: huffmanText.length,
+              compressionRatio: 87.5 // (1 - 1/8) * 100
+            }
+          });
+          
+          this.setData({
+            visualizationSteps: steps
+          });
+          return;
+        }
+        
+        console.error('哈夫曼树节点数量不足');
+        this.setData({
+          apiError: '字符种类太少，无法构建哈夫曼树',
+          isLoading: false
+        });
+        return;
+      }
+      
+      // 记录所有创建的节点，用于后续引用
+      let allNodesMap = {};
+      nodes.forEach(node => {
+        allNodesMap[node.id] = node;
+      });
+      
       // 构建哈夫曼树
       let nodeId = nodes.length;
+      let currentDepth = 1; // 从深度1开始（叶子节点为0）
+      
       while (nodes.length > 1) {
         // 选择频率最小的两个节点
         nodes.sort((a, b) => a.frequency - b.frequency);
@@ -665,18 +763,26 @@ Component({
           nodes: nodesWithStatus
         });
         
-        // 创建新节点
+        // 创建新节点 - 位置计算为两个子节点的中间位置
         const newNode = {
           id: nodeId++,
           char: null,
           frequency: left.frequency + right.frequency,
           left: left.id,
           right: right.id,
+          // 水平位置是两个子节点的平均值
           x: (left.x + right.x) / 2,
-          y: Math.max(left.y, right.y) + 80,
+          // 垂直位置根据深度计算，从上往下
+          y: 40 + ((maxDepth - currentDepth) * verticalSpacing),
           status: 'current',
-          parent: null
+          parent: null,
+          depth: maxDepth - currentDepth,
+          position: (left.position + right.position) / 2,
+          type: 'internal'
         };
+        
+        // 保存新节点到映射表
+        allNodesMap[newNode.id] = newNode;
         
         // 更新子节点的父节点
         let updatedNodes = nodesWithStatus.map(node => {
@@ -699,20 +805,41 @@ Component({
         // 移除已处理的节点，添加新节点
         nodes = nodes.slice(2);
         nodes.push(newNode);
+        
+        // 如果当前深度的所有节点都已处理，增加深度
+        if (nodes.length > 1 && nodes.every(node => node.depth >= currentDepth)) {
+          currentDepth++;
+        }
       }
       
       // 根节点
       const root = nodes[0];
       
+      // 平衡调整树的布局
+      this.balanceHuffmanTree(allNodesMap);
+      
+      // 收集所有节点进行最终展示
+      const allNodes = Object.values(allNodesMap);
+      
+      steps.push({
+        type: 'huffman-tree',
+        description: '哈夫曼树构建完成',
+        charFrequencies,
+        nodes: allNodes.map(node => ({
+          ...node,
+          status: node.id === root.id ? 'current' : node.status
+        }))
+      });
+      
       // 生成哈夫曼编码
-      const codes = {};
-      this.generateHuffmanCodes(charFrequencies, steps, root.id, '', {});
+      this.generateHuffmanCodes(charFrequencies, steps, root.id, '', {}, allNodesMap);
       
       // 计算压缩效果
       const originalLength = huffmanText.length * 8; // 假设原始文本每个字符8位
       let compressedLength = 0;
       for (const char of huffmanText) {
-        compressedLength += charFrequencies.find(info => info.char === char).code.length;
+        const codeLength = charFrequencies.find(info => info.char === char)?.code?.length || 0;
+        compressedLength += codeLength;
       }
       
       const compressionRatio = Math.round((1 - compressedLength / originalLength) * 100);
@@ -722,7 +849,7 @@ Component({
         type: 'huffman-result',
         description: `哈夫曼编码完成，压缩率为 ${compressionRatio}%`,
         charFrequencies,
-        nodes: nodes[0].status === 'current' ? nodes : nodes.map(node => ({
+        nodes: allNodes.map(node => ({
           ...node,
           status: node.id === root.id ? 'current' : node.status
         })),
@@ -738,18 +865,206 @@ Component({
       });
     },
 
+    // 平衡哈夫曼树布局
+    balanceHuffmanTree(nodesMap) {
+      const nodes = Object.values(nodesMap);
+      
+      // 按深度分组节点
+      const nodesByDepth = {};
+      nodes.forEach(node => {
+        if (!nodesByDepth[node.depth]) {
+          nodesByDepth[node.depth] = [];
+        }
+        nodesByDepth[node.depth].push(node);
+      });
+      
+      // 容器宽度
+      const containerWidth = 300;
+      const margin = 20;
+      const availableWidth = containerWidth - 2 * margin;
+      
+      // 从底层到顶层调整节点位置
+      const depths = Object.keys(nodesByDepth).sort((a, b) => b - a); // 从大到小排序
+      
+      // 先调整叶子节点（最底层）
+      if (nodesByDepth[0] && nodesByDepth[0].length > 0) {
+        const leafNodes = nodesByDepth[0];
+        const leafCount = leafNodes.length;
+        
+        // 均匀分布叶子节点
+        leafNodes.sort((a, b) => a.position - b.position);
+        for (let i = 0; i < leafCount; i++) {
+          const node = leafNodes[i];
+          node.x = margin + (i * availableWidth / (leafCount - 1 || 1));
+        }
+      }
+      
+      // 从底向上调整每一层的节点位置
+      for (let i = 1; i < depths.length; i++) {
+        const depth = depths[i];
+        const currentNodes = nodesByDepth[depth];
+        
+        for (const node of currentNodes) {
+          if (node.left !== null && node.right !== null) {
+            const leftNode = nodesMap[node.left];
+            const rightNode = nodesMap[node.right];
+            
+            if (leftNode && rightNode) {
+              // 将内部节点放在其子节点的中间位置
+              node.x = (leftNode.x + rightNode.x) / 2;
+            }
+          }
+        }
+      }
+    },
+
+    // 绘制哈夫曼树连线
+    drawHuffmanLines(nodes) {
+      // 使用canvas画线
+      const query = this.createSelectorQuery();
+      query.select('#huffman-canvas').fields({ node: true, size: true })
+        .exec((res) => {
+          if (!res[0] || !res[0].node) return;
+          
+          const canvas = res[0].node;
+          const ctx = canvas.getContext('2d');
+          
+          // 设置canvas尺寸
+          const dpr = wx.getSystemInfoSync().pixelRatio;
+          canvas.width = res[0].width * dpr;
+          canvas.height = res[0].height * dpr;
+          ctx.scale(dpr, dpr);
+          
+          // 清空画布
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // 性能优化：预计算所有节点父子关系对，避免重复查询
+          const nodeRelations = [];
+          for (const node of nodes) {
+            if (node.parent !== null) {
+              const parent = nodes.find(n => n.id === node.parent);
+              if (parent) {
+                nodeRelations.push({
+                  node,
+                  parent,
+                  isLeft: parent.left === node.id
+                });
+              }
+            }
+          }
+          
+          // 节点半径
+          const nodeRadius = 15;
+          
+          // 绘制所有连线
+          for (const relation of nodeRelations) {
+            const { node, parent, isLeft } = relation;
+            
+            // 计算节点中心坐标
+            const startX = node.x + nodeRadius;
+            const startY = node.y + nodeRadius;
+            const endX = parent.x + nodeRadius;
+            const endY = parent.y + nodeRadius;
+            
+            // 计算节点边缘的连接点
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const startOutX = startX + Math.cos(angle) * nodeRadius;
+            const startOutY = startY + Math.sin(angle) * nodeRadius;
+            const endOutX = endX - Math.cos(angle) * nodeRadius;
+            const endOutY = endY - Math.sin(angle) * nodeRadius;
+            
+            // 绘制连线
+            ctx.beginPath();
+            ctx.strokeStyle = isLeft ? '#3498db' : '#e74c3c'; // 左子树蓝色，右子树红色
+            ctx.lineWidth = 2;
+            
+            // 创建曲线连接，使用二次贝塞尔曲线
+            // 控制点位于两节点连线的中点，但向侧面偏移一些
+            const midX = (startOutX + endOutX) / 2;
+            const midY = (startOutY + endOutY) / 2;
+            
+            // 偏移距离 - 根据两点距离计算
+            const dx = endOutX - startOutX;
+            const dy = endOutY - startOutY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // 控制点垂直于连线方向偏移
+            const offsetAmount = Math.min(25, dist / 4); // 根据距离动态调整偏移量
+            const dirX = -dy / dist; // 垂直于连线方向的单位向量
+            const dirY = dx / dist;
+            
+            const ctrlX = midX + dirX * offsetAmount * (isLeft ? -1 : 1);
+            const ctrlY = midY + dirY * offsetAmount * (isLeft ? -1 : 1);
+            
+            // 绘制二次贝塞尔曲线
+            ctx.moveTo(startOutX, startOutY);
+            ctx.quadraticCurveTo(ctrlX, ctrlY, endOutX, endOutY);
+            ctx.stroke();
+            
+            // 添加高亮效果
+            ctx.beginPath();
+            ctx.strokeStyle = isLeft ? 'rgba(52, 152, 219, 0.3)' : 'rgba(231, 76, 60, 0.3)'; // 半透明辅助线
+            ctx.lineWidth = 6;
+            ctx.moveTo(startOutX, startOutY);
+            ctx.quadraticCurveTo(ctrlX, ctrlY, endOutX, endOutY);
+            ctx.stroke();
+            
+            // 绘制0/1标签
+            // 贝塞尔曲线上的点 B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
+            const t = 0.5; // 贝塞尔曲线参数，取中点
+            const labelX = (1-t)*(1-t)*startOutX + 2*(1-t)*t*ctrlX + t*t*endOutX;
+            const labelY = (1-t)*(1-t)*startOutY + 2*(1-t)*t*ctrlY + t*t*endOutY;
+            
+            // 添加0/1标签背景
+            ctx.fillStyle = isLeft ? 'rgba(52, 152, 219, 0.9)' : 'rgba(231, 76, 60, 0.9)';
+            ctx.beginPath();
+            ctx.arc(labelX, labelY, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 添加边框
+            ctx.strokeStyle = isLeft ? '#2980b9' : '#c0392b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // 绘制0/1标签
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(isLeft ? '0' : '1', labelX, labelY);
+          }
+        });
+    },
+
     // 递归生成哈夫曼编码
-    generateHuffmanCodes(charFrequencies, steps, nodeId, code, visited, allNodes = null) {
+    generateHuffmanCodes(charFrequencies, steps, nodeId, code, visited, allNodesMap = null) {
+      // 检查是否已访问该节点
+      if (!visited) {
+        visited = {};
+      }
       if (visited[nodeId]) return;
       visited[nodeId] = true;
       
-      // 获取节点
-      let nodes = allNodes;
-      if (!nodes) {
-        nodes = this.data.visualizationSteps.find(step => step.type === 'huffman-merge').nodes;
+      // 从节点映射中获取节点
+      let node;
+      if (allNodesMap && allNodesMap[nodeId]) {
+        node = allNodesMap[nodeId];
+      } else {
+        // 从最近的步骤中查找节点
+        const recentSteps = steps.slice().reverse();
+        for (const step of recentSteps) {
+          if (step.nodes && step.nodes.length > 0) {
+            node = step.nodes.find(n => n.id === nodeId);
+            if (node) break;
+          }
+        }
       }
       
-      const node = nodes.find(n => n.id === nodeId);
+      // 如果找不到节点，返回
+      if (!node) {
+        console.error(`找不到ID为${nodeId}的节点`);
+        return;
+      }
       
       // 如果是叶子节点
       if (node.char !== null) {
@@ -761,8 +1076,17 @@ Component({
           return info;
         });
         
+        // 获取最近一次步骤中的所有节点
+        let latestNodes = [];
+        for (let i = steps.length - 1; i >= 0; i--) {
+          if (steps[i].nodes && steps[i].nodes.length > 0) {
+            latestNodes = steps[i].nodes;
+            break;
+          }
+        }
+        
         // 更新节点状态
-        const newNodes = nodes.map(n => {
+        const newNodes = latestNodes.map(n => {
           if (n.id === nodeId) {
             return { ...n, status: 'current' };
           }
@@ -781,11 +1105,21 @@ Component({
       
       // 递归处理左子树和右子树
       if (node.left !== null) {
-        this.generateHuffmanCodes(charFrequencies, steps, node.left, code + '0', visited, nodes);
+        // 使用节点映射检查左子节点是否存在
+        if (allNodesMap && allNodesMap[node.left]) {
+          this.generateHuffmanCodes(charFrequencies, steps, node.left, code + '0', visited, allNodesMap);
+        } else {
+          console.error(`找不到左子节点ID为${node.left}的节点`);
+        }
       }
       
       if (node.right !== null) {
-        this.generateHuffmanCodes(charFrequencies, steps, node.right, code + '1', visited, nodes);
+        // 使用节点映射检查右子节点是否存在
+        if (allNodesMap && allNodesMap[node.right]) {
+          this.generateHuffmanCodes(charFrequencies, steps, node.right, code + '1', visited, allNodesMap);
+        } else {
+          console.error(`找不到右子节点ID为${node.right}的节点`);
+        }
       }
     },
 
@@ -807,6 +1141,16 @@ Component({
         this.executeActivityStep(step);
       } else if (type === 'huffman') {
         this.executeHuffmanStep(step);
+      }
+      
+      // 动态调整自动播放速度
+      if (this.data.isAutoPlaying) {
+        // 复杂步骤给予更多时间
+        if (step.type.includes('result') || step.type.includes('select') || step.type.includes('merge')) {
+          this.adjustAutoPlaySpeed(1.5); // 放慢速度
+        } else {
+          this.adjustAutoPlaySpeed(1); // 恢复正常速度
+        }
       }
     },
 
@@ -884,10 +1228,35 @@ Component({
       if (step.nodes) {
         this.setData({
           huffmanNodes: step.nodes
+        }, () => {
+          // 在节点更新后立即绘制连线
+          this.drawHuffmanLines(step.nodes);
+          
+          // 如果是特殊步骤，可以添加额外的动画或效果
+          if (subType === 'merge' || subType === 'select') {
+            // 可以添加额外的合并或选择动画
+            // 例如，闪烁当前选中的节点
+            setTimeout(() => {
+              const highlightedNodes = step.nodes.map(node => {
+                if (node.status === 'current') {
+                  return {...node, status: 'current'};
+                }
+                return node;
+              });
+              
+              this.setData({
+                huffmanNodes: highlightedNodes
+              });
+              
+              this.drawHuffmanLines(highlightedNodes);
+            }, 100);
+          }
         });
-        
-        // 绘制连线
-        this.drawHuffmanLines(step.nodes);
+      } else {
+        // 如果步骤没有更新节点，但有之前的节点，仍然需要绘制连线
+        if (this.data.huffmanNodes && this.data.huffmanNodes.length > 0) {
+          this.drawHuffmanLines(this.data.huffmanNodes);
+        }
       }
       
       // 更新结果
@@ -896,53 +1265,6 @@ Component({
           huffmanResult: step.result
         });
       }
-    },
-
-    // 绘制哈夫曼树连线
-    drawHuffmanLines(nodes) {
-      // 使用canvas画线
-      const query = this.createSelectorQuery();
-      query.select('#huffman-canvas').fields({ node: true, size: true })
-        .exec((res) => {
-          if (!res[0] || !res[0].node) return;
-          
-          const canvas = res[0].node;
-          const ctx = canvas.getContext('2d');
-          
-          // 设置canvas尺寸
-          const dpr = wx.getSystemInfoSync().pixelRatio;
-          canvas.width = res[0].width * dpr;
-          canvas.height = res[0].height * dpr;
-          ctx.scale(dpr, dpr);
-          
-          // 清空画布
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-          // 画连线
-          ctx.strokeStyle = '#aaa';
-          ctx.lineWidth = 2;
-          
-          for (const node of nodes) {
-            if (node.parent !== null) {
-              const parent = nodes.find(n => n.id === node.parent);
-              if (parent) {
-                ctx.beginPath();
-                ctx.moveTo(node.x + 40, node.y + 40);
-                ctx.lineTo(parent.x + 40, parent.y + 40);
-                ctx.stroke();
-                
-                // 添加 0/1 标签
-                const isLeft = parent.left === node.id;
-                const labelX = (node.x + parent.x) / 2 + 10;
-                const labelY = (node.y + parent.y) / 2 - 10;
-                
-                ctx.fillStyle = '#333';
-                ctx.font = '12px sans-serif';
-                ctx.fillText(isLeft ? '0' : '1', labelX, labelY);
-              }
-            }
-          }
-        });
     },
 
     // API相关方法
@@ -1003,14 +1325,37 @@ Component({
           break;
         case 'activity':
           apiMethod = api.activitySelection;
+          // 修改为后端期望的参数格式
+          const start = [];
+          const finish = [];
+          this.data.activities.forEach(activity => {
+            start.push(activity.start);
+            finish.push(activity.end);
+          });
           requestData = {
-            activities: this.data.activities
+            start: start,
+            finish: finish
           };
           break;
         case 'huffman':
-          apiMethod = api.huffmanCoding;
+          apiMethod = api.huffman;
+          // 修改为后端期望的参数格式 - 计算字符频率
+          const text = this.data.huffmanText;
+          const charFreqMap = new Map();
+          for (const char of text) {
+            charFreqMap.set(char, (charFreqMap.get(char) || 0) + 1);
+          }
+          
+          const chars = [];
+          const freqs = [];
+          charFreqMap.forEach((freq, char) => {
+            chars.push(char);
+            freqs.push(freq);
+          });
+          
           requestData = {
-            text: this.data.huffmanText
+            chars: chars,
+            freqs: freqs
           };
           break;
         default:
@@ -1020,6 +1365,16 @@ Component({
           });
           return;
       }
+      
+      if (!apiMethod) {
+        this.setData({
+          apiError: `无法找到${greedyType}算法的API方法`,
+          isLoading: false
+        });
+        return;
+      }
+      
+      console.log(`发送${greedyType}算法请求:`, requestData);
       
       apiMethod(requestData, true, animationSpeed)
         .then(response => {
@@ -1130,6 +1485,26 @@ Component({
         
         return step;
       });
+    },
+
+    // 动态调整自动播放速度
+    adjustAutoPlaySpeed(factor) {
+      if (!this.data.isAutoPlaying) return;
+      
+      // 保存当前速度设置
+      const baseSpeed = this.data.autoPlaySpeed;
+      
+      // 如果因子与当前设置不同，则调整速度
+      const adjustedSpeed = Math.round(this.data._baseAutoPlaySpeed * factor);
+      if (baseSpeed !== adjustedSpeed) {
+        // 停止当前计时器
+        this.clearAutoPlayTimer();
+        
+        // 设置新速度并重启计时器
+        this.setData({ autoPlaySpeed: adjustedSpeed }, () => {
+          this.startAutoPlay();
+        });
+      }
     }
   }
 }) 

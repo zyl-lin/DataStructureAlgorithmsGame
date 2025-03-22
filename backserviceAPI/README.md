@@ -1216,7 +1216,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - RESTful API设计模式
 - 模块化响应生成机制
 
-### 修改了哪些文件
+### 修改的文件
 - src/server/response_builder.h - 修改了createSuccessResponse方法，将数据封装在state字段内
 
 ## 2024-03-10 二叉树节点布局优化
@@ -1294,7 +1294,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - nlohmann/json库
 - 二叉树遍历算法
 
-### 修改了哪些文件
+### 修改的文件
 - src/server/game_animation_routes.cpp - 修改了前序遍历函数中的JSON数据构建方式
 
 ## 2023年3月21日更新 - 添加数据结构重置接口
@@ -1850,9 +1850,511 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - nlohmann/json库
 - 自定义动画管理器
 
-### 修改了哪些文件
+### 修改的文件
 1. src/server/animation/game_interaction_handler.h - 新增游戏交互处理头文件
 2. src/server/animation/game_interaction_handler.cpp - 新增游戏交互处理实现
 3. src/server/animation/animation_routes.h - 更新动画路由声明
 4. src/server/animation/animation_routes.cpp - 实现动画路由注册和处理函数
 5. API设计.txt - 添加新的游戏元素交互API说明
+
+## 2024-03-23 10:00:00
+
+### 会话的主要目的
+实现动画会话创建接口，为前端提供统一的会话管理机制
+
+### 完成的主要任务
+1. 设计并实现了动画会话创建API（/api/animation/create-session）
+2. 为各种数据结构和算法游戏类型实现了初始状态生成函数
+3. 更新了API设计文档，添加了会话创建接口的详细说明
+4. 创建了测试脚本，用于验证API的功能
+
+### 关键决策和解决方案
+1. 基于游戏类型（linkedlist、stack、queue等）创建特定的初始状态
+2. 使用会话ID机制关联后续的所有操作，确保状态一致性
+3. 为每种游戏类型设计了合适的初始数据结构和视觉布局
+4. 提供了PowerShell和Bash两种测试脚本，方便不同平台的开发者测试
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 自定义动画管理器
+- PowerShell和Bash脚本
+
+### 修改的文件
+1. src/server/animation/animation_routes.h - 添加会话管理和初始状态函数声明
+2. src/server/animation/animation_routes.cpp - 实现会话创建接口和各类初始状态函数
+3. API设计.txt - 更新API文档，添加会话创建接口说明
+4. test_interaction_api.ps1 - 更新PowerShell测试脚本
+5. test_interaction_api.sh - 更新Bash测试脚本
+6. README.md - 添加本次会话总结
+
+## 2024-03-24 11:30:00
+
+### 会话的主要目的
+扩展动画会话创建接口，增加对动态规划和贪心算法游戏类型的支持
+
+### 完成的主要任务
+1. 为动态规划和贪心算法实现了初始状态生成函数
+2. 在会话创建接口中添加了对新游戏类型的处理逻辑
+3. 更新了API设计文档，添加了对新游戏类型的支持说明
+4. 更新了测试脚本，增加了对新游戏类型的测试用例
+
+### 关键决策和解决方案
+1. 为动态规划问题设计了表格式可视化布局，展示斐波那契数列计算过程
+2. 为贪心算法设计了硬币找零问题的初始状态，包括不同面值硬币的视觉表示
+3. 在初始状态中添加了状态标记（如"computed"、"pending"等），便于前端进行差异化渲染
+4. 实现了依赖关系表示，用于展示动态规划问题中的子问题依赖
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 自定义动画管理器
+- PowerShell和Bash脚本
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp - 添加动态规划和贪心算法的初始状态生成函数
+2. src/server/animation/animation_routes.h - 添加函数声明
+3. API设计.txt - 更新会话创建接口说明，添加新的游戏类型
+4. test_interaction_api.ps1 - 添加新游戏类型的测试代码
+5. test_interaction_api.sh - 添加新游戏类型的测试代码
+6. README.md - 添加本次会话总结
+
+## 2024-03-26 API兼容性检查脚本调试
+
+### 会话主要目的
+解决API兼容性检查脚本在Windows环境下的运行问题，以及分析API访问不一致的情况。
+
+### 完成的主要任务
+1. 修改脚本默认主机地址为实际服务地址
+2. 提供在Git Bash中正确运行脚本的步骤
+3. 分析并提出API访问不一致的可能原因
+
+### 关键决策和解决方案
+- 将默认主机地址从localhost:3000改为192.168.56.128:3000
+- 确定需要在Git Bash而不是PowerShell中运行脚本
+- 建议检查服务器端路由配置以解决API访问不一致问题
+
+### 使用的技术栈
+- Bash脚本
+- Node.js API服务
+- Git Bash
+- Windows PowerShell
+
+### 修改的文件
+- api-compatibility-check.sh
+- README.md
+
+## 2024-03-26 API兼容性测试和服务器配置修复
+
+### 会话主要目的
+分析API兼容性测试结果，修复服务器配置和基础路由问题。
+
+### 完成的主要任务
+1. 分析了API测试结果，识别出各类API的问题
+2. 修改服务器端口从8080到3000
+3. 添加基础路由 `/` 和 `/health`
+
+### 关键决策和解决方案
+- 发现并分类了API问题：
+  - 基础路由缺失
+  - 二叉树API部分实现有错误
+  - 排序算法API未实现
+  - 部分高级算法实现有问题
+- 优先修复基础配置问题
+- 制定了分步骤的修复计划
+
+### 使用的技术栈
+- C++ 服务器
+- HTTP/REST API
+- JSON处理
+- Socket编程
+
+### 修改的文件
+- src/server.cpp
+
+## 2024-03-26 排序算法API实现
+
+### 会话主要目的
+实现排序算法相关的API接口，包括冒泡排序、选择排序、插入排序和快速排序。
+
+### 完成的主要任务
+1. 实现了排序算法的状态管理API（获取状态和重置）
+2. 实现了四种排序算法的API接口：
+   - 冒泡排序（bubbleSort）
+   - 选择排序（selectionSort）
+   - 插入排序（insertionSort）
+   - 快速排序（quickSort）
+3. 为每种排序算法添加了动画帧生成功能
+4. 实现了错误处理和参数验证
+
+### 关键决策和解决方案
+- 使用统一的状态格式：array、sorted、currentIndex、comparingIndex
+- 为每个排序步骤生成动画帧，记录数组状态变化
+- 实现了递归的快速排序算法，并生成对应的动画帧
+- 使用try-catch进行错误处理，返回合适的错误信息
+- 所有API返回统一的JSON格式，包含状态和动画信息
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL算法和容器
+- RESTful API设计
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+  - 添加了排序算法相关的处理函数
+  - 添加了排序算法的路由注册
+
+## 2024-03-26 动态规划和贪心算法API修复
+
+### 会话主要目的
+修复动态规划和贪心算法相关API的参数验证和错误处理问题。
+
+### 完成的主要任务
+1. 修复了斐波那契数列API的参数验证和错误处理
+2. 重构了活动安排API的实现逻辑
+3. 优化了哈夫曼编码API的数据结构和内存管理
+4. 为所有算法添加了动画帧生成功能
+
+### 关键决策和解决方案
+- 统一使用JSON请求体传递参数，替代URL参数
+- 增强了参数验证，提供更清晰的错误提示
+- 优化了数据结构，使用智能指针管理内存
+- 为每个算法步骤生成动画帧，支持可视化展示
+- 使用try-catch进行异常处理，确保API稳定性
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL容器和算法
+- 面向对象编程（哈夫曼树实现）
+
+### 修改的文件
+1. src/server/dp_routes.cpp
+   - 修复了斐波那契数列API实现
+2. src/server/greedy_routes.cpp
+   - 重构了活动安排API
+   - 优化了哈夫曼编码API
+
+## 2025-03-21
+
+### 会话主要目的
+修复排序算法路由处理函数命名不一致导致的编译错误
+
+### 完成的主要任务
+- 诊断了函数名不匹配和函数签名不一致的编译错误
+- 修改了排序算法相关的路由处理函数名称和参数
+
+### 关键决策和解决方案
+- 将不正确的函数名(handleBubbleSort等)修改为与头文件声明一致的名称(handleSortingBubbleSort等)
+- 为所有排序函数添加了缺失的Database&参数
+- 修改了路由注册方式，确保正确传递数据库参数
+
+### 使用的技术栈
+- C++
+- Crow Web框架
+- RESTful API
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+
+## 2025-03-21
+
+### 会话主要目的
+解决Linux服务器编译时虚拟内存不足的问题
+
+### 完成的主要任务
+- 分析了"virtual memory exhausted"编译错误的原因
+- 提供了多种增加虚拟内存和减少编译内存消耗的方法
+
+### 关键决策和解决方案
+- 建议添加交换空间以增加可用虚拟内存
+- 推荐使用低优化级别(-O0)和单线程编译(-j1)以减少内存消耗
+- 提供了分割大型源文件的建议以减少单个编译单元的内存需求
+
+### 使用的技术栈
+- Linux内存管理
+- CMake构建系统
+- GCC/G++编译优化
+- 交换空间配置
+
+### 修改的文件
+- README.md（添加本次会话总结）
+
+## 2025-03-21
+
+### 会话主要目的
+解决函数定义缺失导致的链接错误
+
+### 完成的主要任务
+- 分析了"undefined reference"链接错误
+- 发现了函数声明与实现不匹配的问题
+- 添加了缺失的函数实现
+
+### 关键决策和解决方案
+- 在dp_routes.cpp中添加了handleDPFibonacci函数实现
+- 在greedy_routes.cpp中添加了handleGreedyActivitySelection和handleGreedyHuffman函数实现
+- 新函数通过包装已有实现，并添加数据库状态更新功能
+
+### 使用的技术栈
+- C++
+- Crow Web框架
+- nlohmann/json库
+- RESTful API
+
+### 修改的文件
+- src/server/dp_routes.cpp
+- src/server/greedy_routes.cpp
+- README.md（添加本次会话总结）
+
+## 2025-03-21
+
+### 会话主要目的
+修复API兼容性检查脚本的语法错误
+
+### 完成的主要任务
+- 分析了sh运行bash脚本时出现的语法错误
+- 修改了shell脚本以兼容sh/dash解释器
+
+### 关键决策和解决方案
+- 移除了bash特有的function关键字
+- 保留了脚本的核心功能
+- 提供了多种运行脚本的选项
+
+### 使用的技术栈
+- Shell脚本
+- Curl (用于API测试)
+- RESTful API测试
+
+### 修改的文件
+- api-compatibility-check.sh
+- README.md
+
+## 2025-03-21
+
+### 会话主要目的
+修复API兼容性测试中发现的问题
+
+### 完成的主要任务
+- 添加缺失的根路径和健康检查接口
+- 实现缺失的图路径查找功能
+- 修复二叉树插入和遍历接口的错误
+
+### 关键决策和解决方案
+- 将健康检查路径从"/api/health"改为"/health"以符合测试要求
+- 添加根路径接口以返回API服务基本信息
+- 实现handleGraphFindPath函数并注册路由
+- 修复recalculateTreeLayout函数调用缺少参数的问题
+- 改进二叉树遍历函数，当树为空时返回200状态码而不是400错误
+
+### 使用的技术栈
+- C++
+- Crow Web框架
+- nlohmann/json库
+- RESTful API
+
+### 修改的文件
+- src/server/main.cpp
+- src/server/game_animation_routes.cpp
+- README.md
+
+## 2025-03-21
+
+### 会话主要目的
+修复数据结构与算法教学游戏后端API服务中的JSON语法错误
+
+### 完成的主要任务
+- 诊断了二叉树遍历相关代码中的JSON格式错误
+- 修复了所有相关位置的JSON对象初始化语法
+
+### 关键决策和解决方案
+- 将JavaScript风格的JSON对象格式 `{"key": value}` 修改为C++ nlohmann/json库要求的 `{{"key", value}}` 格式
+- 修复了四处类似的错误，涉及前序、中序、后序和层序遍历的空状态初始化
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+
+## 2025-03-21
+
+### 会话主要目的
+修复数据结构与算法教学游戏后端API服务中的图路径查找功能的编译错误
+
+### 完成的主要任务
+- 诊断并修复了缺少`<set>`头文件导致的编译错误
+- 修复了JSON对象初始化语法问题
+
+### 关键决策和解决方案
+- 添加了`<set>`头文件以支持使用`std::set`
+- 将JSON对象的初始化方式从`{ }`格式修改为明确的`json{ }`格式
+- 修复了三处类似的错误，确保正确创建JSON对象
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- STL容器（std::set）
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+
+## 2025-03-21
+
+### 会话主要目的
+修复数据结构与算法教学游戏后端API中的二叉树插入和图路径查找功能
+
+### 完成的主要任务
+- 修复了二叉树节点插入API返回500错误的问题
+- 增强了图路径查找API的错误处理机制
+- 改进了两个API的JSON对象初始化和状态管理逻辑
+
+### 关键决策和解决方案
+- 将JSON对象初始化从大括号语法更改为明确的`json{}`语法
+- 增加了图路径查找API的请求体验证和错误处理
+- 为图路径查找添加了对空图状态的处理逻辑
+- 修复了节点ID处理中的类型转换问题
+- 优化了动画帧生成逻辑，只在需要时生成动画
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- STL容器和算法
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+
+## 2024-03-22 API修复
+
+### 会话主要目的
+修复数据结构与算法教学游戏后端API中的二叉树插入和图路径查找功能
+
+### 完成的主要任务
+1. 修复了二叉树节点插入API返回500错误的问题
+2. 增强了图路径查找API的错误处理机制
+3. 改进了两个API的JSON对象初始化和状态管理逻辑
+
+### 关键决策和解决方案
+1. 将JSON对象初始化从大括号语法更改为明确的`json{}`语法
+2. 增加了图路径查找API的参数类型支持，同时接受字符串和数字类型的节点ID
+3. 为图路径查找添加了更详细的错误提示信息
+4. 统一了参数处理方式，将所有节点ID转换为字符串格式
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- STL容器和算法
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+  - 修复了handleBinaryTreeInsert函数中的JSON初始化语法
+  - 改进了handleGraphFindPath函数的参数处理逻辑
+- README.md
+
+## 2024-03-22 图算法API增强
+
+### 会话主要目的
+改进图算法API的节点标识处理，使其能够同时支持数字ID和字母标签。
+
+### 完成的主要任务
+1. 增强了图路径查找API的节点标识处理能力
+2. 修复了图路径查找API返回400错误的问题
+3. 确保了与图的DFS遍历等其他操作的一致性
+
+### 关键决策和解决方案
+1. 实现了多格式节点标识支持：
+   - 支持数字ID（如0、1、2）
+   - 支持字母标签（如A、B、C）
+2. 改进了节点查找逻辑：
+   - 优先尝试数字ID转换
+   - 失败时尝试通过label查找
+   - 最后尝试直接ID匹配
+3. 统一了内部处理方式，确保所有节点引用使用统一的格式
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- STL容器和算法
+- 字符串处理和类型转换
+
+### 修改的文件
+- src/server/game_animation_routes.cpp
+  - 改进了handleGraphFindPath函数的节点标识处理逻辑
+- README.md
+
+## 2024-03-23 用户资料更新与进度同步API修复
+
+### 会话主要目的
+修复API测试脚本中发现的用户资料更新和游戏进度同步功能的问题。
+
+### 完成的主要任务
+1. 修复了用户资料更新API无法处理nickname和avatar字段的问题
+2. 增强了用户游戏进度同步API，使其支持单个进度对象格式
+
+### 关键决策和解决方案
+1. 用户资料更新：
+   - 在updateUserProfile函数中添加了对nickname和avatar字段的支持
+   - 保持了原有字段（email和password）的处理逻辑不变
+2. 游戏进度同步：
+   - 增加了对单个游戏进度对象格式的支持
+   - 实现了对completed布尔值的处理，自动转换为状态字符串
+   - 添加了对score字段的处理
+   - 保留了对原有数组格式的兼容性
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- SQLite数据库
+
+### 修改的文件
+- src/server/database.cpp
+  - 增强了updateUserProfile函数，支持更多字段
+  - 改进了syncUserProgress函数，支持更灵活的数据格式
+
+## 2024-03-24 用户资料更新与进度同步API增强
+
+### 会话主要目的
+解决用户资料更新与游戏进度同步功能的问题，增强API的灵活性和健壮性。
+
+### 完成的主要任务
+1. 修复了用户资料更新API，添加了对name字段的支持
+2. 全面改进了游戏进度同步API，支持多种数据格式和字段名称
+3. 增强了API文档，添加了详细的请求和响应格式说明
+
+### 关键决策和解决方案
+1. 用户资料更新：
+   - 添加了对name字段的支持，使用户可以更新个人名称
+   - 保持了原有nickname、avatar、email和password字段的处理逻辑
+2. 游戏进度同步：
+   - 实现了多种数据格式支持：单个对象、数组和包装对象
+   - 添加了对不同命名风格的支持（gameId/game_id, levelId/level_id）
+   - 增强了类型处理，支持数字和字符串类型的ID和状态值
+   - 改进了错误处理，提高API稳定性
+3. API文档：
+   - 详细记录了所有API的请求和响应格式
+   - 添加了示例说明，使前端开发更容易理解和使用
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- SQLite数据库
+- STL容器和算法
+
+### 修改的文件
+- src/server/database.cpp
+  - 增强了updateUserProfile函数，添加对name字段的支持
+  - 完全重构了syncUserProgress函数，实现多格式支持和错误处理
+- API设计.txt
+  - 添加了用户管理API的详细请求/响应格式
+  - 添加了游戏进度同步API的多种支持格式说明

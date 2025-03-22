@@ -397,109 +397,170 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
-}
-
-.frequency-table {
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 6rpx;
-  overflow: hidden;
   margin-bottom: 20rpx;
 }
 
-.frequency-table-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
-  background-color: #f5f5f5;
-  padding: 10rpx;
-  font-weight: 500;
-  font-size: 26rpx;
-  color: #333;
-}
-
-.frequency-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
-  padding: 10rpx;
-  font-size: 26rpx;
-  border-top: 1px solid #ddd;
-}
-
-.frequency-row.current {
-  background-color: #e8f4fd;
-}
-
-.frequency-char {
-  text-align: center;
-}
-
-.frequency-count {
-  text-align: center;
-}
-
-.frequency-code {
-  text-align: center;
-  font-family: monospace;
-}
-
 .huffman-tree {
+  width: 100%;
+  height: 500px;
   position: relative;
-  height: 400rpx;
-  background-color: #f8f9fa;
-  border-radius: 6rpx;
   margin-top: 20rpx;
   overflow: hidden;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .huffman-canvas {
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   z-index: 1;
 }
 
 .huffman-node {
   position: absolute;
-  width: 80rpx;
-  height: 80rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
-  background-color: #95a5a6;
+  background-color: #4caf50;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: bold;
+  text-align: center;
+  line-height: 60rpx;
   z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   font-size: 24rpx;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s;
+  transform-origin: center center;
 }
 
+/* 叶子节点样式 */
+.huffman-node.leaf {
+  background-color: #2196F3;
+  border: 2px solid #0d47a1;
+}
+
+/* 内部节点样式 */
+.huffman-node.internal {
+  background-color: #9C27B0;
+  border: 2px solid #4a148c;
+}
+
+/* 当前选中的节点 */
 .huffman-node.current {
-  background-color: #f39c12;
-  border: 2px solid #e67e22;
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.7);
   z-index: 3;
+  border: 2px solid #ff9800;
 }
 
+/* 当前处理的节点 */
 .huffman-node.processed {
-  background-color: #3498db;
+  background-color: #607D8B;
 }
 
 .node-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
 }
 
 .node-freq {
   font-size: 20rpx;
   margin-top: 4rpx;
+  opacity: 0.9;
+}
+
+.node-char {
+  font-weight: bold;
+  font-size: 24rpx;
+}
+
+.frequency-table {
+  margin-top: 30rpx;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.frequency-table-header {
+  display: flex;
+  background-color: #4caf50;
+  color: white;
+  padding: 16rpx 20rpx;
+  font-weight: bold;
+}
+
+.frequency-row {
+  display: flex;
+  padding: 12rpx 20rpx;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.3s;
+}
+
+.frequency-row:last-child {
+  border-bottom: none;
+}
+
+.frequency-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.frequency-row.current {
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+.frequency-row:hover {
+  background-color: #f0f7ff;
+}
+
+.frequency-row.highlight {
+  animation: highlight-row 1.5s ease-in-out;
+}
+
+@keyframes highlight-row {
+  0% { background-color: #f0f7ff; }
+  50% { background-color: #d0e8ff; }
+  100% { background-color: #f0f7ff; }
+}
+
+.frequency-char,
+.frequency-count,
+.frequency-code {
+  flex: 1;
+  padding: 8rpx;
+}
+
+.frequency-code {
+  font-family: monospace;
+  color: #0066cc;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.tree-info {
+  position: absolute;
+  bottom: 10rpx;
+  right: 10rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8rpx 15rpx;
+  border-radius: 4rpx;
+  font-size: 20rpx;
+  z-index: 10;
 }
 
 /* 结果区域 */

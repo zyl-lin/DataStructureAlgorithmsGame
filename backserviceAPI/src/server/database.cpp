@@ -28,6 +28,14 @@ Database::~Database() {
 }
 
 bool Database::initialize() {
+    // 先删除现有表，强制重建
+    executeQuery("DROP TABLE IF EXISTS user_achievements");
+    executeQuery("DROP TABLE IF EXISTS achievements");
+    executeQuery("DROP TABLE IF EXISTS user_progress");
+    executeQuery("DROP TABLE IF EXISTS levels");
+    executeQuery("DROP TABLE IF EXISTS games");
+    executeQuery("DROP TABLE IF EXISTS users");
+    
     // 创建用户表
     executeQuery(R"(
         CREATE TABLE IF NOT EXISTS users (
@@ -35,6 +43,8 @@ bool Database::initialize() {
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             email TEXT,
+            nickname TEXT,
+            avatar TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     )");
@@ -277,6 +287,24 @@ bool Database::updateUserProfile(int userId, const json& profileData) {
         setClause += "password = '" + profileData["password"].get<std::string>() + "'";
     }
     
+    // 添加对nickname字段的支持
+    if (profileData.contains("nickname")) {
+        if (!setClause.empty()) setClause += ", ";
+        setClause += "nickname = '" + profileData["nickname"].get<std::string>() + "'";
+    }
+    
+    // 添加对avatar字段的支持
+    if (profileData.contains("avatar")) {
+        if (!setClause.empty()) setClause += ", ";
+        setClause += "avatar = '" + profileData["avatar"].get<std::string>() + "'";
+    }
+    
+    // 添加对name字段的支持
+    if (profileData.contains("name")) {
+        if (!setClause.empty()) setClause += ", ";
+        setClause += "name = '" + profileData["name"].get<std::string>() + "'";
+    }
+    
     if (setClause.empty()) return false;
     
     std::string query = "UPDATE users SET " + setClause + " WHERE id = " + std::to_string(userId);
@@ -395,27 +423,101 @@ json Database::getUserProgress(int userId) {
 }
 
 bool Database::syncUserProgress(int userId, const json& progressData) {
-    // 在实际应用中，这里应该实现更复杂的同步逻辑
-    // 简化处理，仅更新用户进度
-    if (!progressData.is_object() || !progressData.contains("progress") || !progressData["progress"].is_array()) {
-        return false;
+    // 检查是否是统一的单个进度对象格式
+    if ((progressData.contains("gameId") || progressData.contains("game_id")) && 
+        (progressData.contains("levelId") || progressData.contains("level_id"))) {
+        
+        // 获取游戏ID，支持不同的键名
+        int gameId;
+        if (progressData.contains("gameId")) {
+            gameId = progressData["gameId"].is_number() ? 
+                     progressData["gameId"].get<int>() : 
+                     std::stoi(progressData["gameId"].get<std::string>());
+        } else {
+            gameId = progressData["game_id"].is_number() ? 
+                     progressData["game_id"].get<int>() : 
+                     std::stoi(progressData["game_id"].get<std::string>());
+        }
+        
+        // 获取关卡ID，支持不同的键名
+        int levelId;
+        if (progressData.contains("levelId")) {
+            levelId = progressData["levelId"].is_number() ? 
+                      progressData["levelId"].get<int>() : 
+                      std::stoi(progressData["levelId"].get<std::string>());
+        } else {
+            levelId = progressData["level_id"].is_number() ? 
+                      progressData["level_id"].get<int>() : 
+                      std::stoi(progressData["level_id"].get<std::string>());
+        }
+        
+        // 处理completed或status字段
+        std::string status = "in_progress";
+        if (progressData.contains("completed")) {
+            if (progressData["completed"].is_boolean() && progressData["completed"].get<bool>()) {
+                status = "completed";
+            } else if (progressData["completed"].is_string() && 
+                      (progressData["completed"].get<std::string>() == "true" || 
+                       progressData["completed"].get<std::string>() == "completed")) {
+                status = "completed";
+            }
+        } else if (progressData.contains("status")) {
+            status = progressData["status"].get<std::string>();
+        }
+        
+        // 构建基本查询
+        std::string query = "INSERT OR REPLACE INTO user_progress (user_id, game_id, level_id, status";
+        std::string values = std::to_string(userId) + ", " + std::to_string(gameId) + ", " + 
+                            std::to_string(levelId) + ", '" + status + "'";
+        
+        // 如果有分数，也保存
+        if (progressData.contains("score")) {
+            query += ", score";
+            int score = progressData["score"].is_number() ? 
+                       progressData["score"].get<int>() : 
+                       std::stoi(progressData["score"].get<std::string>());
+            values += ", " + std::to_string(score);
+        }
+        
+        // 完成查询
+        query += ") VALUES (" + values + ")";
+        return executeQuery(query);
     }
     
-    bool success = true;
-    for (const auto& progress : progressData["progress"]) {
-        if (progress.contains("game_id") && progress.contains("level_id") && progress.contains("status")) {
-            int gameId = progress["game_id"];
-            int levelId = progress["level_id"];
-            std::string status = progress["status"];
-            
-            std::string query = "INSERT OR REPLACE INTO user_progress (user_id, game_id, level_id, status) VALUES (" +
-                               std::to_string(userId) + ", " + std::to_string(gameId) + ", " + 
-                               std::to_string(levelId) + ", '" + status + "')";
-            success = success && executeQuery(query);
+    // 如果不是单个进度对象，尝试数组格式
+    if (progressData.is_array()) {
+        // 直接处理数组格式
+        bool success = true;
+        for (const auto& progress : progressData) {
+            if ((progress.contains("gameId") || progress.contains("game_id")) && 
+                (progress.contains("levelId") || progress.contains("level_id"))) {
+                
+                json singleProgress = progress;
+                success = success && syncUserProgress(userId, singleProgress);
+            }
+        }
+        return success;
+    }
+    
+    // 处理包含progress键的对象格式
+    if (progressData.is_object() && progressData.contains("progress")) {
+        // 如果progress是数组，递归处理每个元素
+        if (progressData["progress"].is_array()) {
+            bool success = true;
+            for (const auto& progress : progressData["progress"]) {
+                json singleProgress = progress;
+                success = success && syncUserProgress(userId, singleProgress);
+            }
+            return success;
+        }
+        // 如果progress是单个对象，递归处理该对象
+        else if (progressData["progress"].is_object()) {
+            return syncUserProgress(userId, progressData["progress"]);
         }
     }
     
-    return success;
+    // 没有找到可处理的格式
+    return false;
 }
 
 void Database::checkAchievements(int userId) {

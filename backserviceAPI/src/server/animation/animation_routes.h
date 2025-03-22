@@ -14,6 +14,9 @@ using json = nlohmann::json;
 // 注册动画相关的路由
 void registerAnimationRoutes(crow::App<crow::CORSHandler>& app);
 
+// 会话管理函数
+crow::response handleCreateSession(const crow::request& req);
+
 // 动画控制相关处理函数
 crow::response handleAnimationStart(const crow::request& req);
 crow::response handleAnimationPause(const crow::request& req);
@@ -29,6 +32,18 @@ crow::response handleNextFrame(const crow::request& req);
 crow::response handlePrevFrame(const crow::request& req);
 crow::response handleGetFrames(const crow::request& req);
 crow::response handleSetSpeed(const crow::request& req);
+
+// 初始化状态创建函数
+json createInitialLinkedListState();
+json createInitialStackState();
+json createInitialQueueState();
+json createInitialBinaryTreeState();
+json createInitialGraphState();
+json createInitialSortingState();
+json createInitialSearchState();
+json createInitialMazeState();
+json createInitialDPState();
+json createInitialGreedyState();
 
 // 特定游戏动画处理函数
 // 链表游戏动画

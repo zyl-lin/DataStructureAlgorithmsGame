@@ -593,7 +593,97 @@ Component({
         return;
       }
       
-      // 本地遍历逻辑...
+      // 本地遍历逻辑
+      // 先重置状态
+      this.setData({
+        userSequence: [],
+        selectedNodes: [],
+        highlightedNodes: [],
+        highlightedEdges: [],
+        isTraversalComplete: false,
+        showFeedback: false,
+        apiError: ''
+      }, () => {
+        // 开始执行本地遍历动画
+        this.startLocalTraversal();
+      });
+    },
+
+    // 开始本地遍历
+    startLocalTraversal: function() {
+      const { graphData, traversalMode, startNodeIndex } = this.data;
+      
+      if (!graphData || !graphData.nodes || !graphData.edges) {
+        wx.showToast({
+          title: '图数据无效',
+          icon: 'none'
+        });
+        return;
+      }
+      
+      // 计算正确的遍历序列
+      const traversalResult = this.calculateTraversalSequence(traversalMode, startNodeIndex);
+      
+      // 使用动画展示遍历过程
+      this.setData({
+        correctSequence: traversalResult,
+        animationStep: 0
+      }, () => {
+        this.animateTraversal();
+      });
+    },
+    
+    // 计算遍历序列
+    calculateTraversalSequence: function(mode, startNode) {
+      const { graphData } = this.data;
+      const nodes = graphData.nodes;
+      const edges = graphData.edges;
+      
+      // 记录已访问的节点
+      const visited = new Array(nodes.length).fill(false);
+      // 存储遍历结果
+      const result = [];
+      
+      if (mode === 'dfs') {
+        // 深度优先遍历
+        const dfs = (nodeIndex) => {
+          // 标记为已访问
+          visited[nodeIndex] = true;
+          // 添加到结果
+          result.push(nodes[nodeIndex]);
+          
+          // 访问所有相邻节点
+          const neighbors = edges[nodeIndex] || [];
+          for (const neighbor of neighbors) {
+            if (!visited[neighbor]) {
+              dfs(neighbor);
+            }
+          }
+        };
+        
+        // 从起始节点开始DFS
+        dfs(startNode);
+      } else {
+        // 广度优先遍历
+        const queue = [startNode];
+        visited[startNode] = true;
+        
+        while (queue.length > 0) {
+          const nodeIndex = queue.shift();
+          result.push(nodes[nodeIndex]);
+          
+          // 访问所有相邻节点
+          const neighbors = edges[nodeIndex] || [];
+          for (const neighbor of neighbors) {
+            if (!visited[neighbor]) {
+              visited[neighbor] = true;
+              queue.push(neighbor);
+            }
+          }
+        }
+      }
+      
+      return result;
     },
 
     // 使用API开始遍历
@@ -622,13 +712,18 @@ Component({
         return;
       }
       
-      // 构造请求数据
+      // 构造请求数据 - 修正为后端期望的格式
+      const startVertexValue = graphData.nodes && graphData.nodes[startNodeIndex] ? 
+                              graphData.nodes[startNodeIndex].toString() : 
+                              startNodeIndex.toString();
+      
       const requestData = {
+        // 兼容两种格式：保留原有的graph结构但添加startVertex字段
         graph: {
           nodes: graphData.nodes || [],
           edges: graphData.edges || []
         },
-        startNode: startNodeIndex
+        startVertex: startVertexValue
       };
       
       console.log('发送图遍历API请求:', requestData);
@@ -656,7 +751,7 @@ Component({
 
     // 处理API响应数据
     handleApiResponse: function(data) {
-      if (!data || !Array.isArray(data.steps)) {
+      if (!data || !data.animation || !Array.isArray(data.animation.frames)) {
         this.setData({
           apiError: '无效的API响应数据',
           isLoading: false
@@ -666,13 +761,13 @@ Component({
       
       console.log('处理API响应数据:', data);
       
-      // 保存动画步骤数据
-      const steps = data.steps;
-      const result = data.result || [];
+      // 保存动画步骤数据和遍历结果
+      const frames = data.animation.frames;
+      const traversalResult = data.state.traversal.result || [];
       
       this.setData({
-        apiSteps: steps,
-        apiResult: result,
+        apiSteps: frames,
+        apiResult: traversalResult,
         currentApiStep: 0,
         isLoading: false
       }, () => {
@@ -692,13 +787,13 @@ Component({
       }
       
       // 获取当前步骤
-      const step = apiSteps[currentApiStep];
+      const frame = apiSteps[currentApiStep];
       
       // 更新状态
       this.setData({
-        userSequence: step.sequence || [],
-        highlightedNodes: step.highlightedNodes || [],
-        highlightedEdges: step.highlightedEdges || [],
+        userSequence: frame.traversalResult || [],
+        highlightedNodes: frame.highlight ? [frame.highlight] : [],
+        highlightedEdges: [],
         currentApiStep: currentApiStep + 1
       }, () => {
         // 重绘图形

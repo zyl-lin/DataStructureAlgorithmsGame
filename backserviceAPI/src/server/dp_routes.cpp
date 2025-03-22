@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <numeric>
 #include <algorithm>
+#include <crow.h>
 
 using json = nlohmann::json;
 
@@ -52,52 +53,106 @@ crow::response handleDPReset(const crow::request& req, Database& db) {
     }
 }
 
-// 动态规划游戏操作 - 斐波那契数列
-crow::response handleDPFibonacci(const crow::request& req, Database& db) {
-    AnimationParams params = extractAnimationParams(req);
-    
+// 斐波那契数列计算
+crow::response handleFibonacci(const crow::request& req) {
     try {
-        // 解析请求参数
-        auto nParam = req.url_params.get("n");
-        if (!nParam) {
+        auto reqJson = json::parse(req.body);
+        
+        // 检查n参数
+        if (!reqJson.contains("n")) {
             return crow::response(400, ResponseBuilder::createErrorResponse(
                 400, "缺少参数n", "dp").dump());
         }
         
-        int n = std::stoi(nParam);
-        if (n < 0 || n > 30) { // 限制n的范围以避免溢出
+        int n = reqJson["n"];
+        
+        // 验证n的范围
+        if (n < 0 || n > 30) {  // 限制n的范围以避免整数溢出
             return crow::response(400, ResponseBuilder::createErrorResponse(
-                400, "n必须在0到30之间", "dp").dump());
+                400, "参数n必须在0到30之间", "dp").dump());
         }
-        
+
         // 计算斐波那契数列
-        std::vector<int> dp(n + 1);
-        std::vector<std::pair<int, int>> steps; // 记录每一步的计算过程
-        
-        if (n >= 0) dp[0] = 0;
-        if (n >= 1) dp[1] = 1;
-        
+        std::vector<int> fib(n + 1);
+        std::vector<json> frames;
+
+        if (n >= 0) fib[0] = 0;
+        if (n >= 1) fib[1] = 1;
+
+        // 记录初始状态
+        frames.push_back({
+            {"sequence", fib},
+            {"currentIndex", -1},
+            {"calculating", false}
+        });
+
+        // 计算并记录每一步
         for (int i = 2; i <= n; i++) {
-            dp[i] = dp[i-1] + dp[i-2];
-            steps.push_back({i, dp[i]});
+            // 显示正在计算的位置
+            frames.push_back({
+                {"sequence", fib},
+                {"currentIndex", i},
+                {"calculating", true},
+                {"prev1", fib[i-1]},
+                {"prev2", fib[i-2]}
+            });
+
+            fib[i] = fib[i-1] + fib[i-2];
+
+            // 显示计算结果
+            frames.push_back({
+                {"sequence", fib},
+                {"currentIndex", i},
+                {"calculating", false},
+                {"result", fib[i]}
+            });
         }
-        
-        // 构建结果
-        json result = {
-            {"algorithm", "fibonacci"},
-            {"input", n},
-            {"result", dp[n]},
-            {"table", dp},
-            {"steps", steps}
+
+        // 最终状态
+        frames.push_back({
+            {"sequence", fib},
+            {"currentIndex", -1},
+            {"calculating", false},
+            {"completed", true}
+        });
+
+        json response = {
+            {"state", {
+                {"sequence", fib},
+                {"completed", true}
+            }},
+            {"animation", {
+                {"frames", frames},
+                {"totalSteps", frames.size()},
+                {"speed", 5}
+            }}
         };
-        
-        // 更新数据库中的状态
-        db.updateGameState("dp", result);
-        
-        return crow::response(200, ResponseBuilder::createSuccessResponse(result, "dp").dump());
+
+        return crow::response(200, ResponseBuilder::createSuccessResponse(response, "dp").dump());
     } catch (const std::exception& e) {
         return crow::response(500, ResponseBuilder::createErrorResponse(
-            500, std::string("计算斐波那契数列失败: ") + e.what(), "dp").dump());
+            500, std::string("斐波那契数列计算错误: ") + e.what(), "dp").dump());
+    }
+}
+
+// 斐波那契数列计算（包含Database参数的版本）
+crow::response handleDPFibonacci(const crow::request& req, Database& db) {
+    try {
+        // 调用原来的斐波那契实现
+        crow::response result = handleFibonacci(req);
+        
+        // 如果计算成功，更新数据库中的状态
+        if (result.code == 200) {
+            json resultData = json::parse(result.body);
+            if (resultData.contains("state")) {
+                db.updateGameState("dp", resultData["state"]);
+            }
+        }
+        
+        return result;
+    } catch (const std::exception& e) {
+        return crow::response(500, ResponseBuilder::createErrorResponse(
+            500, std::string("斐波那契数列计算失败: ") + e.what(), "dp").dump());
     }
 }
 
