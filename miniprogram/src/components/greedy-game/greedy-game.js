@@ -79,7 +79,15 @@ Component({
     // 自动播放计时器
     autoPlayTimer: null,
     autoPlaySpeed: 800, // 毫秒
-    _baseAutoPlaySpeed: 800 // 基础自动播放速度
+
+    // 哈夫曼可视化容器尺寸
+    huffmanContainerSize: {
+      width: 300,
+      height: 450,
+      nodeSpacing: 40,
+      verticalSpacing: 60,
+      maxNodes: 20
+    },
   },
 
   /**
@@ -89,10 +97,16 @@ Component({
     attached() {
       // 根据level设置不同的初始化参数
       this.initLevelSettings();
+      // 初始化哈夫曼容器尺寸
+      this.initHuffmanContainerSize();
+      // 监听屏幕旋转
+      wx.onWindowResize(this.updateHuffmanContainerSize.bind(this));
     },
     detached() {
       // 清理定时器
       this.clearAutoPlayTimer();
+      // 移除屏幕旋转监听
+      wx.offWindowResize(this.updateHuffmanContainerSize);
     }
   },
 
@@ -649,20 +663,24 @@ Component({
         nodes: []
       });
       
-      // 布局参数计算 - 基于字符数量动态调整
-      const containerWidth = 300; // 容器宽度约为300px
-      const containerHeight = 400; // 容器高度约为400px
-      const nodeCount = charFrequencies.length;
+      // 计算布局的基本参数 - 用于居中布局
+      const { width: containerWidth, nodeSpacing, verticalSpacing } = this.data.huffmanContainerSize;
+      const baseX = containerWidth / 2; // 中心点X坐标
       
-      // 计算树的最大可能深度
-      const maxDepth = Math.ceil(Math.log2(nodeCount + 1));
-      // 垂直间距根据深度动态调整
-      const verticalSpacing = Math.min(80, containerHeight / (maxDepth + 1));
+      // 根据字符数量动态调整节点间距
+      const charCount = charFrequencies.length;
+      const actualNodeSpacing = Math.min(
+        nodeSpacing,
+        (containerWidth - 60) / (charCount + 1) // 减去左右边距，确保节点不会贴边
+      );
       
-      // 创建初始节点（叶子节点）
+      // 创建初始节点
       let nodes = charFrequencies.map((info, index) => {
-        // 在顶部均匀分布节点
-        const x = 30 + (index * (containerWidth - 60) / Math.max(1, nodeCount - 1));
+        // 计算水平位置，使得节点分布在中心点的两侧
+        const totalWidth = (charCount - 1) * actualNodeSpacing; // 所有节点占用的总宽度
+        const startX = baseX - (totalWidth / 2); // 从中心点向左偏移一半总宽度
+        const x = startX + (index * actualNodeSpacing); // 依次排列节点
+        
         return {
           id: index,
           char: info.char,
@@ -670,12 +688,9 @@ Component({
           left: null,
           right: null,
           x: x,
-          y: 40, // 放在顶部
+          y: 40,
           status: '',
-          parent: null,
-          depth: maxDepth, // 从最大深度开始，向上构建树
-          position: index,
-          type: 'leaf'
+          parent: null
         };
       });
       
@@ -696,7 +711,7 @@ Component({
         nodes: [...nodes]
       });
       
-      // 特殊情况处理
+      // 确保我们至少有两个节点，否则无法构建哈夫曼树
       if (nodes.length < 2) {
         // 如果只有一个字符，为其分配编码"0"
         if (nodes.length === 1) {
@@ -741,8 +756,6 @@ Component({
       
       // 构建哈夫曼树
       let nodeId = nodes.length;
-      let currentDepth = 1; // 从深度1开始（叶子节点为0）
-      
       while (nodes.length > 1) {
         // 选择频率最小的两个节点
         nodes.sort((a, b) => a.frequency - b.frequency);
@@ -770,15 +783,12 @@ Component({
           frequency: left.frequency + right.frequency,
           left: left.id,
           right: right.id,
-          // 水平位置是两个子节点的平均值
+          // 水平位置取两个子节点的中点
           x: (left.x + right.x) / 2,
-          // 垂直位置根据深度计算，从上往下
-          y: 40 + ((maxDepth - currentDepth) * verticalSpacing),
+          // 垂直位置在子节点上方，但不超过容器高度
+          y: Math.min(Math.max(left.y, right.y) + verticalSpacing, this.data.huffmanContainerSize.height - 60),
           status: 'current',
-          parent: null,
-          depth: maxDepth - currentDepth,
-          position: (left.position + right.position) / 2,
-          type: 'internal'
+          parent: null
         };
         
         // 保存新节点到映射表
@@ -805,41 +815,19 @@ Component({
         // 移除已处理的节点，添加新节点
         nodes = nodes.slice(2);
         nodes.push(newNode);
-        
-        // 如果当前深度的所有节点都已处理，增加深度
-        if (nodes.length > 1 && nodes.every(node => node.depth >= currentDepth)) {
-          currentDepth++;
-        }
       }
       
       // 根节点
       const root = nodes[0];
       
-      // 平衡调整树的布局
-      this.balanceHuffmanTree(allNodesMap);
-      
-      // 收集所有节点进行最终展示
-      const allNodes = Object.values(allNodesMap);
-      
-      steps.push({
-        type: 'huffman-tree',
-        description: '哈夫曼树构建完成',
-        charFrequencies,
-        nodes: allNodes.map(node => ({
-          ...node,
-          status: node.id === root.id ? 'current' : node.status
-        }))
-      });
-      
-      // 生成哈夫曼编码
+      // 生成哈夫曼编码时传递所有节点的映射
       this.generateHuffmanCodes(charFrequencies, steps, root.id, '', {}, allNodesMap);
       
       // 计算压缩效果
       const originalLength = huffmanText.length * 8; // 假设原始文本每个字符8位
       let compressedLength = 0;
       for (const char of huffmanText) {
-        const codeLength = charFrequencies.find(info => info.char === char)?.code?.length || 0;
-        compressedLength += codeLength;
+        compressedLength += charFrequencies.find(info => info.char === char).code.length;
       }
       
       const compressionRatio = Math.round((1 - compressedLength / originalLength) * 100);
@@ -849,7 +837,7 @@ Component({
         type: 'huffman-result',
         description: `哈夫曼编码完成，压缩率为 ${compressionRatio}%`,
         charFrequencies,
-        nodes: allNodes.map(node => ({
+        nodes: nodes[0].status === 'current' ? nodes : nodes.map(node => ({
           ...node,
           status: node.id === root.id ? 'current' : node.status
         })),
@@ -863,177 +851,6 @@ Component({
       this.setData({
         visualizationSteps: steps
       });
-    },
-
-    // 平衡哈夫曼树布局
-    balanceHuffmanTree(nodesMap) {
-      const nodes = Object.values(nodesMap);
-      
-      // 按深度分组节点
-      const nodesByDepth = {};
-      nodes.forEach(node => {
-        if (!nodesByDepth[node.depth]) {
-          nodesByDepth[node.depth] = [];
-        }
-        nodesByDepth[node.depth].push(node);
-      });
-      
-      // 容器宽度
-      const containerWidth = 300;
-      const margin = 20;
-      const availableWidth = containerWidth - 2 * margin;
-      
-      // 从底层到顶层调整节点位置
-      const depths = Object.keys(nodesByDepth).sort((a, b) => b - a); // 从大到小排序
-      
-      // 先调整叶子节点（最底层）
-      if (nodesByDepth[0] && nodesByDepth[0].length > 0) {
-        const leafNodes = nodesByDepth[0];
-        const leafCount = leafNodes.length;
-        
-        // 均匀分布叶子节点
-        leafNodes.sort((a, b) => a.position - b.position);
-        for (let i = 0; i < leafCount; i++) {
-          const node = leafNodes[i];
-          node.x = margin + (i * availableWidth / (leafCount - 1 || 1));
-        }
-      }
-      
-      // 从底向上调整每一层的节点位置
-      for (let i = 1; i < depths.length; i++) {
-        const depth = depths[i];
-        const currentNodes = nodesByDepth[depth];
-        
-        for (const node of currentNodes) {
-          if (node.left !== null && node.right !== null) {
-            const leftNode = nodesMap[node.left];
-            const rightNode = nodesMap[node.right];
-            
-            if (leftNode && rightNode) {
-              // 将内部节点放在其子节点的中间位置
-              node.x = (leftNode.x + rightNode.x) / 2;
-            }
-          }
-        }
-      }
-    },
-
-    // 绘制哈夫曼树连线
-    drawHuffmanLines(nodes) {
-      // 使用canvas画线
-      const query = this.createSelectorQuery();
-      query.select('#huffman-canvas').fields({ node: true, size: true })
-        .exec((res) => {
-          if (!res[0] || !res[0].node) return;
-          
-          const canvas = res[0].node;
-          const ctx = canvas.getContext('2d');
-          
-          // 设置canvas尺寸
-          const dpr = wx.getSystemInfoSync().pixelRatio;
-          canvas.width = res[0].width * dpr;
-          canvas.height = res[0].height * dpr;
-          ctx.scale(dpr, dpr);
-          
-          // 清空画布
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-          // 性能优化：预计算所有节点父子关系对，避免重复查询
-          const nodeRelations = [];
-          for (const node of nodes) {
-            if (node.parent !== null) {
-              const parent = nodes.find(n => n.id === node.parent);
-              if (parent) {
-                nodeRelations.push({
-                  node,
-                  parent,
-                  isLeft: parent.left === node.id
-                });
-              }
-            }
-          }
-          
-          // 节点半径
-          const nodeRadius = 15;
-          
-          // 绘制所有连线
-          for (const relation of nodeRelations) {
-            const { node, parent, isLeft } = relation;
-            
-            // 计算节点中心坐标
-            const startX = node.x + nodeRadius;
-            const startY = node.y + nodeRadius;
-            const endX = parent.x + nodeRadius;
-            const endY = parent.y + nodeRadius;
-            
-            // 计算节点边缘的连接点
-            const angle = Math.atan2(endY - startY, endX - startX);
-            const startOutX = startX + Math.cos(angle) * nodeRadius;
-            const startOutY = startY + Math.sin(angle) * nodeRadius;
-            const endOutX = endX - Math.cos(angle) * nodeRadius;
-            const endOutY = endY - Math.sin(angle) * nodeRadius;
-            
-            // 绘制连线
-            ctx.beginPath();
-            ctx.strokeStyle = isLeft ? '#3498db' : '#e74c3c'; // 左子树蓝色，右子树红色
-            ctx.lineWidth = 2;
-            
-            // 创建曲线连接，使用二次贝塞尔曲线
-            // 控制点位于两节点连线的中点，但向侧面偏移一些
-            const midX = (startOutX + endOutX) / 2;
-            const midY = (startOutY + endOutY) / 2;
-            
-            // 偏移距离 - 根据两点距离计算
-            const dx = endOutX - startOutX;
-            const dy = endOutY - startOutY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            // 控制点垂直于连线方向偏移
-            const offsetAmount = Math.min(25, dist / 4); // 根据距离动态调整偏移量
-            const dirX = -dy / dist; // 垂直于连线方向的单位向量
-            const dirY = dx / dist;
-            
-            const ctrlX = midX + dirX * offsetAmount * (isLeft ? -1 : 1);
-            const ctrlY = midY + dirY * offsetAmount * (isLeft ? -1 : 1);
-            
-            // 绘制二次贝塞尔曲线
-            ctx.moveTo(startOutX, startOutY);
-            ctx.quadraticCurveTo(ctrlX, ctrlY, endOutX, endOutY);
-            ctx.stroke();
-            
-            // 添加高亮效果
-            ctx.beginPath();
-            ctx.strokeStyle = isLeft ? 'rgba(52, 152, 219, 0.3)' : 'rgba(231, 76, 60, 0.3)'; // 半透明辅助线
-            ctx.lineWidth = 6;
-            ctx.moveTo(startOutX, startOutY);
-            ctx.quadraticCurveTo(ctrlX, ctrlY, endOutX, endOutY);
-            ctx.stroke();
-            
-            // 绘制0/1标签
-            // 贝塞尔曲线上的点 B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
-            const t = 0.5; // 贝塞尔曲线参数，取中点
-            const labelX = (1-t)*(1-t)*startOutX + 2*(1-t)*t*ctrlX + t*t*endOutX;
-            const labelY = (1-t)*(1-t)*startOutY + 2*(1-t)*t*ctrlY + t*t*endOutY;
-            
-            // 添加0/1标签背景
-            ctx.fillStyle = isLeft ? 'rgba(52, 152, 219, 0.9)' : 'rgba(231, 76, 60, 0.9)';
-            ctx.beginPath();
-            ctx.arc(labelX, labelY, 12, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // 添加边框
-            ctx.strokeStyle = isLeft ? '#2980b9' : '#c0392b';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // 绘制0/1标签
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 14px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(isLeft ? '0' : '1', labelX, labelY);
-          }
-        });
     },
 
     // 递归生成哈夫曼编码
@@ -1142,16 +959,6 @@ Component({
       } else if (type === 'huffman') {
         this.executeHuffmanStep(step);
       }
-      
-      // 动态调整自动播放速度
-      if (this.data.isAutoPlaying) {
-        // 复杂步骤给予更多时间
-        if (step.type.includes('result') || step.type.includes('select') || step.type.includes('merge')) {
-          this.adjustAutoPlaySpeed(1.5); // 放慢速度
-        } else {
-          this.adjustAutoPlaySpeed(1); // 恢复正常速度
-        }
-      }
     },
 
     // 执行零钱兑换步骤
@@ -1228,35 +1035,10 @@ Component({
       if (step.nodes) {
         this.setData({
           huffmanNodes: step.nodes
-        }, () => {
-          // 在节点更新后立即绘制连线
-          this.drawHuffmanLines(step.nodes);
-          
-          // 如果是特殊步骤，可以添加额外的动画或效果
-          if (subType === 'merge' || subType === 'select') {
-            // 可以添加额外的合并或选择动画
-            // 例如，闪烁当前选中的节点
-            setTimeout(() => {
-              const highlightedNodes = step.nodes.map(node => {
-                if (node.status === 'current') {
-                  return {...node, status: 'current'};
-                }
-                return node;
-              });
-              
-              this.setData({
-                huffmanNodes: highlightedNodes
-              });
-              
-              this.drawHuffmanLines(highlightedNodes);
-            }, 100);
-          }
         });
-      } else {
-        // 如果步骤没有更新节点，但有之前的节点，仍然需要绘制连线
-        if (this.data.huffmanNodes && this.data.huffmanNodes.length > 0) {
-          this.drawHuffmanLines(this.data.huffmanNodes);
-        }
+        
+        // 绘制连线
+        this.drawHuffmanLines(step.nodes);
       }
       
       // 更新结果
@@ -1265,6 +1047,59 @@ Component({
           huffmanResult: step.result
         });
       }
+    },
+
+    // 绘制哈夫曼树连线
+    drawHuffmanLines(nodes) {
+      // 使用canvas画线
+      const query = this.createSelectorQuery();
+      query.select('#huffman-canvas').fields({ node: true, size: true })
+        .exec((res) => {
+          if (!res[0] || !res[0].node) return;
+          
+          const canvas = res[0].node;
+          const ctx = canvas.getContext('2d');
+          
+          // 设置canvas尺寸
+          const dpr = wx.getSystemInfoSync().pixelRatio;
+          canvas.width = res[0].width * dpr;
+          canvas.height = res[0].height * dpr;
+          ctx.scale(dpr, dpr);
+          
+          // 清空画布
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // 画连线
+          ctx.strokeStyle = '#aaa';
+          ctx.lineWidth = 2;
+          
+          // 节点半径 - 确保与CSS中的节点大小一致
+          const nodeRadius = 30; // 修改为与CSS中的节点大小一致，即60rpx/2
+          
+          for (const node of nodes) {
+            if (node.parent !== null) {
+              const parent = nodes.find(n => n.id === node.parent);
+              if (parent) {
+                // 绘制从当前节点到父节点的线
+                ctx.beginPath();
+                ctx.moveTo(node.x, node.y);
+                ctx.lineTo(parent.x, parent.y);
+                ctx.stroke();
+                
+                // 添加 0/1 标签 - 位置计算使其处于线段中点附近
+                const isLeft = parent.left === node.id;
+                const labelX = (node.x + parent.x) / 2 + (isLeft ? -10 : 10);
+                const labelY = (node.y + parent.y) / 2;
+                
+                ctx.fillStyle = '#333';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(isLeft ? '0' : '1', labelX, labelY);
+              }
+            }
+          }
+        });
     },
 
     // API相关方法
@@ -1487,24 +1322,52 @@ Component({
       });
     },
 
-    // 动态调整自动播放速度
-    adjustAutoPlaySpeed(factor) {
-      if (!this.data.isAutoPlaying) return;
+    // 初始化哈夫曼容器尺寸
+    initHuffmanContainerSize() {
+      const systemInfo = wx.getSystemInfoSync();
+      const screenWidth = systemInfo.windowWidth;
+      const screenHeight = systemInfo.windowHeight;
       
-      // 保存当前速度设置
-      const baseSpeed = this.data.autoPlaySpeed;
+      // 计算合适的容器尺寸
+      const containerWidth = Math.min(screenWidth * 0.9, 600); // 最大宽度600px
+      const containerHeight = Math.min(screenHeight * 0.4, 800); // 最大高度800px
       
-      // 如果因子与当前设置不同，则调整速度
-      const adjustedSpeed = Math.round(this.data._baseAutoPlaySpeed * factor);
-      if (baseSpeed !== adjustedSpeed) {
-        // 停止当前计时器
-        this.clearAutoPlayTimer();
-        
-        // 设置新速度并重启计时器
-        this.setData({ autoPlaySpeed: adjustedSpeed }, () => {
-          this.startAutoPlay();
-        });
+      // 根据容器大小计算节点间距
+      const nodeSpacing = this.calculateNodeSpacing(containerWidth);
+      const verticalSpacing = this.calculateVerticalSpacing(containerHeight);
+      
+      this.setData({
+        huffmanContainerSize: {
+          width: containerWidth,
+          height: containerHeight,
+          nodeSpacing,
+          verticalSpacing,
+          maxNodes: Math.floor(containerWidth / nodeSpacing)
+        }
+      });
+    },
+
+    // 更新哈夫曼容器尺寸（用于屏幕旋转）
+    updateHuffmanContainerSize() {
+      this.initHuffmanContainerSize();
+      // 如果正在可视化，则重新绘制
+      if (this.data.isVisualizing && this.data.greedyType === 'huffman') {
+        this.drawHuffmanLines(this.data.huffmanNodes);
       }
-    }
+    },
+
+    // 计算节点水平间距
+    calculateNodeSpacing(containerWidth) {
+      // 根据容器宽度动态计算合适的节点间距
+      const baseSpacing = containerWidth / 10; // 基础间距
+      return Math.min(Math.max(baseSpacing, 20), 50); // 限制在20-50px之间
+    },
+
+    // 计算节点垂直间距
+    calculateVerticalSpacing(containerHeight) {
+      // 根据容器高度动态计算合适的垂直间距
+      const baseSpacing = containerHeight / 6; // 基础垂直间距
+      return Math.min(Math.max(baseSpacing, 40), 80); // 限制在40-80px之间
+    },
   }
 }) 

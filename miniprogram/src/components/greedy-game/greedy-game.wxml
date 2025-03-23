@@ -190,17 +190,17 @@
         </view>
         
         <!-- 哈夫曼树可视化 -->
-        <view class="huffman-tree">
+        <view class="huffman-tree" style="width: {{huffmanContainerSize.width}}px; height: {{huffmanContainerSize.height}}px;">
           <canvas id="huffman-canvas" type="2d" class="huffman-canvas"></canvas>
           <view wx:for="{{huffmanNodes}}" wx:key="id" 
-                class="huffman-node {{item.char !== null ? 'leaf' : 'internal'}} {{item.status}}"
+                class="huffman-node {{item.status}}"
                 style="left: {{item.x}}px; top: {{item.y}}px;">
             <view class="node-content">
-              <text class="node-char" wx:if="{{item.char !== null}}">{{item.char}}</text>
-              <text class="node-freq">{{item.frequency}}</text>
+              {{item.char !== null ? item.char : ''}}
+              <view class="node-freq">{{item.frequency}}</view>
             </view>
           </view>
-          <view class="tree-info" wx:if="{{huffmanNodes.length > 8}}">
+          <view class="tree-info" wx:if="{{huffmanNodes.length > huffmanContainerSize.maxNodes}}">
             <text>节点较多，请注意观察细节</text>
           </view>
         </view>
