@@ -123,3 +123,5 @@ curl -s -X POST $SERVER/api/user/progress/sync \
 echo -e "\n"
 
 echo -e "${GREEN}所有API测试完成!${NC}" 
+
+

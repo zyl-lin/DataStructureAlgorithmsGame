@@ -111,20 +111,36 @@ Component({
     changeSearchType: function(e) {
       const type = e.currentTarget.dataset.type;
       
-      // 如果是二分搜索，确保数组已排序
-      if (type === 'binary' && !this.properties.isSorted) {
+      // 如果是二分搜索，先对数组进行排序
+      if (type === 'binary') {
+        // 对原始数组进行排序
+        const sortedArray = [...this.data.originalArray].sort((a, b) => a - b);
+        // 创建新的可视化数组
+        const sortedVisualArray = sortedArray.map(value => ({
+          value,
+          status: ''
+        }));
+        
+        // 更新数组和状态
+        this.setData({
+          searchType: type,
+          currentAlgorithmInfo: this.data.algorithmInfo[type],
+          originalArray: sortedArray,
+          visualArray: sortedVisualArray
+        });
+        
+        // 提示用户数组已排序
         wx.showToast({
-          title: '二分搜索需要排序数组',
+          title: '数组已自动排序',
           icon: 'none',
           duration: 2000
         });
-        return;
+      } else {
+        this.setData({
+          searchType: type,
+          currentAlgorithmInfo: this.data.algorithmInfo[type]
+        });
       }
-      
-      this.setData({
-        searchType: type,
-        currentAlgorithmInfo: this.data.algorithmInfo[type]
-      });
       
       // 如果正在搜索中，重置搜索
       if (this.data.isSearching) {

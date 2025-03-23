@@ -1,10 +1,4 @@
 <view class="binary-tree-container">
-  <!-- 任务面板 -->
-  <view class="task-panel" wx:if="{{task}}">
-    <view class="task-title">当前任务</view>
-    <view class="task-description">{{task.description}}</view>
-  </view>
-
   <!-- 遍历模式选择器 -->
   <view class="traversal-selector">
     <view class="selector-title">遍历方式</view>

@@ -5,7 +5,7 @@
 #include <crow/middlewares/cors.h>
 #include <nlohmann/json.hpp>
 #include "database.h"
-#include "animation/animation_manager.h"
+#include "animation/common/animation_manager.h"
 
 using json = nlohmann::json;
 

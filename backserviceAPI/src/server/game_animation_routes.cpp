@@ -1,5 +1,5 @@
 #include "game_animation_routes.h"
-#include "animation/animation_manager.h"
+#include "animation/common/animation_manager.h"  // 更新包含路径
 #include "response_builder.h"
 #include "maze_routes.h"
 #include "greedy_routes.h"

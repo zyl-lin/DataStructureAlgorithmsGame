@@ -5,7 +5,7 @@
 #include "game_routes.h"
 #include "achievement_routes.h"
 #include "game_animation_routes.h"
-#include "animation/animation_routes.h"
+#include "animation/routes/animation_routes.h"
 #include <crow/middlewares/cors.h>
 
 using json = nlohmann::json;

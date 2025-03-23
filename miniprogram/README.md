@@ -3355,3 +3355,30 @@
 - **修改了哪些文件**：
   1. src/components/greedy-game/greedy-game.js（优化节点布局计算逻辑）
   2. src/components/greedy-game/greedy-game.wxss（改进容器和节点样式）
+
+## 2024-07-14 12:15:00
+
+### 会话总结
+- **会话的主要目的**：修复动态规划游戏组件的重置功能，避免重复调用API
+- **完成的主要任务**：
+  1. 修改了动态规划游戏组件中的resetVisualization和resetApi方法，添加了_skipApiReset标记控制重置流程
+  2. 优化了resetApi方法的实现，直接设置标记状态而不是通过回调嵌套
+  3. 重新实现了resetApi方法，确保其位于toggleSpeedControl方法后面，不会被覆盖
+  4. 修复了状态管理机制，避免递归调用引起的无限循环问题
+  5. 优化了错误处理，确保在API请求失败时也能正确重置状态
+
+- **关键决策和解决方案**：
+  1. 使用_skipApiReset标记控制重置流程，防止递归调用
+  2. 在resetVisualization方法开始时检查标记状态，决定是否调用resetApi
+  3. 合并多个setData调用，提高状态更新效率
+  4. 确保resetApi方法的位置正确，避免被其他方法覆盖
+  5. 添加完整的错误处理，保证在任何情况下都能恢复正常状态
+
+- **使用的技术栈**：
+  1. 微信小程序原生框架
+  2. JavaScript状态管理
+  3. RESTful API调用
+  4. 错误处理机制
+
+- **修改了哪些文件**：
+  1. src/components/dp-game/dp-game.js（修改了resetVisualization和resetApi方法）

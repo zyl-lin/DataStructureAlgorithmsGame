@@ -291,9 +291,10 @@ Component({
       // 清理定时器
       this.clearAutoPlayTimer();
       
-      // 如果是API模式，调用API重置
-      if (this.data.isApiMode) {
+      // 如果是API模式，调用API重置，但避免循环调用
+      if (this.data.isApiMode && !this.data._skipApiReset) {
         this.resetApi();
+        return; // 提前返回，避免重复重置
       }
       
       // 重置状态
@@ -324,7 +325,15 @@ Component({
         isLoading: false,
         apiError: '',
         animationSpeed: 5,
-        showSpeedControl: false
+        showSpeedControl: false,
+        _skipApiReset: false // 重置标记
+      });
+    },
+
+    // 切换速度控制显示状态
+    toggleSpeedControl: function() {
+      this.setData({
+        showSpeedControl: !this.data.showSpeedControl
       });
     },
 
@@ -333,7 +342,13 @@ Component({
       if (!this.data.isApiMode) return;
       
       const api = require('../../services/api').dp;
-      this.setData({ isLoading: true, apiError: '' });
+      
+      // 设置标记以避免循环调用
+      this.setData({ 
+        _skipApiReset: true,
+        isLoading: true,
+        apiError: '' 
+      });
       
       api.reset()
         .then(() => {
@@ -343,11 +358,9 @@ Component({
         .catch(error => {
           console.error('重置动态规划状态失败:', error);
           this.setData({
-            apiError: '重置状态失败，请重试'
+            apiError: '重置状态失败，请重试',
+            isLoading: false
           });
-        })
-        .finally(() => {
-          this.setData({ isLoading: false });
         });
     },
 
@@ -1069,36 +1082,6 @@ Component({
       this.setData({
         animationSpeed: e.detail.value
       });
-    },
-
-    // 切换速度控制显示状态
-    toggleSpeedControl: function() {
-      this.setData({
-        showSpeedControl: !this.data.showSpeedControl
-      });
-    },
-
-    // 重置API状态
-    resetApi: function() {
-      if (!this.data.isApiMode) return;
-      
-      const api = require('../../services/api').dp;
-      this.setData({ isLoading: true, apiError: '' });
-      
-      api.reset()
-        .then(() => {
-          console.log('动态规划状态重置成功');
-          this.resetVisualization();
-        })
-        .catch(error => {
-          console.error('重置动态规划状态失败:', error);
-          this.setData({
-            apiError: '重置状态失败，请重试'
-          });
-        })
-        .finally(() => {
-          this.setData({ isLoading: false });
-        });
     },
 
     // 修改开始可视化方法

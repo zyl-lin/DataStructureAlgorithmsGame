@@ -1242,7 +1242,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - JSON数据处理
 - 防御性编程
 
-### 修改了哪些文件
+### 修改的文件
 - src/server/game_animation_routes.cpp
   - 重写了recalculateTreeLayout函数
   - 优化了handleBinaryTreeInsert函数中的坐标计算逻辑
@@ -1270,7 +1270,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - 二叉树遍历算法
 - JSON数据处理
 
-### 修改了哪些文件
+### 修改的文件
 - src/server/game_animation_routes.cpp - 重构了handleBinaryTreeInsert函数的节点插入逻辑
 
 ## 2025-05-22
@@ -1430,7 +1430,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - nlohmann/json库
 - RESTful API设计
 
-### 修改了哪些文件
+### 修改的文件
 - src/server/maze_routes.cpp - 添加了迷宫算法的状态获取函数
 - src/server/dp_routes.cpp - 添加了动态规划算法的状态获取函数
 - src/server/greedy_routes.cpp - 添加了贪心算法的状态获取函数
@@ -1768,7 +1768,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - OpenSSL
 - CMake构建系统
 
-### 修改了哪些文件
+### 修改的文件
 1. src/server/jwt_utils.h（新建）- JWT工具头文件
 2. src/server/jwt_utils.cpp（新建）- JWT工具实现文件
 3. CMakeLists.txt - 添加jwt-cpp依赖
@@ -1823,7 +1823,7 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - OpenSSL
 - CMake构建系统
 
-### 修改了哪些文件
+### 修改的文件
 1. CMakeLists.txt - 修正了jwt-cpp的使用方式
 2. src/server/jwt_utils.cpp - 简化了代码，移除了手动实现的Base64函数
 
@@ -2358,3 +2358,2048 @@ C++、STL(队列、映射)、动画帧生成、JSON数据处理
 - API设计.txt
   - 添加了用户管理API的详细请求/响应格式
   - 添加了游戏进度同步API的多种支持格式说明
+
+## 2024-03-24 12:30:00
+
+### 会话的主要目的
+实现动态规划和贪心算法游戏元素的交互功能和动画演示API
+
+### 完成的主要任务
+1. 扩展游戏交互处理器，添加对动态规划和贪心算法元素的交互支持
+2. 实现动态规划的斐波那契数列可视化动画API
+3. 实现贪心算法的零钱兑换可视化动画API
+4. 添加动态规划和贪心算法单步执行API
+5. 完善测试脚本，支持测试新增的算法类型
+
+### 关键决策和解决方案
+1. 为动态规划DP表的单元格添加了状态切换（normal、clicked、hovered、computing、computed、dependency）用于直观展示计算过程
+2. 贪心算法零钱兑换问题采用从大到小的硬币选择策略，通过状态变化直观展示选择过程
+3. 优化交互设计，悬停在DP单元格时自动高亮其依赖的单元格，便于理解依赖关系
+4. 单步执行API设计支持逐步演示算法执行过程，适合教学场景
+5. 整合动画帧生成机制，确保动画流畅性和交互的即时反馈
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 自定义动画管理器
+- 状态机设计模式
+
+### 修改的文件
+1. src/server/animation/game_interaction_handler.cpp - 添加动态规划和贪心算法的交互处理逻辑
+2. src/server/animation/game_interaction_handler.h - 添加新函数声明
+3. src/server/animation/dp_animations.cpp - 新增文件，实现动态规划动画API
+4. src/server/animation/greedy_animations.cpp - 新增文件，实现贪心算法动画API
+5. src/server/animation/animation_routes.h - 添加新函数声明
+6. CMakeLists.txt - 添加新源文件到构建系统
+7. README.md - 添加本次会话总结
+
+## 2024-03-25
+
+### 会话主要目的
+实现最长公共子序列（LCS）动态规划算法的功能，扩展游戏动画演示API
+
+### 完成的主要任务
+1. 实现了LCS动态规划的初始状态生成函数`createInitialLCSState`
+2. 添加了LCS动画生成处理函数`handleDPLCSAnimation`和`createLCSDPAnimationFrames`
+3. 实现了LCS单步执行功能`executeLCSDPStep`
+4. 更新了会话创建接口，支持LCS动态规划类型
+5. 更新了API文档，添加LCS相关接口说明
+
+### 关键决策和解决方案
+1. 设计了二维表格式的LCS状态表示，包含行列标签、单元格值和依赖关系
+2. 通过动画帧清晰展示LCS算法的执行过程，包括匹配和非匹配情况的处理
+3. 记录了单元格的依赖关系，以便可视化子问题依赖
+4. 在算法完成后展示最终的最长公共子序列和回溯路径
+5. 集成到现有动态规划框架中，保持API的一致性
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+- 自定义动画管理器
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp - 添加LCS算法相关函数实现
+2. src/server/animation/animation_routes.h - 添加LCS函数声明
+3. API设计.txt - 更新API文档，添加LCS相关接口说明
+4. test_interaction_api.ps1 - 添加LCS测试代码
+5. test_interaction_api.sh - 添加LCS测试代码
+
+
+1. 实现了LCS算法的单元格点击交互处理
+
+
+## 2024-03-26
+增强LCS（最长公共子序列）动态规划算法的可视化交互功能
+
+### 完成的主要任务
+1. 实现了LCS算法的单元格点击交互处理
+2. 添加了LCS路径显示接口，用于可视化最优路径
+3. 添加了LCS单元格计算接口，用于直观展示计算过程
+4. 完善了相关测试脚本，确保功能正常工作
+
+### 关键决策和解决方案
+1. 扩展了game_interaction_handler实现对LCS单元格点击的处理
+2. 添加了sstream头文件以支持字符串分割功能
+3. 实现了LCS路径显示功能，可清晰展示最长公共子序列的构成路径
+4. 实现了单元格计算解释功能，可动态展示每个单元格的计算依据
+
+### 使用的技术栈
+- 自定义动画管理器
+- 字符串处理
+
+### 修改的文件
+1. src/server/animation/game_interaction_handler.cpp - 增强LCS交互处理
+2. src/server/animation/game_interaction_handler.h - 添加split函数声明
+3. src/server/animation/animation_routes.cpp - 添加LCS路径显示和单元格计算功能
+4. src/server/animation/animation_routes.h - 添加新函数声明
+5. API设计.txt - 更新API文档，添加新接口说明
+6. test_interaction_api.ps1 - 添加新功能测试代码
+7. test_interaction_api.sh - 添加新功能测试代码
+
+
+## 2024-03-27
+
+### 会话主要目的
+完善最长公共子序列（LCS）动态规划算法的交互功能实现
+
+### 完成的主要任务
+- 实现了LCS单元格的点击和悬停交互功能
+- 完善了LCS路径显示和单元格计算功能
+- 优化了交互反馈和动画效果
+- 添加了详细的计算过程说明
+
+### 关键决策和解决方案
+- 设计了单元格状态系统（normal, clicked, hovered, dependency, path等）
+- 实现了依赖关系的可视化展示
+- 添加了LCS路径的特殊高亮效果
+- 提供了详细的计算过程解释
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+- src/server/animation/game_interaction_handler.cpp
+- src/server/animation/dp_animations.cpp
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+增强LCS动态规划算法的动画控制功能
+
+### 完成的主要任务
+- 添加了动画速度控制功能
+- 实现了动画步骤回退功能
+- 优化了单元格状态显示系统
+- 完善了API文档
+
+### 关键决策和解决方案
+- 设计了动画速度控制接口，支持0.5x到2.0x的速度调节
+- 实现了动画帧缓存系统，支持步骤回退
+- 定义了完整的单元格状态样式系统，使用不同颜色直观显示计算过程
+- 优化了状态切换和动画过渡效果
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理系统
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+- API设计.txt
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+增强LCS动态规划算法的可视化效果和教学价值
+
+### 完成的主要任务
+- 添加了详细的计算步骤解释功能
+- 实现了依赖关系可视化系统
+- 优化了动画帧生成逻辑
+- 完善了API文档
+
+### 关键决策和解决方案
+- 为每个单元格添加了详细的计算过程解释
+- 实现了三种依赖类型（diagonal、up、left）的可视化
+- 优化了动画帧的生成，提供更清晰的状态变化
+- 统一了JSON数据结构，确保前端展示的一致性
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+- 状态管理系统
+
+### 修改的文件
+- src/server/animation/dp_animations.cpp
+- API设计.txt
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+增强LCS动态规划算法的教学效果，添加详细的步骤提示功能
+
+### 完成的主要任务
+- 实现了分阶段的步骤提示系统
+- 为每个计算步骤添加了详细的解释
+- 优化了动画帧的提示信息展示
+- 完善了API文档
+
+### 关键决策和解决方案
+- 设计了三阶段提示系统（初始化、计算、回溯）
+- 为每个阶段提供了详细的算法原理解释
+- 动态生成基于当前状态的提示信息
+- 在动画帧中集成了提示系统
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+- 字符串处理
+
+### 修改的文件
+- src/server/animation/dp_animations.cpp
+- API设计.txt
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+为LCS动态规划算法添加执行过程记录和回放功能，增强算法的教学效果
+
+### 完成的主要任务
+- 实现了LCS执行过程记录功能，记录每个步骤的详细信息
+- 添加了执行记录回放API，支持逐步回放算法执行过程
+- 优化了动画帧生成逻辑，集成执行记录功能
+- 完善了API文档，添加了执行记录回放相关说明
+
+### 关键决策和解决方案
+- 设计了LCSExecutionRecord结构，记录每个步骤的完整信息
+- 实现了三种操作类型（init、match、mismatch）的记录生成
+- 提供了详细的依赖关系和解释说明
+- 支持按步骤回放执行过程，便于理解算法原理
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+- 结构化数据设计
+
+### 修改的文件
+- src/server/animation/dp_animations.cpp
+- API设计.txt
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+为LCS动态规划算法添加状态保存和恢复功能，增强学习体验
+
+### 完成的主要任务
+- 实现了LCS状态保存功能，支持保存当前学习进度
+- 添加了状态恢复功能，允许继续之前的学习
+- 完善了状态管理机制，包含完整的计算信息
+- 更新了API文档，添加新功能说明
+
+### 关键决策和解决方案
+- 设计了完整的状态保存结构，包含基本信息、计算状态和执行记录
+- 实现了基于时间戳的状态管理，便于追踪学习历史
+- 提供了灵活的状态恢复机制，支持继续学习和状态回顾
+- 确保了状态保存和恢复的数据完整性
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 状态管理系统
+- 时间戳处理
+
+### 修改的文件
+- src/server/animation/dp_animations.cpp
+- API设计.txt
+- README.md
+
+## 2024-03-29
+
+### 会话主要目的
+完善LCS动态规划算法测试脚本，增强系统测试能力
+
+### 完成的主要任务
+- 为LCS状态保存和恢复功能添加测试用例
+- 增加了综合测试模块，验证状态管理功能的完整性
+- 添加了错误处理测试，确保API能够正确处理异常情况
+- 实现了测试结果统计和报告功能
+- 添加彩色输出，提升测试脚本的可读性
+
+### 关键决策和解决方案
+- 设计了多阶段测试流程，全面测试状态保存和恢复功能
+- 实现了测试用例统计机制，便于分析测试覆盖率
+- 通过模拟各种错误场景，验证API的健壮性
+- 增加测试结果汇总，提供直观的测试通过率统计
+- 添加退出码，支持CI/CD流程中的自动化测试判断
+
+### 使用的技术栈
+- Bash脚本
+- curl命令行工具
+- JSON处理
+- Linux终端彩色输出
+- 脚本测试自动化技术
+
+### 修改的文件
+- test_interaction_api.sh
+
+## 2024-03-29
+
+### 会话主要目的
+实现排序算法的动画演示功能，包括冒泡排序和选择排序
+
+### 完成的主要任务
+- 实现了排序算法的初始状态生成函数
+- 添加了冒泡排序和选择排序的动画帧生成功能
+- 实现了排序状态的重置功能
+- 添加了排序算法的API路由
+
+### 关键决策和解决方案
+- 设计了统一的排序状态数据结构，包含数组、当前索引、比较索引等信息
+- 实现了详细的动画帧生成逻辑，展示每一步排序操作
+- 使用不同的颜色状态表示数组元素的不同状态（正常、比较中、交换中、已排序）
+- 为每个动画帧添加了描述性文本，帮助理解排序过程
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- RESTful API设计
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createInitialSortingState函数
+  - 实现了createBubbleSortAnimationFrames函数
+  - 实现了createSelectionSortAnimationFrames函数
+  - 添加了handleSortingAnimation和handleSortingReset函数
+  - 注册了新的API路由
+
+## 2024-03-29
+
+### 会话主要目的
+实现搜索算法的动画演示功能，包括线性搜索和二分查找
+
+### 完成的主要任务
+- 实现了搜索算法的初始状态生成函数
+- 添加了线性搜索和二分查找的动画帧生成功能
+- 实现了搜索状态的重置功能
+- 添加了搜索算法的API路由
+
+### 关键决策和解决方案
+- 设计了统一的搜索状态数据结构，包含数组、目标值、当前索引等信息
+- 为二分查找实现了左右边界和中间位置的可视化
+- 使用不同的颜色状态表示数组元素的不同状态（正常、当前、比较中、已找到、未找到）
+- 为每个动画帧添加了描述性文本，帮助理解搜索过程
+- 实现了详细的动画帧生成逻辑，展示每一步搜索操作
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- RESTful API设计
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createInitialSearchState函数
+  - 实现了createLinearSearchAnimationFrames函数
+  - 实现了createBinarySearchAnimationFrames函数
+  - 添加了handleSearchAnimation和handleSearchReset函数
+  - 注册了新的API路由
+
+## 2024-03-29
+
+### 会话主要目的
+实现迷宫算法的动画演示功能，包括深度优先搜索(DFS)和广度优先搜索(BFS)
+
+### 完成的主要任务
+- 实现了迷宫算法的初始状态生成函数
+- 添加了迷宫生成功能，随机创建墙壁和通道
+- 实现了深度优先搜索和广度优先搜索的动画帧生成功能
+- 添加了迷宫状态的重置功能
+- 实现了迷宫算法的API路由
+
+### 关键决策和解决方案
+- 设计了统一的迷宫状态数据结构，包含网格大小、起点、终点、墙壁等信息
+- 实现了随机迷宫生成算法，确保起点和终点可达
+- 使用不同的颜色状态表示迷宫元素（墙壁、路径、访问过的单元格、当前位置等）
+- 为每个动画帧添加了描述性文本，帮助理解搜索过程
+- 实现了路径回溯功能，可以显示最终找到的路径
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 图搜索算法（DFS和BFS）
+- STL容器（队列、映射等）
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createInitialMazeState函数
+  - 实现了generateMaze函数
+  - 实现了createMazeDFSAnimationFrames和dfsMaze函数
+  - 实现了createMazeBFSAnimationFrames函数
+  - 添加了handleMazeAnimation和handleMazeReset函数
+  - 注册了新的API路由
+
+## 2024-03-29
+
+### 会话主要目的
+实现图算法的动画演示功能，包括深度优先搜索(DFS)和广度优先搜索(BFS)
+
+### 完成的主要任务
+- 实现了图算法的初始状态生成函数
+- 添加了深度优先搜索和广度优先搜索的动画帧生成功能
+- 实现了图算法状态的重置功能
+- 添加了图算法的API路由
+
+### 关键决策和解决方案
+- 设计了统一的图状态数据结构，包含节点、边、访问记录等信息
+- 实现了DFS和BFS两种遍历算法的动画生成
+- 使用不同的颜色状态表示节点和边的状态（正常、当前、已访问、路径）
+- 为每个动画帧添加了描述性文本，帮助理解遍历过程
+- 实现了路径记录功能，可以显示遍历的完整路径
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 图遍历算法（DFS和BFS）
+- STL容器（集合、队列等）
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createInitialGraphState函数
+  - 实现了createGraphDFSAnimationFrames和dfsGraph函数
+  - 实现了createGraphBFSAnimationFrames函数
+  - 添加了handleGraphAnimation和handleGraphReset函数
+  - 注册了新的API路由
+
+## 2024-03-29
+
+### 会话主要目的
+实现快速排序算法的动画演示功能
+
+### 完成的主要任务
+- 实现了快速排序算法的动画帧生成函数
+- 添加了基准元素选择和分区过程的可视化
+- 实现了递归排序过程的动画展示
+- 更新了排序算法处理函数，支持快速排序
+
+### 关键决策和解决方案
+- 设计了完整的快速排序动画帧生成逻辑，包括：
+  - 基准元素的选择和高亮显示
+  - 分区过程中的元素比较和交换
+  - 基准元素放置到最终位置
+  - 递归排序子数组的过程展示
+- 使用不同的状态标记（currentIndex、comparingIndex、pivotIndex）来展示排序过程
+- 为每个关键步骤添加了详细的描述文本
+- 实现了已排序元素的标记功能
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 递归算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createQuickSortAnimationFrames函数
+  - 实现了quickSort递归函数
+  - 更新了handleSortingAnimation函数，支持快速排序
+
+## 2024-03-29
+
+### 会话主要目的
+实现插入排序算法的动画演示功能
+
+### 完成的主要任务
+- 实现了插入排序算法的动画帧生成函数
+- 添加了元素选择和插入过程的可视化
+- 实现了元素移动和比较的动画展示
+- 更新了排序算法处理函数，支持插入排序
+
+### 关键决策和解决方案
+- 设计了完整的插入排序动画帧生成逻辑，包括：
+  - 当前元素的选择和高亮显示
+  - 与已排序部分的元素比较
+  - 元素移动和插入过程的可视化
+  - 已排序部分的标记
+- 使用不同的状态标记（currentIndex、comparingIndex）来展示排序过程
+- 为每个关键步骤添加了详细的描述文本
+- 实现了已排序元素的标记功能
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 排序算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createInsertionSortAnimationFrames函数
+  - 更新了handleSortingAnimation函数，支持插入排序
+
+## 2024-03-29
+
+### 会话主要目的
+实现归并排序算法的动画演示功能
+
+### 完成的主要任务
+- 实现了归并排序算法的动画帧生成函数
+- 添加了数组分割和合并过程的可视化
+- 实现了递归排序过程的动画展示
+- 更新了排序算法处理函数，支持归并排序
+
+### 关键决策和解决方案
+- 设计了完整的归并排序动画帧生成逻辑，包括：
+  - 数组分割过程的可视化
+  - 子数组合并过程的展示
+  - 元素比较和放置的动画
+  - 已排序区间的标记
+- 使用不同的状态标记（currentIndex、comparingIndex、leftIndex、rightIndex）来展示排序过程
+- 为每个关键步骤添加了详细的描述文本
+- 实现了已排序区间的标记功能
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 递归算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加了createMergeSortAnimationFrames函数
+  - 实现了mergeSort和merge函数
+  - 更新了handleSortingAnimation函数，支持归并排序
+
+## 会话总结 - 2024-03-19 15:30
+
+### 会话主要目的
+实现游戏界面的后端API接口，支持游戏元素的交互动画效果
+
+### 完成的主要任务
+1. 实现了游戏元素的点击、拖拽、放置和悬停事件处理
+2. 为不同类型的游戏（链表、二叉树、图、LCS）添加了交互处理函数
+3. 更新了API设计文档，添加了新的游戏元素交互API说明
+4. 添加了相应的测试用例到测试脚本中
+
+### 关键决策和解决方案
+1. 采用事件驱动的方式处理游戏元素交互
+2. 为每种游戏类型实现独立的事件处理函数
+3. 使用状态机管理游戏元素的不同状态（normal、clicked、dragging、hovered等）
+4. 实现了动画帧的生成和管理机制
+
+### 使用的技术栈
+- C++17
+- Crow框架（HTTP服务器）
+- nlohmann/json（JSON处理）
+- 状态机设计模式
+- 事件驱动编程
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp
+2. API设计.txt
+3. shell:test_interaction_api.sh
+4. README.md
+
+## 2024-03-19 16:30
+
+### 会话主要目的
+实现插入排序和归并排序的动画演示功能，丰富排序算法的可视化效果。
+
+### 完成的主要任务
+1. 实现了插入排序算法的动画帧生成函数
+2. 实现了归并排序算法的动画帧生成函数
+3. 添加了合并操作的可视化展示
+4. 更新了排序算法处理函数，支持新增的排序算法
+
+### 关键决策和解决方案
+1. 为插入排序设计了清晰的动画步骤：
+   - 选择当前元素
+   - 与已排序部分比较
+   - 移动元素和插入操作
+   - 标记已排序区域
+2. 为归并排序实现了递归过程的可视化：
+   - 数组分割过程展示
+   - 子数组合并动画
+   - 元素比较和放置操作
+   - 合并完成后的状态更新
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动画状态管理
+- 递归算法实现
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp
+   - 添加了createInsertionSortAnimationFrames函数
+   - 添加了createMergeSortAnimationFrames函数
+   - 添加了mergeSort和merge辅助函数
+   - 更新了handleSortingAnimation函数
+2. README.md
+
+## 2024-03-30 动态规划算法动画实现
+
+### 会话主要目的
+实现动态规划算法的动画演示功能，包括斐波那契数列和背包问题。
+
+### 完成的主要任务
+1. 实现了斐波那契数列的动态规划动画生成函数
+2. 实现了背包问题的动态规划动画生成函数
+3. 添加了动态规划算法的API处理函数
+4. 为每个算法步骤添加了详细的描述和可视化效果
+
+### 关键决策和解决方案
+1. 斐波那契数列动画：
+   - 使用单元格状态（computing、dependency、computed）展示计算过程
+   - 高亮显示依赖关系，帮助理解递推公式
+   - 为每个计算步骤添加详细说明
+
+2. 背包问题动画：
+   - 使用二维表格展示动态规划过程
+   - 可视化物品选择和容量约束
+   - 展示每个状态的最优解计算过程
+   - 提供详细的决策过程说明
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 动态规划算法
+- 动画状态管理
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp
+   - 添加了createDPFibonacciAnimationFrames函数
+   - 添加了createDPKnapsackAnimationFrames函数
+   - 添加了handleDPFibonacciAnimation和handleDPKnapsackAnimation函数
+2. README.md
+
+## 2024-03-21 贪心算法动画实现
+
+### 会话主要目的
+- 实现贪心算法的动画演示功能，包括零钱兑换、活动安排和哈夫曼编码三个经典问题
+
+### 完成的主要任务
+1. 零钱兑换算法动画
+   - 实现贪心策略选择最优硬币组合
+   - 动态展示每步选择过程和剩余金额
+   - 可视化硬币选择的决策过程
+
+2. 活动安排算法动画
+   - 按结束时间排序活动
+   - 展示活动选择和冲突判断过程
+   - 可视化最优活动组合的形成
+
+3. 哈夫曼编码算法动画
+   - 使用优先队列实现最小堆
+   - 可视化树的构建过程
+   - 展示节点合并和编码分配
+   - 动态显示树的层次结构
+
+4. 通用功能实现
+   - 步骤控制机制
+   - 动画状态管理
+   - 错误处理和异常响应
+
+### 关键决策和解决方案
+1. 数据结构选择
+   - 使用优先队列实现哈夫曼树的构建
+   - 采用向量存储活动和硬币信息
+   - 使用JSON对象管理动画状态
+
+2. 算法实现策略
+   - 贪心策略：每步选择当前最优解
+   - 状态转换：清晰展示每步决策过程
+   - 可视化设计：直观展示算法执行流程
+
+3. 动画控制
+   - 支持单步执行和连续播放
+   - 提供暂停、继续和重置功能
+   - 实现动画速度调节
+
+### 使用的技术栈
+- C++17
+- STL容器和算法
+- Crow Web框架
+- nlohmann/json库
+- 面向对象编程
+- 贪心算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 添加贪心算法动画相关函数
+  - 实现算法可视化逻辑
+  - 添加API路由处理
+
+### 后续优化方向
+1. 添加更多贪心算法示例
+2. 优化动画效果和交互体验
+3. 增加算法执行效率分析
+4. 完善错误处理机制
+
+## 2024-03-21 贪心算法动画优化
+
+### 会话主要目的
+优化贪心算法的动画演示效果，增强教学价值和可视化体验。
+
+### 完成的主要任务
+1. 零钱兑换算法优化
+   - 添加了状态样式系统（normal、selected、current、skipped）
+   - 实现了硬币选择过程的详细动画
+   - 添加了硬币使用统计功能
+   - 优化了步骤描述文本
+
+2. 活动安排算法优化
+   - 添加了状态样式系统（normal、selected、current、conflict、comparing）
+   - 实现了活动排序的可视化展示
+   - 增加了活动选择过程的详细信息
+   - 优化了冲突检测的展示效果
+
+3. 哈夫曼编码算法优化
+   - 添加了状态样式系统（normal、current、merging、merged、leaf）
+   - 实现了节点合并的动态效果
+   - 添加了编码计算和显示功能
+   - 优化了树的层次布局
+
+### 关键决策和解决方案
+1. 状态管理
+   - 为每个算法设计了独特的状态样式系统
+   - 实现了清晰的状态转换机制
+   - 添加了详细的步骤说明
+
+2. 可视化增强
+   - 使用不同颜色标识不同状态
+   - 添加了动态的状态变化效果
+   - 实现了详细的过程展示
+
+3. 数据结构优化
+   - 优化了JSON数据结构
+   - 添加了统计信息
+   - 增强了状态追踪能力
+
+### 使用的技术栈
+- C++17
+- STL容器和算法
+- nlohmann/json库
+- 动画状态管理
+- 贪心算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 优化了createGreedyCoinChangeAnimationFrames函数
+  - 优化了createGreedyActivitySelectionAnimationFrames函数
+  - 优化了createHuffmanAnimationFrames函数
+  - 添加了calculateHuffmanCodes辅助函数
+
+### 后续优化方向
+1. 添加更多的交互功能
+2. 实现动画速度控制
+3. 添加算法性能分析
+4. 增加更多的教学提示
+
+## 2024-03-21 贪心算法动画增强
+
+### 会话主要目的
+增强贪心算法的动画演示功能，添加详细的教学提示和解释，提升教学价值。
+
+### 完成的主要任务
+1. 零钱兑换算法增强
+   - 添加了详细的教学提示，解释贪心策略的原理
+   - 实现了硬币使用统计功能
+   - 优化了动画状态样式系统
+   - 添加了每步操作的详细解释
+
+2. 活动安排算法增强
+   - 添加了排序过程的教学解释
+   - 实现了活动冲突检测的可视化
+   - 优化了活动选择过程的展示
+   - 添加了最终结果的详细统计
+
+3. 哈夫曼编码算法增强
+   - 添加了树构建过程的详细解释
+   - 实现了编码生成过程的可视化
+   - 计算并展示了平均编码长度
+   - 优化了节点合并的动画效果
+
+### 关键决策和解决方案
+1. 教学提示系统
+   - 为每个算法步骤添加了针对性的解释
+   - 使用不同颜色标识不同状态和提示
+   - 提供了算法原理和策略的说明
+
+2. 可视化增强
+   - 优化了状态转换的动画效果
+   - 添加了更多的视觉反馈
+   - 实现了详细的统计信息展示
+
+3. 交互体验
+   - 提供了清晰的步骤说明
+   - 添加了操作结果的即时反馈
+   - 优化了动画帧的生成逻辑
+
+### 使用的技术栈
+- C++17
+- STL容器和算法
+- nlohmann/json库
+- 动画状态管理
+- 贪心算法实现
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 增强了createGreedyCoinChangeAnimationFrames函数
+  - 增强了createGreedyActivitySelectionAnimationFrames函数
+  - 增强了createHuffmanAnimationFrames函数
+  - 添加了更多的教学提示和统计功能
+
+### 后续优化方向
+1. 添加更多的算法可视化效果
+2. 实现更多的交互功能
+3. 添加算法效率分析功能
+4. 支持自定义输入数据
+
+## 会话记录 - 2024年3月更新
+
+### 会话主要目的
+- 增强哈夫曼编码算法的动画演示功能
+- 添加更详细的教学提示和交互特性
+- 优化动画的教育价值
+
+### 完成的主要任务
+1. 改进了哈夫曼编码算法的动画帧生成逻辑
+2. 添加了更详细的教学提示，包括：
+   - 算法基本原理解释
+   - 每个步骤的详细说明
+   - 编码规则的可视化展示
+3. 增加了算法复杂度分析和性能指标
+4. 实现了更直观的编码结果展示
+
+### 关键决策和解决方案
+1. 动画状态管理
+   - 使用不同的状态样式（normal, current, merging, merged, leaf, hint）
+   - 为每个节点添加清晰的视觉标识
+2. 教学提示增强
+   - 在每个关键步骤添加详细的解释
+   - 包含算法原理、贪心策略说明
+   - 提供编码规则的具体示例
+3. 性能优化
+   - 优化了节点频率计算方法
+   - 改进了平均编码长度的计算逻辑
+
+### 使用的技术栈
+- C++17
+- STL容器（优先队列、向量等）
+- JSON数据处理
+- 动画状态管理系统
+- 二叉树数据结构
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+  - 增强了createHuffmanAnimationFrames函数
+  - 添加了更多的教学提示和交互特性
+- README.md（本文件）
+  - 添加了最新的会话记录和更新说明
+
+### 后续优化方向
+1. 可以考虑添加更多的交互特性
+2. 进一步优化动画的视觉效果
+3. 添加更多的算法分析和比较内容
+4. 考虑添加编码效率的实时计算和显示
+
+## 2023-03-23 动画API完善和LCS状态管理增强
+
+### 会话的主要目的
+完善现有游戏模块的动画API，特别是为LCS（最长公共子序列）动态规划算法添加状态保存、恢复和执行回放功能，以及添加通用的动画控制API。
+
+### 完成的主要任务
+1. 为AnimationSession类添加状态保存和恢复功能
+   - 实现了saveState、loadState和hasState方法
+   - 添加了保存状态的数据结构
+2. 实现了LCS相关的状态管理API
+   - 添加了状态保存API（/api/dp/lcs/save）
+   - 添加了状态恢复API（/api/dp/lcs/restore）
+   - 添加了执行回放API（/api/dp/lcs/playback）
+3. 实现了通用动画控制API
+   - 添加了动画速度控制（/api/animation/speedControl）
+   - 添加了步骤回退功能（/api/animation/stepBack）
+4. 更新了测试脚本，添加了对新API的测试用例
+
+### 关键决策和解决方案
+1. 状态保存机制
+   - 使用键值对的方式在会话中保存多个状态
+   - 保存完整的状态信息，包括计算步骤和路径
+2. 步骤回退实现
+   - 根据不同的游戏类型（dp、greedy等）实现特定的回退逻辑
+   - 对于LCS，特别处理了计算位置和单元格状态
+3. 动画速度控制
+   - 支持以倍速方式控制动画，基准为1.0
+   - 内部转换为毫秒单位的帧间隔
+
+### 使用的技术栈
+- C++17
+- STL容器（map、vector等）
+- Crow Web框架
+- JSON数据处理
+
+### 修改了哪些文件
+- src/server/animation/animation_manager.h
+  - 添加了状态保存和恢复相关的方法声明
+  - 添加了保存状态的数据结构
+- src/server/animation/animation_manager.cpp
+  - 实现了状态保存和恢复的方法
+- src/server/animation/animation_routes.h
+  - 添加了新API的函数声明
+- src/server/animation/animation_routes.cpp
+  - 添加了新API的路由注册
+  - 实现了动画速度控制和步骤回退功能
+- test_interaction_api.sh
+  - 添加了对新API的测试用例
+
+## 2024-03-31
+
+### 会话主要目的
+实现LCS（最长公共子序列）动态规划算法的状态保存、恢复和执行回放功能。
+
+### 完成的主要任务
+1. 实现了LCS状态保存功能（handleLCSStateSave）
+   - 支持使用时间戳保存多个状态点
+   - 验证会话和游戏类型
+   - 提供状态保存成功的反馈
+
+2. 实现了LCS状态恢复功能（handleLCSStateRestore）
+   - 自动选择最新的保存状态
+   - 完整恢复计算状态和进度
+   - 提供详细的恢复结果信息
+
+3. 实现了LCS执行回放功能（handleLCSExecutionPlayback）
+   - 支持指定目标步骤的回放
+   - 自动选择最近的保存状态作为起点
+   - 逐步执行到目标状态
+
+4. 增强了AnimationSession类
+   - 添加了getSavedStates方法
+   - 完善了状态管理功能
+
+### 关键决策和解决方案
+1. 状态管理策略：
+   - 使用时间戳作为状态标识
+   - 支持多状态点保存和管理
+   - 实现状态的快速查找和恢复
+
+2. 错误处理：
+   - 完整的参数验证
+   - 详细的错误信息反馈
+   - 异常情况的优雅处理
+
+3. 性能优化：
+   - 高效的状态查找算法
+   - 最近状态优先的恢复策略
+   - 增量执行的回放机制
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL容器（map、vector等）
+- 时间戳处理
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp
+   - 添加了handleLCSStateSave函数
+   - 添加了handleLCSStateRestore函数
+   - 添加了handleLCSExecutionPlayback函数
+
+2. src/server/animation/animation_manager.h
+   - 添加了getSavedStates方法到AnimationSession类
+
+### 后续优化方向
+1. 添加状态压缩功能，减少存储空间占用
+2. 实现状态自动清理机制，避免内存泄漏
+3. 添加更多的状态管理功能（如删除特定状态）
+4. 优化回放性能，支持更大规模的状态管理
+
+## 2024-03-31 16:00
+
+### 会话主要目的
+实现LCS（最长公共子序列）动态规划算法的单步执行功能，增强算法的可视化和教学效果。
+
+### 完成的主要任务
+1. 实现了LCS动态规划的单步计算函数（executeLCSDPStep）
+   - 支持DP表格的初始化和边界条件处理
+   - 实现了单元格值的计算和依赖关系跟踪
+   - 添加了详细的计算过程描述
+   - 支持最终结果的构建和路径回溯
+
+2. 增强了状态管理功能
+   - 实现了单元格状态的动态更新
+   - 添加了依赖关系的可视化支持
+   - 提供了详细的计算步骤说明
+   - 支持计算完成后的结果展示
+
+3. 优化了用户体验
+   - 添加了清晰的步骤描述
+   - 实现了依赖关系的可视化
+   - 提供了计算过程的详细解释
+   - 支持最终结果的展示和路径回溯
+
+### 关键决策和解决方案
+1. 状态管理策略：
+   - 使用JSON对象存储DP表格和单元格状态
+   - 动态跟踪计算位置和进度
+   - 记录单元格间的依赖关系
+   - 支持计算完成后的路径回溯
+
+2. 可视化增强：
+   - 为每个单元格提供状态标记（computed、current等）
+   - 展示单元格间的依赖关系（diagonal、up、left）
+   - 提供详细的计算过程说明
+   - 支持最终路径的可视化
+
+3. 错误处理：
+   - 完整的参数验证和异常处理
+   - 安全的状态更新机制
+   - 防止数组越界和空值访问
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- STL容器（vector、string等）
+- 动态规划算法
+- 状态管理系统
+
+### 修改的文件
+1. src/server/animation/animation_routes.cpp
+   - 添加了executeLCSDPStep函数实现
+   - 实现了单步计算和状态更新逻辑
+
+### 后续优化方向
+1. 添加更多的动画效果
+2. 优化依赖关系的展示方式
+3. 添加更详细的教学提示
+4. 支持自定义输入字符串
+5. 添加算法复杂度分析
+
+## 2024-03-23 代码结构优化
+
+### 会话主要目的
+- 优化项目代码结构，提高代码的可维护性和可扩展性
+- 解决动画处理逻辑重复和文件组织问题
+
+### 完成的主要任务
+1. 分析了 animation_routes.cpp 和 dp_animations.cpp 中的代码重复问题
+2. 提出了新的代码组织结构，按照游戏模块类型分离文件
+3. 设计了更清晰的目录结构，改进了代码模块化
+
+### 关键决策和解决方案
+1. 采用按模块分离的方式重组代码：
+   - 路由注册和处理逻辑分离
+   - 具体实现按算法类型分类
+   - 通用功能放入 common 目录
+2. 统一了动画处理接口设计
+3. 移除了重复的代码实现
+
+### 使用的技术栈
+- C++17
+- Crow Web 框架
+- JSON 数据处理
+- 模块化设计模式
+
+### 修改的文件
+- src/server/animation/animation_routes.cpp
+- src/server/animation/dp_animations.cpp
+- 新增多个模块化文件（计划中）
+
+### 后续优化方向
+1. 实现新的目录结构
+2. 迁移现有代码到对应模块
+3. 添加单元测试
+4. 完善接口文档
+
+创建了新的目录结构
+创建了基础的头文件
+开始移动动态规划相关的代码
+接下来的步骤是：
+继续将所有动态规划相关的函数实现从原文件移动到新文件中
+创建贪心算法、排序算法等其他模块的头文件和实现文件
+更新CMakeLists.txt以包含新的文件结构
+更新主路由文件以使用新的模块化结构
+
+
+## 2024-03-23 代码重构进展更新
+
+### 会话主要目的
+- 继续优化项目代码结构，实现模块化重构
+- 完成动态规划模块的代码迁移和重组
+
+### 完成的主要任务
+1. 实现了新的目录结构：
+   - routes/：路由注册和处理
+   - implementations/：算法实现
+   - common/：通用功能
+2. 完成了动态规划模块的重构：
+   - 移动 LCS 相关代码到独立文件
+   - 实现了核心算法功能
+   - 创建了路由注册文件
+3. 创建了主路由文件，统一管理所有路由注册
+
+### 关键决策和解决方案
+1. 采用分层架构：
+   - 路由层：处理 HTTP 请求和响应
+   - 实现层：包含算法核心逻辑
+   - 通用层：提供共享功能
+2. 统一了错误处理和响应格式
+3. 改进了代码组织，提高了可维护性
+
+### 使用的技术栈
+- C++17
+- Crow Web 框架
+- JSON 数据处理
+- 模块化设计模式
+
+### 修改的文件
+- src/server/animation/routes/animation_routes.h
+- src/server/animation/routes/animation_routes.cpp
+- src/server/animation/routes/dp_routes.cpp
+- src/server/animation/implementations/dp/dp_animations.h
+- src/server/animation/implementations/dp/dp_animations.cpp
+- src/server/animation/common/animation_session.h
+- src/server/animation/common/response_builder.h
+
+### 后续优化方向
+1. 继续重构其他算法模块：
+   - 贪心算法模块
+   - 排序算法模块
+   - 搜索算法模块
+2. 更新 CMakeLists.txt 以适应新的目录结构
+3. 添加单元测试
+4. 完善错误处理机制
+
+
+创建了新的文件结构：
+routes/greedy_routes.cpp - 贪心算法路由注册
+implementations/greedy/greedy_animations.h - 贪心算法头文件
+implementations/greedy/greedy_animations.cpp - 贪心算法实现
+实现了三个贪心算法：
+零钱兑换：使用贪心策略选择最大面值的硬币
+活动选择：按结束时间排序选择不冲突的活动
+哈夫曼编码：使用优先队列构建最优编码树
+每个算法都包含：
+初始状态生成函数
+动画帧生成函数
+错误处理机制
+状态管理功能
+更新了CMakeLists.txt，添加了新的源文件和头文件目录。
+
+# 2024-03-23 排序算法模块重构更新
+
+## 会话的主要目的
+重构排序算法模块，实现四种基本排序算法（冒泡排序、选择排序、插入排序、快速排序）的可视化动画。
+
+## 完成的主要任务
+1. 创建了排序算法模块的基本结构：
+   - 路由注册文件
+   - 算法实现头文件
+   - 算法实现源文件
+2. 实现了四种排序算法的动画生成：
+   - 冒泡排序：相邻元素比较和交换
+   - 选择排序：查找最小元素并交换
+   - 插入排序：构建有序序列
+   - 快速排序：分区递归排序
+3. 添加了排序状态管理功能：
+   - 获取当前状态
+   - 重置排序状态
+   - 单步执行功能
+
+## 关键决策和解决方案
+1. 动画帧设计：
+   - 使用JSON格式存储排序状态
+   - 记录当前索引、比较索引和交换索引
+   - 为每个算法添加特定的状态字段
+2. 可视化策略：
+   - 清晰展示比较和交换过程
+   - 使用不同颜色标识不同状态
+   - 添加详细的步骤说明
+3. 错误处理：
+   - 完整的参数验证
+   - 会话状态检查
+   - 异常捕获和处理
+
+## 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL容器和算法
+- 面向对象编程
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/routes/sorting_routes.cpp
+   - src/server/animation/implementations/sorting/sorting_animations.h
+   - src/server/animation/implementations/sorting/sorting_animations.cpp
+2. 更新文件：
+   - CMakeLists.txt：添加新的源文件
+   - README.md：添加重构说明
+
+# 2024-03-23 搜索算法模块重构更新
+
+## 会话的主要目的
+重构搜索算法模块，实现线性搜索和二分搜索的可视化动画。
+
+## 完成的主要任务
+1. 创建了搜索算法模块的基本结构：
+   - 路由注册文件
+   - 算法实现头文件
+   - 算法实现源文件
+2. 实现了两种搜索算法的动画生成：
+   - 线性搜索：逐个元素比较
+   - 二分搜索：分治策略查找
+3. 添加了搜索状态管理功能：
+   - 获取当前状态
+   - 重置搜索状态
+   - 单步执行功能
+
+## 关键决策和解决方案
+1. 动画帧设计：
+   - 使用JSON格式存储搜索状态
+   - 记录当前索引、比较索引和边界索引
+   - 为每个算法添加特定的状态字段
+2. 可视化策略：
+   - 清晰展示比较过程
+   - 使用不同颜色标识不同状态
+   - 添加详细的步骤说明
+3. 错误处理：
+   - 完整的参数验证
+   - 会话状态检查
+   - 异常捕获和处理
+
+## 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL容器和算法
+- 面向对象编程
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/routes/search_routes.cpp
+   - src/server/animation/implementations/search/search_animations.h
+   - src/server/animation/implementations/search/search_animations.cpp
+2. 更新文件：
+   - CMakeLists.txt：添加新的源文件
+   - README.md：添加重构说明
+
+# 2024-03-23 迷宫算法模块重构更新
+
+## 会话的主要目的
+重构迷宫算法模块，实现迷宫生成和三种求解算法（DFS、BFS、A*）的可视化动画。
+
+## 完成的主要任务
+1. 创建了迷宫算法模块的基本结构：
+   - 路由注册文件
+   - 算法实现头文件
+   - 算法实现源文件
+2. 实现了迷宫生成和三种求解算法：
+   - 迷宫生成：使用随机DFS生成迷宫
+   - DFS求解：深度优先搜索寻路
+   - BFS求解：广度优先搜索寻路
+   - A*求解：启发式搜索寻路
+3. 添加了迷宫状态管理功能：
+   - 获取当前状态
+   - 重置迷宫状态
+   - 动画帧生成
+
+## 关键决策和解决方案
+1. 迷宫表示：
+   - 使用二维数组表示迷宫网格
+   - 0表示通道，1表示墙壁
+   - 记录访问状态和路径信息
+2. 动画帧设计：
+   - 记录当前访问位置
+   - 展示搜索过程
+   - 显示最终路径
+3. 错误处理：
+   - 完整的参数验证
+   - 会话状态检查
+   - 异常捕获和处理
+
+## 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- STL容器和算法
+- 图搜索算法（DFS、BFS、A*）
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/routes/maze_routes.cpp
+   - src/server/animation/implementations/maze/maze_animations.h
+   - src/server/animation/implementations/maze/maze_animations.cpp
+2. 更新文件：
+   - API设计.txt：添加迷宫算法API说明
+   - @test_interaction_api.sh：添加迷宫算法API测试代码
+   - README.md：添加本次重构说明
+
+# 2024-03-23 代码重构 - 游戏交互处理器移动
+
+## 会话主要目的
+将游戏交互处理器（GameInteractionHandler）相关文件移动到common目录，优化代码结构。
+
+## 完成的主要任务
+1. 创建了新的目录结构：
+   - common/game_interaction_handler.h
+   - common/game_interaction_handler.cpp
+2. 移动了游戏交互处理器的代码到新位置
+3. 删除了原有的文件
+4. 保持了所有功能的完整性
+
+## 关键决策和解决方案
+1. 将交互处理器放在common目录下，因为它是一个通用功能模块
+2. 保持了原有的类结构和功能不变
+3. 确保了与其他模块的正确依赖关系
+
+## 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- 事件处理系统
+- 状态管理
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/common/game_interaction_handler.h
+   - src/server/animation/common/game_interaction_handler.cpp
+2. 删除文件：
+   - src/server/animation/game_interaction_handler.h
+   - src/server/animation/game_interaction_handler.cpp
+3. 更新文件：
+   - README.md
+
+# 2024-03-23 代码重构 - 动画管理器移动
+
+## 会话主要目的
+将动画管理器（AnimationManager）相关文件移动到common目录，优化代码结构。
+
+## 完成的主要任务
+1. 创建了新的目录结构：
+   - common/animation_manager.h
+   - common/animation_manager.cpp
+2. 移动了动画管理器的代码到新位置
+3. 删除了原有的文件
+4. 保持了所有功能的完整性
+
+## 关键决策和解决方案
+1. 将动画管理器放在common目录下，因为它是一个核心功能模块
+2. 保持了原有的类结构和功能不变
+3. 优化了会话ID生成逻辑，使用时间戳和随机数组合
+4. 增强了状态管理功能，支持保存和加载状态
+
+## 使用的技术栈
+- C++17
+- STL容器（map、vector等）
+- 时间戳处理
+- 随机数生成
+- JSON数据处理
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/common/animation_manager.h
+   - src/server/animation/common/animation_manager.cpp
+2. 删除文件：
+   - src/server/animation/animation_manager.h
+   - src/server/animation/animation_manager.cpp
+3. 更新文件：
+   - README.md
+
+# 2024-03-23 代码重构 - 动画路由移动
+
+## 会话主要目的
+将动画路由（AnimationRoutes）相关文件移动到routes目录，优化代码结构。
+
+## 完成的主要任务
+1. 创建了新的目录结构：
+   - routes/animation_routes.h
+   - routes/animation_routes.cpp
+2. 移动了动画路由的代码到新位置
+3. 删除了原有的文件
+4. 保持了所有功能的完整性
+
+## 关键决策和解决方案
+1. 将路由处理器放在routes目录下，遵循模块化设计原则
+2. 保持了原有的路由注册和处理函数不变
+3. 优化了错误处理和响应格式
+4. 增强了会话管理和动画控制功能
+
+## 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- RESTful API设计
+- 会话管理系统
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/routes/animation_routes.h
+   - src/server/animation/routes/animation_routes.cpp
+2. 删除文件：
+   - src/server/animation/animation_routes.h
+   - src/server/animation/animation_routes.cpp
+3. 更新文件：
+   - README.md
+
+# 2024-03-23 代码重构 - 动态规划动画模块移动
+
+## 会话主要目的
+将动态规划动画（DPAnimations）相关文件移动到implementations/dp目录，优化代码结构。
+
+## 完成的主要任务
+1. 创建了新的目录结构：
+   - implementations/dp/dp_animations.h
+   - implementations/dp/dp_animations.cpp
+2. 移动了动态规划动画的代码到新位置
+3. 删除了原有的文件
+4. 保持了所有功能的完整性
+
+## 关键决策和解决方案
+1. 将动态规划动画实现放在implementations/dp目录下，遵循模块化设计原则
+2. 使用命名空间dp_animations封装相关功能
+3. 优化了状态管理和动画帧生成逻辑
+4. 增强了错误处理和参数验证
+
+## 使用的技术栈
+- C++17
+- nlohmann/json库
+- 动态规划算法
+- 状态管理系统
+- 动画帧生成
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/implementations/dp/dp_animations.h
+   - src/server/animation/implementations/dp/dp_animations.cpp
+2. 删除文件：
+   - src/server/animation/dp_animations.h
+   - src/server/animation/dp_animations.cpp
+3. 更新文件：
+   - README.md
+
+# 2024-03-23 代码重构 - 贪心算法动画模块移动
+
+## 会话主要目的
+将贪心算法动画（GreedyAnimations）相关文件移动到implementations/greedy目录，优化代码结构。
+
+## 完成的主要任务
+1. 创建了新的目录结构：
+   - implementations/greedy/greedy_animations.h
+   - implementations/greedy/greedy_animations.cpp
+2. 移动了贪心算法动画的代码到新位置
+3. 删除了原有的文件
+4. 保持了所有功能的完整性
+
+## 关键决策和解决方案
+1. 将贪心算法动画实现放在implementations/greedy目录下，遵循模块化设计原则
+2. 使用命名空间greedy_animations封装相关功能
+3. 优化了状态管理和动画帧生成逻辑
+4. 增强了错误处理和参数验证
+
+## 使用的技术栈
+- C++17
+- nlohmann/json库
+- 贪心算法
+- 状态管理系统
+- 动画帧生成
+
+## 修改的文件
+1. 新建文件：
+   - src/server/animation/implementations/greedy/greedy_animations.h
+   - src/server/animation/implementations/greedy/greedy_animations.cpp
+2. 删除文件：
+   - src/server/animation/greedy_animations.cpp
+3. 更新文件：
+   - README.md
+
+# 2024-03-23 修复动画会话类重定义错误
+
+## 会话主要目的
+修复代码中`AnimationSession`类和`AnimationFrame`结构体的重定义错误，解决编译问题。
+
+## 完成的主要任务
+1. 修复了animation_session.h和animation_manager.h中的类定义冲突
+2. 重构了AnimationSession类，使其仅在一处定义
+3. 创建了animation_session.cpp实现文件
+4. 确保所有使用AnimationSession的代码正常工作
+
+## 关键决策和解决方案
+1. 在animation_session.h中仅保留AnimationFrame结构体定义，移除AnimationSession类定义
+2. 在animation_manager.h中保留完整的AnimationSession类定义
+3. 创建animation_session.cpp文件实现AnimationSession类的方法
+4. 使用前向声明和适当的包含关系避免循环依赖
+
+## 使用的技术栈
+- C++17
+- 面向对象编程
+- 头文件组织
+- 代码重构技术
+
+## 修改的文件
+1. 修改文件：
+   - src/server/animation/common/animation_session.h
+   - src/server/animation/common/animation_manager.h
+   - src/server/animation/common/animation_manager.cpp
+2. 新建文件：
+   - src/server/animation/common/animation_session.cpp
+3. 更新文件：
+   - README.md
+
+## 2024-08-07 贪心算法函数修复
+
+### 会话主要目的
+修复贪心算法模块中的函数调用问题和JSON数据处理错误
+
+### 完成的主要任务
+1. 修复了`handleGreedyHuffmanAnimation`函数中错误的函数调用，将`createHuffmanAnimationFrames`调用改为正确的`createGreedyHuffmanAnimationFrames`
+2. 修复了`calculateOptimalSolution`函数中处理JSON数据时的类型转换问题
+3. 移除了错误添加的空`handleDPLCS`函数，避免函数重复定义
+
+### 关键决策和解决方案
+1. 统一函数命名，确保调用与定义一致，修改了`handleGreedyHuffmanAnimation`函数中的调用
+2. 优化JSON数据访问方式，将`codes[ch].get<std::string>()`简化为`codes[ch]`，解决了不兼容的`.length()`调用问题
+3. 删除了误添加的空`handleDPLCS`函数，保持代码整洁
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- Crow Web框架
+- 贪心算法实现
+
+### 修改的文件
+1. src/server/animation/implementations/greedy/greedy_animations.cpp
+   - 修改了函数调用
+   - 优化了JSON数据处理
+2. src/server/animation/implementations/dp/dp_animations.cpp
+   - 删除了多余的空函数
+
+## 2024-08-07 贪心算法函数重复定义修复
+
+### 会话主要目的
+修复贪心算法模块中的函数重复定义问题
+
+### 完成的主要任务
+1. 识别并移除了`greedy_animations.cpp`文件中重复定义的函数：
+   - 删除了重复定义的`createGreedyCoinChangeAnimationFrames`函数
+   - 删除了重复定义的`createGreedyActivitySelectionAnimationFrames`函数
+
+### 关键决策和解决方案
+1. 使用grep搜索确定了重复定义的函数位置
+2. 保留了文件中的第一次函数定义（179行和285行），删除了后面的重复定义（627行和681行）
+3. 确保保持代码逻辑的完整性，函数的删除不影响调用
+
+### 使用的技术栈
+- C++17
+- 代码重构
+- 编译错误修复
+
+### 修改的文件
+1. src/server/animation/implementations/greedy/greedy_animations.cpp
+   - 删除了重复定义的函数
+
+## 2024-08-07 AnimationSession 和 AnimationFrame 重复定义修复
+
+### 会话主要目的
+解决 AnimationFrame 结构体在 animation_session.h 和 animation_manager.h 中重复定义的问题
+
+### 完成的主要任务
+1. 分析了 animation_session.h 和 animation_manager.h 文件中的循环依赖问题
+2. 修改了 animation_session.h 文件，移除对 animation_manager.h 的引用
+3. 修改了 animation_manager.h 文件，添加对 animation_session.h 的引用
+
+### 关键决策和解决方案
+1. 保留 AnimationFrame 结构体的定义在 animation_session.h 中
+2. 在 animation_session.h 中添加 AnimationSession 类的前向声明
+3. 在 animation_manager.h 中包含 animation_session.h 以使用 AnimationFrame 定义
+4. 移除 animation_manager.h 中对 AnimationFrame 的前向声明
+
+### 使用的技术栈
+- C++
+- 头文件管理
+- 类和结构体设计
+
+### 修改了哪些文件
+1. src/server/animation/common/animation_session.h - 移除循环依赖，添加前向声明
+2. src/server/animation/common/animation_manager.h - 引入 animation_session.h，移除重复声明
+
+## 2024-03-21 15:00:00
+### 会话总结
+- **会话的主要目的**：修复后端服务代码中的编译错误
+- **完成的主要任务**：
+  1. 修复了 AnimationFrame 结构体重复定义问题
+  2. 修复了 dp_animations.cpp 中的 JSON 类型转换错误
+  3. 修复了 greedy_animations.cpp 中的运算符重载错误
+  4. 优化了代码结构，提高了类型安全性
+
+- **关键决策和解决方案**：
+  1. 移除重复的结构体定义，使用头文件包含的方式解决
+  2. 使用显式的 JSON 解析替代直接类型转换
+  3. 使用安全的循环累加替代不兼容类型的运算
+  4. 保持了原有功能的完整性
+
+- **使用的技术栈**：
+  1. C++
+  2. nlohmann/json 库
+  3. STL 容器和算法
+  4. 头文件管理
+
+- **修改了哪些文件**：
+  1. src/server/animation/common/animation_session.h
+  2. src/server/animation/implementations/dp/dp_animations.cpp
+  3. src/server/animation/implementations/greedy/greedy_animations.cpp
+
+## 2024-03-21 14:30:00
+### 会话总结
+- **会话的主要目的**：修复后端服务代码中的编译错误
+
+- **完成的主要任务**：
+  1. 修改了AnimationManager类中createSession方法的返回类型
+  2. 修复了greedy_animations.cpp中的JSON对象访问和类型转换问题
+  3. 优化了哈夫曼编码中的频率计算逻辑
+
+- **关键决策和解决方案**：
+  1. 将createSession方法返回类型改为string，返回sessionId
+  2. 使用at()和get<int>()方法安全访问JSON对象
+  3. 优化了频率累加和平均编码长度计算的实现
+  4. 保持了原有功能和中文注释不变
+
+- **使用的技术栈**：
+  1. C++17
+  2. nlohmann/json库
+  3. STL容器和算法
+
+- **修改了哪些文件**：
+  1. src/server/animation/common/animation_manager.h
+  2. src/server/animation/implementations/greedy/greedy_animations.cpp
+
+  活动选择算法中的变量i未声明问题：
+使用了已定义的step变量替代未声明的i
+添加了对selected是否为空的检查
+使用return currentState替代了不合适的continue语句
+哈夫曼编码中的频率计算问题：
+使用显式循环替代了std::accumulate
+修正了循环范围，使用freqs.size()而不是codes.size()
+保持了原有的计算逻辑，但使用了更安全的访问方式
+这些修改应该解决了编译错误。主要的改进包括：
+修复了变量作用域问题
+改进了错误处理逻辑
+使用了更安全的JSON访问方式
+避免了不兼容的运算符操作
+
+## 2024-07-14 14:30:00
+### 会话总结
+- **会话的主要目的**：修复greedy_animations.cpp中的std::accumulate类型不匹配错误
+
+## 2024-07-14 13:30:00
+### 会话总结
+- **会话的主要目的**：修复后端API服务的链接错误问题
+- **完成的主要任务**：
+  1. 分析了链接错误信息，发现多个函数定义缺失
+  2. 检查了项目文件结构，确认所有源文件都存在
+  3. 发现CMakeLists.txt中SOURCES列表不完整
+  4. 添加了缺失的源文件到CMakeLists.txt的SOURCES列表中
+
+- **关键决策和解决方案**：
+  1. 在SOURCES列表中添加了以下源文件：
+     - database.cpp（数据库相关实现）
+     - user_routes.cpp（用户路由实现）
+     - game_routes.cpp（游戏路由实现）
+     - achievement_routes.cpp（成就路由实现）
+     - game_animation_routes.cpp（游戏动画路由实现）
+     - jwt_utils.cpp（JWT工具实现）
+     - base64.cpp（Base64编码实现）
+     - game_logic.cpp（游戏逻辑实现）
+  2. 保持了原有源文件的编译顺序
+  3. 确保所有必要的头文件目录都已包含
+
+- **使用的技术栈**：
+  1. CMake构建系统
+  2. C++17
+  3. Crow框架
+  4. SQLite3
+  5. OpenSSL
+  6. JWT-CPP
+
+- **修改了哪些文件**：
+  1. CMakeLists.txt（添加缺失的源文件到SOURCES列表）
+
+## 2024-03-23 更新日志
+
+### 会话主要目的
+- 解决后端API服务的链接错误问题
+
+### 完成的主要任务
+- 分析了链接错误信息，发现多个未定义的引用
+- 检查了项目文件结构
+- 创建了缺失的源文件
+- 更新了CMakeLists.txt配置
+
+### 关键决策和解决方案
+- 创建了`src/server/animation/routes/graph_routes.cpp`文件
+- 实现了图遍历相关的路由处理函数：
+  - handleGraphTraverseDFS
+  - handleGraphTraverseBFS
+  - handleGraphState
+  - handleGraphReset
+- 在CMakeLists.txt中添加了新创建的源文件
+
+### 使用的技术栈
+- CMake构建系统
+- C++17
+- Crow框架
+- nlohmann/json库
+- RESTful API设计
+
+### 修改的文件
+- 新建：`src/server/animation/routes/graph_routes.cpp`
+- 修改：`CMakeLists.txt`
+
+## 2024-03-23 更新日志
+
+### 会话主要目的
+- 修复后端API服务的编译链接错误
+
+### 完成的主要任务
+1. 修复了AnimationSession类的方法重复定义问题
+   - 移除了animation_session.cpp文件
+   - 将所有实现保留在animation_manager.cpp中
+2. 实现了迷宫相关的处理函数
+   - 创建了maze_animations.h和maze_animations.cpp
+   - 实现了迷宫生成、求解和状态管理功能
+3. 更新了CMakeLists.txt，添加了新的源文件
+
+### 关键决策和解决方案
+1. 将AnimationSession类的实现集中到一个文件中，避免重复定义
+2. 创建了独立的迷宫模块，包含完整的功能实现
+3. 使用模块化设计，将迷宫相关功能封装在单独的文件中
+
+### 使用的技术栈
+- C++17
+- Crow Web框架
+- nlohmann/json库
+- CMake构建系统
+- 迷宫生成和寻路算法
+
+### 修改的文件
+1. 删除：src/server/animation/common/animation_session.cpp
+2. 修改：src/server/animation/common/animation_session.h
+3. 新建：src/server/animation/implementations/maze/maze_animations.h
+4. 新建：src/server/animation/implementations/maze/maze_animations.cpp
+5. 修改：CMakeLists.txt
+
+## 2024-03-23 更新日志
+
+### 会话主要目的
+- 修复迷宫动画相关代码中的编译错误，主要是AnimationSession类的不完整定义问题
+
+### 完成的主要任务
+1. 创建了完整的AnimationSession类定义，包括所有必要的方法和成员变量
+2. 修复了maze_animations.cpp中的json操作，使用get<int>()避免类型歧义
+3. 优化了generateMaze函数中的状态访问方式
+
+### 关键决策和解决方案
+1. 在animation_session.h中定义完整的AnimationSession类，包括：
+   - 动画帧管理方法
+   - 状态管理方法
+   - 游戏状态操作方法
+2. 修改json操作方式，使用显式类型转换避免歧义
+3. 保持原有功能代码不变，只修复编译错误
+
+### 使用的技术栈
+- C++17
+- nlohmann/json库
+- STL容器和算法
+- 面向对象编程
+
+### 修改的文件
+1. src/server/animation/common/animation_session.h（添加完整的类定义）
+2. src/server/animation/implementations/maze/maze_animations.cpp（修复json操作）
+
+在 animation_session.h 中：
+保留了完整的 AnimationFrame 结构体定义
+保留了完整的 AnimationSession 类定义
+包含了所有必要的头文件和成员
+在 animation_manager.h 中：
+移除了重复的 AnimationFrame 和 AnimationSession 定义
+通过 include "animation_session.h" 引入这些定义
+只保留了 AnimationManager 类的定义
+这样的修改解决了以下问题：
+避免了类和结构体的重复定义
+建立了清晰的依赖关系：animation_manager.h 依赖 animation_session.h
+保持了代码的模块化和单一职责原则
+
+## 2024-03-23 更新日志
+
+### 会话主要目的
+- 修复后端API服务中AnimationFrame和AnimationSession重复定义的编译错误
+
+### 完成的主要任务
+1. 移除了animation_manager.h中的重复定义
+2. 保持animation_session.h作为唯一的定义源
+3. 确保了头文件包含关系的正确性
+
+### 关键决策和解决方案
+1. 将所有AnimationFrame和AnimationSession的定义统一放在animation_session.h中
+2. 在animation_manager.h中通过include引用这些定义
+3. 保持了原有的中文注释和功能代码不变
+4. 使用#ifndef而不是#pragma once进行头文件保护
+
+### 使用的技术栈
+- C++
+- 头文件管理
+- 类和结构体定义
+
+### 修改了哪些文件
+1. src/server/animation/animation_manager.h（移除重复定义，改为包含animation_session.h）
+
+删除了重复的 animation_manager.h 文件
+更新了引用该文件的代码，使其指向正确的路径 (common 目录下)
+保持了代码的功能不变，只修改了包含路径
+
+## 2024-03-22 11:30:00
+
+### 会话总结
+- **会话的主要目的**：修复动画管理相关类的编译错误，完善类的实现
+
+- **完成的主要任务**：
+  1. 修复了 AnimationManager 和 AnimationSession 类的定义和实现
+  2. 添加了线程安全机制
+  3. 完善了动画状态管理和帧操作功能
+  4. 优化了单例模式的实现
+
+- **关键决策和解决方案**：
+  1. 使用 std::unique_ptr 实现单例模式，确保资源自动释放
+  2. 添加 mutex 实现线程安全的会话管理
+  3. 完善了 AnimationFrame 结构体的构造函数
+  4. 统一使用 #ifndef 而不是 #pragma once
+  5. 保留了原有的中文注释，确保代码可读性
+
+- **使用的技术栈**：
+  1. C++17
+  2. STL (mutex, unique_ptr)
+  3. nlohmann/json
+  4. Linux 线程同步机制
+
+- **修改了哪些文件**：
+  1. src/server/animation/common/animation_session.h
+  2. src/server/animation/common/animation_manager.h
+  3. src/server/animation/common/animation_manager.cpp
+
+## 2024-03-21 23:45:00
+### 会话总结
+- **会话的主要目的**：修复动画管理相关代码的编译错误，确保代码的一致性和正确性
+
+- **完成的主要任务**：
+  1. 修复了 AnimationManager 类的实现与声明不匹配的问题
+  2. 添加了缺失的 mutex 头文件和线程安全实现
+  3. 修正了 unique_ptr 的使用方式
+  4. 优化了动画相关路由处理代码
+  5. 修复了动态规划状态恢复功能
+
+- **关键决策和解决方案**：
+  1. 保持了原有的中文注释，确保代码可读性
+  2. 使用 std::lock_guard 确保线程安全
+  3. 统一使用 unique_ptr 管理单例实例
+  4. 简化了状态恢复逻辑，使用统一的接口
+  5. 优化了错误处理机制
+
+- **使用的技术栈**：
+  1. C++17
+  2. STL (mutex, unique_ptr)
+  3. Linux API
+  4. Crow框架
+  5. nlohmann/json
+
+- **修改了哪些文件**：
+  1. src/server/animation/animation_manager.cpp
+  2. src/server/animation/routes/animation_routes.cpp
+  3. src/server/animation/implementations/dp/dp_animations.cpp
+
+
+在animation_routes.h中添加了适当的包含和声明
+已实现getSessionIdFromRequest辅助函数
+修复了handleGetFrames中的JSON初始化语法
+在dp_animations.cpp中为animation_routes.h添加了适当的包含，以访问getSessionIdFromRequest
+
+# 会话总结 - 2024-03-23
+
+## 主要目的
+- 清理项目中的重复文件，优化代码组织结构
+
+## 完成的主要任务
+- 删除了重复的 animation_manager.cpp 文件
+- 保留了 common 目录下的更新版本
+
+## 关键决策和解决方案
+- 通过比较两个文件的内容和位置，决定保留 common 目录下的版本
+- common 目录下的版本更新、更完整，且与相关头文件在同一目录下
+
+## 使用的技术栈
+- C++
+- 文件系统操作
+
+## 修改的文件
+- 删除: src/server/animation/animation_manager.cpp
+- 保留: src/server/animation/common/animation_manager.cpp
+
+## 2023-05-08
+
+### 会话主要目的
+解决C++项目中缺少AnimationSession实现导致的链接错误问题
+
+### 完成的主要任务
+- 分析了项目编译时的未定义引用错误
+- 创建了缺失的animation_session.cpp文件，实现了AnimationSession类的方法
+- 更新了CMakeLists.txt，添加了新创建的源文件
+- 修正了animation_manager.h中缺少的方法声明
+
+### 关键决策和解决方案
+- 通过分析链接错误，识别出缺少AnimationSession类方法的实现
+- 实现了包括addFrame、getCurrentFrame、updateGameState等所有缺失的方法
+- 在头文件中添加了缺失的generateSessionId和clearSessions方法声明
+
+### 使用的技术栈
+- C++17
+- CMake构建系统
+- Crow Web框架
+- nlohmann/json库
+
+### 修改了哪些文件
+- src/server/animation/common/animation_session.cpp (新建)
+- src/server/animation/common/animation_manager.h
+- CMakeLists.txt
+- README.md
+
+## 2024-07-14 会话总结
+### 主要目的：修复现有动画管理系统的链接错误和实现不一致问题
+
+### 完成任务：
+修正单例模式实现方式
+保持线程安全机制不变
+确保头文件与实现文件声明一致
+完善构建系统配置
+
+### 关键技术决策：
+采用指针方式实现单例模式
+保留原有的互斥锁保护机制
+兼容现有会话管理逻辑
+
+### 技术栈：
+C++17
+STL容器
+Linux线程安全
+
+### 修改文件：
+src/server/animation/common/animation_manager.h
+src/server/animation/common/animation_manager.cpp
+CMakeLists.txt
+API设计.txt
+
+## 2024-03-21 动态规划和贪心算法功能完善
+
+### 会话的主要目的
+修复动态规划和贪心算法相关的链接错误，完善相关功能实现。
+
+### 完成的主要任务
+1. 修改了动态规划模块的头文件保护机制，从#pragma once改为#ifndef
+2. 实现了缺失的动态规划相关函数：
+   - handleDPFibonacci：斐波那契数列动画处理
+   - handleDPKnapsack：背包问题动画处理
+   - handleDPState：状态获取
+   - handleDPReset：状态重置
+   - handleDPStep：单步执行
+3. 修改了贪心算法模块的头文件保护机制
+4. 完善了贪心算法相关函数：
+   - handleGreedyState：状态获取
+   - handleGreedyReset：状态重置
+
+### 关键决策和解决方案
+1. 使用标准的#ifndef头文件保护机制替代#pragma once
+2. 为动态规划和贪心算法实现了完整的状态管理功能
+3. 统一了错误处理和响应格式
+4. 保持了中文注释和提示信息
+
+### 使用的技术栈
+1. C++17
+2. Crow框架
+3. nlohmann/json库
+4. 动态规划算法
+5. 贪心算法
+
+### 修改了哪些文件
+1. src/server/animation/implementations/dp/dp_animations.h
+2. src/server/animation/implementations/dp/dp_animations.cpp
+3. src/server/animation/implementations/greedy/greedy_animations.h
+4. src/server/animation/implementations/greedy/greedy_animations.cpp
+
+在handleDPStateRestore中：
+删除了通过不存在的getSavedStates（）方法访问私有savedStates成员的尝试
+更改为使用固定键"lcs_state_latest"进行状态存储
+修改了loadState调用，以匹配只接受一个参数的正确方法签名
+在响应数据中添加了时间戳生成
+在handleDPStateSave中：
+更改为使用相同的固定键"lcs_state_latest"进行状态存储
+简化了状态保存逻辑
+
+实现了dp_animations命名空间中的executeDPStep函数，支持三种动态规划算法的单步执行
+实现了动态规划相关的路由处理函数，将它们放在dp_routes.cpp中
+实现了贪心算法相关的路由处理函数，将它们放在greedy_routes.cpp中
+所有实现都保持了与现有代码风格一致，并添加了中文注释
+使用了统一的错误处理机制，确保API返回格式一致
+
+## 2024-03-21 23:50:00
+### 会话总结
+- **会话的主要目的**：修复动态规划算法实现中的类型转换问题。
+
+- **完成的主要任务**：
+  1. 修复了dp_animations.cpp中的executeDPStep函数中的类型转换问题
+  2. 修正了json值与整数运算的问题，添加了正确的get<int>()调用
+  3. 修复了字符串引用绑定问题，改为直接复制字符串值
+  4. 确保所有json数值操作都正确进行类型转换
+
+- **关键决策和解决方案**：
+  1. 对所有json数值访问添加get<int>()调用，确保正确的类型转换
+  2. 将字符串引用改为值复制，避免临时对象绑定问题
+  3. 保持原有的算法逻辑不变，只修复类型转换相关问题
+  4. 保留了中文注释，确保代码可读性
+
+- **使用的技术栈**：
+  1. C++17
+  2. nlohmann/json库
+  3. 动态规划算法
+
+- **修改了哪些文件**：
+  1. src/server/animation/implementations/dp/dp_animations.cpp（修复了executeDPStep函数中的类型转换问题）
